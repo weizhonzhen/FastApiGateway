@@ -4,23 +4,17 @@ public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {   
-            //压缩
-            services.AddResponseCompression();
-
-            //注入api网关
-            services.AddTransient<IResponse, ApiResponse>();
-
-            //跨域
+            services.AddResponseCompression();           
+            services.AddTransient<IResponse, ApiResponse>();//注入api网关
             services.AddCors(options =>
             {
                 options.AddPolicy("any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
-            });            
+            });//跨域
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            //api网关
-            app.UseMiddleware<ApiMiddleware>();
+        {           
+            app.UseMiddleware<ApiMiddleware>(); //api网关
         }
     }    
     
