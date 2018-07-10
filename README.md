@@ -1,5 +1,5 @@
 
-#remark
+//说明
 public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
