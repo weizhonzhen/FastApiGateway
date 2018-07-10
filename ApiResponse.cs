@@ -1,13 +1,10 @@
 ﻿using Api.Gateway.Model;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Api.Gateway
 {
-    public class ApiResponse : IResponse
+    public class ApiResponse : IResponse 
     {
         public void Content(HttpContext context)
         {
