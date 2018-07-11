@@ -35,24 +35,24 @@ namespace Api.Gateway
                     var index = rand.Next(1, item.DownParam.Count);
                     var downparam = item.DownParam[index];
 
-                    if (downparam.Method.ToLower() == "post")
+                    var info = GetReuslt(downparam, param, content);
+
+                    if (info.status != 200 && item.DownParam.Count > 1)
                     {
-                        if (downparam.IsBody)
+                        var tempIndex = rand.Next(1, item.DownParam.Count);
+                        while (index == tempIndex)
                         {
-                            var info = BaseUrl.PostContent(downparam);
-                            context.Response.StatusCode = info.status;
-                            context.Response.WriteAsync(info.msg, Encoding.UTF8);
+                            tempIndex = rand.Next(1, item.DownParam.Count);
                         }
-                        else
-                        {
-                            var info = BaseUrl.PostUrl(downparam);
-                            context.Response.StatusCode = info.status;
-                            context.Response.WriteAsync(info.msg, Encoding.UTF8);
-                        }
+
+                        downparam = item.DownParam[tempIndex];
+                        info = GetReuslt(downparam, param, content);
+
+                        context.Response.StatusCode = info.status;
+                        context.Response.WriteAsync(info.msg, Encoding.UTF8);
                     }
-                    else if (downparam.Method.ToLower() == "get")
+                    else
                     {
-                        var info = BaseUrl.GetUrl(downparam);
                         context.Response.StatusCode = info.status;
                         context.Response.WriteAsync(info.msg, Encoding.UTF8);
                     }
@@ -68,28 +68,11 @@ namespace Api.Gateway
 
                     foreach (var downparam in item.DownParam)
                     {
-                        if (downparam.Method.ToLower() == "post")
+                        task.Add(Task.Factory.StartNew(() =>
                         {
-                            task.Add(Task.Factory.StartNew(() =>
-                            {
-                                if (downparam.IsBody)
-                                {
-                                    downparam.Param = content;
-                                    result.Add(BaseUrl.PostContent(downparam));
-                                }
-                                else
-                                    result.Add(BaseUrl.PostUrl(downparam));
-                            }));
-                        }
-                        else if (downparam.Method.ToLower() == "get")
-                        {
-                            task.Add(Task.Factory.StartNew(() =>
-                            {
-                                result.Add(BaseUrl.GetUrl(downparam));
-                            }));
-                        }
+                            result.Add(GetReuslt(downparam, param, content));
+                        }));
                     }
-
 
                     Task.WaitAll(task.ToArray());
 
@@ -102,6 +85,37 @@ namespace Api.Gateway
                     context.Response.WriteAsync(JsonConvert.SerializeObject(downDic).ToString(), Encoding.UTF8);
                 }
             }
+        }
+
+        /// <summary>
+        /// 处理请求
+        /// </summary>
+        /// <param name="downparam">下游</param>
+        /// <param name="param">请求参数</param>
+        /// <param name="content">请求参数body</param>
+        /// <returns></returns>
+        private ReturnModel GetReuslt(DownParam downparam, string param, string content)
+        {
+            if (downparam.Method.ToLower() == "post")
+            {
+                if (downparam.IsBody)
+                {
+                    downparam.Param = content;
+                    return BaseUrl.PostContent(downparam);
+                }
+                else
+                {
+                    downparam.Param = param;
+                    return BaseUrl.PostUrl(downparam);
+                }
+            }
+            else if (downparam.Method.ToLower() == "get")
+            {
+                downparam.Param = param;
+                return BaseUrl.GetUrl(downparam);
+            }
+            else
+                return new ReturnModel { status = 200, msg = "" };
         }
     }
 }
