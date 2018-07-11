@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Api.Gateway.Model
 {
@@ -11,6 +9,19 @@ namespace Api.Gateway.Model
         /// </summary>
         public string Key { get; set; }
 
+        /// <summary>
+        /// Composite(合并请求),Polling(轮循请求)
+        /// </summary>
+        public string Schema { get; set; }
+
+        /// <summary>
+        /// down param
+        /// </summary>
+        public List<DownParam> DownParam { get; set; }
+    }
+
+    public class DownParam
+    {
         //down url
         public string Url { get; set; }
 
@@ -22,16 +33,11 @@ namespace Api.Gateway.Model
         /// <summary>
         /// is body action
         /// </summary>
-        public bool IsContent { get; set; }
+        public bool IsBody { get; set; }
 
         /// <summary>
         /// param
         /// </summary>
         public string Param { get; set; }
-
-        /// <summary>
-        /// time out
-        /// </summary>
-        public int Seconds { get; set; }
     }
 }

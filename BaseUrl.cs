@@ -1,6 +1,5 @@
 ﻿using Api.Gateway.Model;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -25,7 +24,7 @@ namespace Api.Gateway
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(UrlModel item)
+        public static ReturnModel GetUrl(DownParam item)
         {
             var model = new ReturnModel();
             try
@@ -49,7 +48,7 @@ namespace Api.Gateway
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(UrlModel item)
+        public static ReturnModel PostUrl(DownParam item)
         {
             var model = new ReturnModel();
             try
@@ -75,14 +74,14 @@ namespace Api.Gateway
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(UrlModel item)
+        public static ReturnModel PostContent(DownParam item)
         {
             var model = new ReturnModel();
             try
             {
                 var content = new StringContent(item.Param, Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(item.Url), content).Result;
-                model.status = (int)response.StatusCode; ;
+                model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
             }
