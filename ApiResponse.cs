@@ -58,11 +58,10 @@ namespace Api.Gateway
                     }
                 }
 
-
                 //composite 合并请求
                 if (item.Schema.ToLower() == "composite")
                 {
-                    var downDic = new List<Dictionary<string, object>>();
+                    var downDic = new Dictionary<string, object>();
                     var result = new List<ReturnModel>();
                     var task = new List<Task>();
 
@@ -76,9 +75,11 @@ namespace Api.Gateway
 
                     Task.WaitAll(task.ToArray());
 
+                    var count = 0;
                     foreach (var temp in result)
                     {
-                        downDic.Add(BaseJson.JsonToDic(temp.msg));
+                        downDic.Add(string.Format("result{0}", count), BaseJson.JsonToDic(temp.msg));
+                        count++;
                     }
 
                     context.Response.StatusCode = 200;
