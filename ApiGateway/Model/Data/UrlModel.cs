@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Api.Gateway.Model.Data
 {
-    internal class UrlModel
+    public class UrlModel
     {
         /// <summary>
         /// key
@@ -41,7 +41,7 @@ namespace Api.Gateway.Model.Data
         public bool IsGetToken { get; set; }
     }
 
-    internal class DownParam
+    public class DownParam
     {
         //down url
         public string Url { get; set; }
