@@ -22,7 +22,7 @@ namespace Api.Gateway
             context.Response.ContentType = "application/Json";
             var key = context.Request.Path.Value.Replace("/", "").ToLower();
 
-            if (MongoDbInfo.GetCount<UrlModel>(a => a.Key.ToLower() == key)<0)
+            if (MongoDbInfo.GetCount<UrlModel>(a => a.Key.ToLower() == key) < 0)
             {
                 context.Response.StatusCode = 404;
                 context.Response.WriteAsync(string.Format("请求地址{0}无效", key), Encoding.UTF8);
@@ -31,16 +31,30 @@ namespace Api.Gateway
             {
                 var item = MongoDbInfo.GetModel<UrlModel>(a => a.Key.ToLower() == key);
 
-                if (!item.IsGetToken || !item.IsAnonymous)
-                    CheckToken(item, context);
-
-                if (item.IsCache)
+                if (item.IsGetToken)
+                    Token(item, context);
+                else
                 {
-                    var resultInfo = MongoDbInfo.GetModel<CacheModel>(a => a.Key.ToLower() == key);
-                    if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
+                    if (!item.IsAnonymous)
+                        CheckToken(item, context);
+
+                    if (item.IsCache)
                     {
-                        context.Response.StatusCode = 200;
-                        context.Response.WriteAsync(JsonConvert.SerializeObject(resultInfo.result).ToString(), Encoding.UTF8);
+                        var resultInfo = MongoDbInfo.GetModel<CacheModel>(a => a.Key.ToLower() == key);
+                        if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
+                        {
+                            context.Response.StatusCode = 200;
+                            context.Response.WriteAsync(JsonConvert.SerializeObject(resultInfo.result).ToString(), Encoding.UTF8);
+                        }
+                        else
+                        {
+                            if (item.Schema.ToLower() == "polling") //polling 轮循请求
+                                Polling(item, context);
+                            else if (item.Schema.ToLower() == "composite") //composite 合并请求
+                                Composite(item, context);
+                            else
+                                Normal(item, context);
+                        }
                     }
                     else
                     {
@@ -51,15 +65,6 @@ namespace Api.Gateway
                         else
                             Normal(item, context);
                     }
-                }
-                else
-                {
-                    if (item.Schema.ToLower() == "polling") //polling 轮循请求
-                        Polling(item, context);
-                    else if (item.Schema.ToLower() == "composite") //composite 合并请求
-                        Composite(item, context);
-                    else
-                        Normal(item, context);
                 }
             }
         }
@@ -127,6 +132,14 @@ namespace Api.Gateway
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
                     dic.Add("result", "token过期");
+                    context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                }
+
+                if (tokenInfo.Ip != GetClientIp(context))
+                {
+                    context.Response.StatusCode = 200;
+                    dic.Add("success", false);
+                    dic.Add("result", "token授权ip地址异常");
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                 }
             }
@@ -220,6 +233,70 @@ namespace Api.Gateway
 
             context.Response.StatusCode = 200;
             context.Response.WriteAsync(JsonConvert.SerializeObject(downDic).ToString(), Encoding.UTF8);
+        }
+        #endregion
+
+        #region 获取token
+        /// <summary>
+        /// 获取token
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="context"></param>
+        private void Token(UrlModel item, HttpContext context)
+        {
+            var dic = new Dictionary<string, object>();
+            var AppKey = "";
+            var AppSecret = "";
+
+            if (context.Request.Method.ToLower() == "get")
+            {
+                AppKey = context.Request.Query["AppKey"].ToStr().ToLower();
+                AppSecret = context.Request.Query["AppSecret"].ToStr().ToLower();
+            }
+            else if (context.Request.Method.ToLower() == "post")
+            {
+                AppKey = context.Request.Form["AppKey"].ToStr().ToLower();
+                AppSecret = context.Request.Query["AppSecret"].ToStr().ToLower();
+            }
+
+            if (MongoDbInfo.GetCount<UserInfo>(a => a.AppKey.ToLower() == AppKey && a.AppSecret.ToLower() == AppSecret) <= 0)
+            {
+                context.Response.StatusCode = 200;
+                dic.Add("success", false);
+                dic.Add("result", "AppKey和AppSecret参数不存在");
+                context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+            }
+            else
+            {
+                var info = MongoDbInfo.GetModel<UserInfo>(a => a.AppKey.ToLower() == AppKey && a.AppSecret.ToLower() == AppSecret);
+                info.Ip = GetClientIp(context);
+                info.AccessExpires = DateTime.Now.AddHours(24);
+                info.AccessToken = BaseSymmetric.Generate(string.Format("{0}_{1}_{2}", info.AppKey, info.AppSecret, info.AccessExpires)).ToLower();
+
+                dic.Add("success", true);
+                dic.Add("AccessToken", info.AccessToken);
+                dic.Add("AccessExpires", info.AccessExpires);
+
+                context.Response.StatusCode = 200;
+                context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+            }
+        }
+        #endregion
+
+        #region 获取客户Ip
+        /// <summary>
+        /// 获取客户Ip
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public string GetClientIp(HttpContext context)
+        {
+            var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = context.Connection.RemoteIpAddress.ToString();
+            }
+            return ip;
         }
         #endregion
     }
