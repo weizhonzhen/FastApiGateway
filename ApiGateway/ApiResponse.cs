@@ -31,17 +31,20 @@ namespace Api.Gateway
             {
                 var item = MongoDbInfo.GetModel<UrlModel>(a => a.Key.ToLower() == key);
 
+                //获取token
                 if (item.IsGetToken)
                     Token(item, context);
                 else
                 {
+                    //是否匿名访问
                     if (!item.IsAnonymous)
                         CheckToken(item, context);
 
+                    //结果是否缓存
                     if (item.IsCache)
                     {
                         var resultInfo = MongoDbInfo.GetModel<CacheModel>(a => a.Key.ToLower() == key);
-                        if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
+                        if (DateTime.Compare(resultInfo.TimeOut.AddHours(8), DateTime.Now) > 0)
                         {
                             context.Response.StatusCode = 200;
                             context.Response.WriteAsync(JsonConvert.SerializeObject(resultInfo.result).ToString(), Encoding.UTF8);
@@ -127,7 +130,7 @@ namespace Api.Gateway
             else
             {
                 var tokenInfo = MongoDbInfo.GetModel<UserInfo>(a => a.AccessToken.ToLower() == token);
-                if (DateTime.Compare(tokenInfo.AccessExpires, DateTime.Now) < 0)
+                if (DateTime.Compare(tokenInfo.AccessExpires.AddHours(8), DateTime.Now) < 0)
                 {
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
@@ -157,6 +160,10 @@ namespace Api.Gateway
 
             var downparam = item.DownParam.First();
             var info = GetReuslt(downparam, param, content);
+
+            //缓存结果
+            if (item.IsCache)
+                CacheResult(item, info);
 
             context.Response.StatusCode = info.status;
             context.Response.WriteAsync(info.msg, Encoding.UTF8);
@@ -189,11 +196,16 @@ namespace Api.Gateway
                 downparam = item.DownParam[tempIndex];
                 info = GetReuslt(downparam, param, content);
 
+
                 context.Response.StatusCode = info.status;
                 context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
             else
             {
+                //缓存结果
+                if (item.IsCache)
+                    CacheResult(item, info);
+
                 context.Response.StatusCode = info.status;
                 context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
@@ -230,6 +242,10 @@ namespace Api.Gateway
                 downDic.Add(string.Format("result{0}", count), BaseJson.JsonToDic(temp.msg));
                 count++;
             }
+
+            //缓存结果
+            if (item.IsCache)
+                CacheResult(item, null, downDic);
 
             context.Response.StatusCode = 200;
             context.Response.WriteAsync(JsonConvert.SerializeObject(downDic).ToString(), Encoding.UTF8);
@@ -273,6 +289,12 @@ namespace Api.Gateway
                 info.AccessExpires = DateTime.Now.AddHours(24);
                 info.AccessToken = BaseSymmetric.Generate(string.Format("{0}_{1}_{2}", info.AppKey, info.AppSecret, info.AccessExpires)).ToLower();
 
+                //修改信息
+                MongoDbInfo.Update<UserInfo>(
+                    a => a.AppKey.ToLower() == AppKey && a.AppSecret.ToLower() == AppSecret
+                    , info, a => new { a.AccessExpires, a.Ip, a.AccessToken }
+                );
+
                 dic.Add("success", true);
                 dic.Add("AccessToken", info.AccessToken);
                 dic.Add("AccessExpires", info.AccessExpires);
@@ -297,6 +319,33 @@ namespace Api.Gateway
                 ip = context.Connection.RemoteIpAddress.ToString();
             }
             return ip;
+        }
+        #endregion
+
+        #region 缓存结果
+        /// <summary>
+        /// 缓存结果
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="item"></param>
+        private void CacheResult(UrlModel item, ReturnModel info = null, Dictionary<string, object> dic = null)
+        {
+            var model = new CacheModel();
+            model.Key = item.Key.ToLower();
+            model.TimeOut = DateTime.Now.AddDays(item.TimeOut);
+
+            if (info != null)
+                model.result = BaseJson.JsonToDic(info.msg);
+
+            if (dic != null)
+                model.result = dic;
+
+            if (MongoDbInfo.GetCount<CacheModel>(a => a.Key.ToLower() == model.Key) <= 0)
+                MongoDbInfo.Add(model);
+            else
+            {
+                MongoDbInfo.Update<CacheModel>(a => a.Key.ToLower() == model.Key, model, a => new { a.result, a.TimeOut });
+            }
         }
         #endregion
     }

@@ -26,9 +26,9 @@ namespace Api.Gateway.Model.Data
         public bool IsCache { get; set; }
 
         /// <summary>
-        /// 过期时间
+        /// 过期时间天单位
         /// </summary>
-        public DateTime TimeOut { get; set; }
+        public int TimeOut { get; set; }
 
         /// <summary>
         /// 是否匿名访问
