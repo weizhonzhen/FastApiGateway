@@ -35,8 +35,8 @@ namespace MongoDb.Core
                 {
                     config = BaseConfig.GetValue<ConfigModel>(AppSettingKey.Mongodb,"db.json");
                     var _client = new MongoClient(config.ConnStr.Replace("&amp;", "&"));
-                    _client.Settings.MaxConnectionPoolSize = config.Max == 0 ? 100 : config.Min;
-                    _client.Settings.MinConnectionPoolSize = config.Min == 0 ? 10 : config.Min;
+                    //_client.Settings.MaxConnectionPoolSize = config.Max == 0 ? 100 : config.Min;
+                    //_client.Settings.MinConnectionPoolSize = config.Min == 0 ? 10 : config.Min;
                     Interlocked.CompareExchange<MongoClient>(ref client, _client, null);
                 }
 
