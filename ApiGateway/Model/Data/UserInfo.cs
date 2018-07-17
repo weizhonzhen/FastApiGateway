@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Api.Gateway.Model.Data
 {
-    internal class UserInfo
+    public class UserInfo
     {
         /// <summary>
         /// key
