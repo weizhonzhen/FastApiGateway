@@ -1,0 +1,8 @@
+{
+  "Mongodb": {
+    "ConnStr": "mongodb://127.0.0.1",
+    "DbName": "ApiGateway",
+    "Max": 60,
+    "Min": 10
+  }
+}

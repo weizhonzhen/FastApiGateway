@@ -1,0 +1,8 @@
+F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\Api.deps.json
+F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\Api.dll
+F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\Api.pdb
+F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\Api.csproj.CoreCompileInputs.cache
+F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\Api.AssemblyInfoInputs.cache
+F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\Api.AssemblyInfo.cs
+F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\Api.dll
+F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\Api.pdb
