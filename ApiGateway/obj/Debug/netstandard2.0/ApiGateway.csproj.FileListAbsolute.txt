@@ -1,9 +1,0 @@
-F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\ApiGateway.deps.json
-F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\ApiGateway.dll
-F:\项目\Base\Core2.0\ApiGateway\bin\Debug\netstandard2.0\ApiGateway.pdb
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.csprojAssemblyReference.cache
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.csproj.CoreCompileInputs.cache
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.AssemblyInfoInputs.cache
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.AssemblyInfo.cs
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.dll
-F:\项目\Base\Core2.0\ApiGateway\obj\Debug\netstandard2.0\ApiGateway.pdb
