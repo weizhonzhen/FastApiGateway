@@ -18,7 +18,7 @@ namespace Api.Gateway
         {
             http = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip });
             http.DefaultRequestHeaders.Connection.Add("keep-alive");
-            http.Timeout = new TimeSpan(0, 0, 60);
+            http.Timeout = new TimeSpan(0, 0, 30);
         }
 
         #region get url(select)
