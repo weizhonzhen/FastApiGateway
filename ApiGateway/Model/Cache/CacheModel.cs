@@ -6,12 +6,7 @@ namespace Api.Gateway.Model.Cache
 {
     internal class CacheModel
     {
-        /// <summary>
-        /// mongo id
-        /// </summary>
-        public MongoDB.Bson.ObjectId _id { get; set; }
-
-        /// <summary>
+       /// <summary>
         /// url key
         /// </summary>
         public string Key { get; set; }

@@ -80,28 +80,58 @@ namespace Api.Gateway
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private ReturnModel GetReuslt(DownParam downparam, string param, string content)
+        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key)
         {
-            if (downparam.Method.ToLower() == "post")
+            if (downparam.IsDeath == true && DateTime.Compare(downparam.NextAction.AddHours(8), DateTime.Now) > 0)
+                return new ReturnModel { msg = "等待恢复", status = 404 };
+            else
             {
-                if (downparam.IsBody)
+                var result = new ReturnModel();
+                if (downparam.Method.ToLower() == "post")
                 {
-                    downparam.Param = content;
-                    return BaseUrl.PostContent(downparam);
+                    if (downparam.IsBody)
+                    {
+                        downparam.Param = content;
+                        result = BaseUrl.PostContent(downparam);
+                    }
+                    else
+                    {
+                        downparam.Param = param;
+                        result = BaseUrl.PostUrl(downparam);
+                    }
                 }
-                else
+                else if (downparam.Method.ToLower() == "get")
                 {
                     downparam.Param = param;
-                    return BaseUrl.PostUrl(downparam);
+                    result = BaseUrl.GetUrl(downparam);
                 }
+
+                if (result.status == 404)
+                    Task.Factory.StartNew(() =>
+                    {
+                        var item = new UrlModel();
+                        item.DownParam = new List<DownParam>();
+                        downparam.IsDeath = true;
+                        downparam.NextAction = DateTime.Now.AddHours(1);
+                        item.DownParam.Add(downparam);
+
+                        MongoDbInfo.Update<UrlModel>(a => a.Key.ToLower() == key.ToLower(), item, a => new { a.DownParam });
+                    });
+                else if (downparam.IsDeath)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        var item = new UrlModel();
+                        item.DownParam = new List<DownParam>();
+                        downparam.IsDeath = false;
+                        item.DownParam.Add(downparam);
+
+                        MongoDbInfo.Update<UrlModel>(a => a.Key.ToLower() == key.ToLower(), item, a => new { a.DownParam });
+                    });
+                }
+
+                return result;
             }
-            else if (downparam.Method.ToLower() == "get")
-            {
-                downparam.Param = param;
-                return BaseUrl.GetUrl(downparam);
-            }
-            else
-                return new ReturnModel { status = 200, msg = "" };
         }
         #endregion
 
@@ -159,7 +189,7 @@ namespace Api.Gateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.First();
-            var info = GetReuslt(downparam, param, content);
+            var info = GetReuslt(downparam, param, content, item.Key);
 
             //缓存结果
             if (item.IsCache)
@@ -183,7 +213,7 @@ namespace Api.Gateway
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
 
-            var info = GetReuslt(downparam, param, content);
+            var info = GetReuslt(downparam, param, content, item.Key);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -194,7 +224,7 @@ namespace Api.Gateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content);
+                info = GetReuslt(downparam, param, content, item.Key);
 
 
                 context.Response.StatusCode = info.status;
@@ -230,7 +260,7 @@ namespace Api.Gateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content));
+                    result.Add(GetReuslt(downparam, param, content, item.Key));
                 }));
             }
 
