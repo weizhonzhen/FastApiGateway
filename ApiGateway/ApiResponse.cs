@@ -82,7 +82,8 @@ namespace Api.Gateway
         /// <returns></returns>
         private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key)
         {
-            if (downparam.IsDeath == true && DateTime.Compare(downparam.NextAction.AddHours(8), DateTime.Now) > 0)
+            var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower()) ?? new WaitModel();
+            if (info.Key.ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now.AddHours(8)) > 0)
                 return new ReturnModel { msg = "等待恢复", status = 404 };
             else
             {
@@ -90,43 +91,28 @@ namespace Api.Gateway
                 if (downparam.Method.ToLower() == "post")
                 {
                     if (downparam.IsBody)
-                    {
-                        downparam.Param = content;
-                        result = BaseUrl.PostContent(downparam);
-                    }
+                        result = BaseUrl.PostContent(downparam.Url, content);
                     else
-                    {
-                        downparam.Param = param;
-                        result = BaseUrl.PostUrl(downparam);
-                    }
+                        result = BaseUrl.PostUrl(downparam.Url, param);
                 }
                 else if (downparam.Method.ToLower() == "get")
-                {
-                    downparam.Param = param;
-                    result = BaseUrl.GetUrl(downparam);
-                }
+                    result = BaseUrl.GetUrl(downparam.Url, param);
 
                 if (result.status == 404)
                     Task.Factory.StartNew(() =>
                     {
-                        var item = new UrlModel();
-                        item.DownParam = new List<DownParam>();
-                        downparam.IsDeath = true;
-                        downparam.NextAction = DateTime.Now.AddHours(1);
-                        item.DownParam.Add(downparam);
+                        var wait = new WaitModel();
+                        wait.Key = key.ToLower();
+                        wait.WaitHour = downparam.WaitHour;
+                        wait.NextAction = DateTime.Now.AddHours(wait.WaitHour);
 
-                        MongoDbInfo.Update<UrlModel>(a => a.Key.ToLower() == key.ToLower(), item, a => new { a.DownParam });
+                        MongoDbInfo.Add<WaitModel>(wait);
                     });
-                else if (downparam.IsDeath)
+                else if (info.Key.ToLower() == key.ToLower())
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        var item = new UrlModel();
-                        item.DownParam = new List<DownParam>();
-                        downparam.IsDeath = false;
-                        item.DownParam.Add(downparam);
-
-                        MongoDbInfo.Update<UrlModel>(a => a.Key.ToLower() == key.ToLower(), item, a => new { a.DownParam });
+                        MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key.ToLower());
                     });
                 }
 
@@ -189,7 +175,7 @@ namespace Api.Gateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.First();
-            var info = GetReuslt(downparam, param, content, item.Key);
+            var info = GetReuslt(downparam, param, content,item.Key);
 
             //缓存结果
             if (item.IsCache)
@@ -212,8 +198,8 @@ namespace Api.Gateway
             var rand = new Random();
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
-
-            var info = GetReuslt(downparam, param, content, item.Key);
+            
+            var info = GetReuslt(downparam, param, content,item.Key);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -224,7 +210,7 @@ namespace Api.Gateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content, item.Key);
+                info = GetReuslt(downparam, param, content,item.Key);
 
 
                 context.Response.StatusCode = info.status;
@@ -260,7 +246,7 @@ namespace Api.Gateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content, item.Key));
+                    result.Add(GetReuslt(downparam, param, content,item.Key));
                 }));
             }
 
