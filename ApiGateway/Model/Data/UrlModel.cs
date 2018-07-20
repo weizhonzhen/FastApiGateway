@@ -55,20 +55,10 @@ namespace Api.Gateway.Model.Data
         /// is body action
         /// </summary>
         public bool IsBody { get; set; }
-
+        
         /// <summary>
-        /// param
+        /// 无响应等待下次请求时间(小时单位)
         /// </summary>
-        public string Param { get; set; }
-
-        /// <summary>
-        /// 是否无响应
-        /// </summary>
-        public bool IsDeath { get; set; }
-
-        /// <summary>
-        /// 无响应等待下次请求时间
-        /// </summary>
-        public DateTime NextAction { get; set; }
+        public int WaitHour { get; set; }
     }
 }
