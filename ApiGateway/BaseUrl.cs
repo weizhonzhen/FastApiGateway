@@ -25,13 +25,12 @@ namespace Api.Gateway
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(DownParam item)
+        public static ReturnModel GetUrl(string url,string param)
         {
             var model = new ReturnModel();
             try
             {
-                var url = string.Format("{0}{1}", item.Url, item.Param);
-                var response = http.GetAsync(new Uri(url)).Result;
+                var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
                 model.status = (int)response.StatusCode; ;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -49,15 +48,13 @@ namespace Api.Gateway
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(DownParam item)
+        public static ReturnModel PostUrl(string url,string param)
         {
             var model = new ReturnModel();
             try
             {
-                var url = string.Format("{0}{1}", item.Url, item.Param);
-
                 var content = new StringContent("", Encoding.UTF8, "application/json");
-                var response = http.PostAsync(new Uri(url), content).Result;
+                var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
                 model.status = (int)response.StatusCode; ;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -75,13 +72,13 @@ namespace Api.Gateway
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(DownParam item)
+        public static ReturnModel PostContent(string url,string param)
         {
             var model = new ReturnModel();
             try
             {
-                var content = new StringContent(item.Param, Encoding.UTF8, "application/json");
-                var response = http.PostAsync(new Uri(item.Url), content).Result;
+                var content = new StringContent(param, Encoding.UTF8, "application/json");
+                var response = http.PostAsync(new Uri(url), content).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
