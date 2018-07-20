@@ -82,8 +82,8 @@ namespace Api.Gateway
         /// <returns></returns>
         private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key)
         {
-            var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower()) ?? new WaitModel();
-            if (info.Key.ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now.AddHours(8)) > 0)
+            var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key) ?? new WaitModel();
+            if (info.Key.ToLower() == key && DateTime.Compare(info.NextAction, DateTime.Now.AddHours(8)) > 0)
                 return new ReturnModel { msg = "等待恢复", status = 404 };
             else
             {
@@ -102,17 +102,17 @@ namespace Api.Gateway
                     Task.Factory.StartNew(() =>
                     {
                         var wait = new WaitModel();
-                        wait.Key = key.ToLower();
+                        wait.Key = key;
                         wait.WaitHour = downparam.WaitHour;
                         wait.NextAction = DateTime.Now.AddHours(wait.WaitHour);
 
                         MongoDbInfo.Add<WaitModel>(wait);
                     });
-                else if (info.Key.ToLower() == key.ToLower())
+                else if (info.Key.ToLower() == key)
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key.ToLower());
+                        MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key);
                     });
                 }
 
@@ -175,7 +175,7 @@ namespace Api.Gateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.First();
-            var info = GetReuslt(downparam, param, content,item.Key);
+            var info = GetReuslt(downparam, param, content, item.Key);
 
             //缓存结果
             if (item.IsCache)
@@ -198,8 +198,8 @@ namespace Api.Gateway
             var rand = new Random();
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
-            
-            var info = GetReuslt(downparam, param, content,item.Key);
+
+            var info = GetReuslt(downparam, param, content, item.Key);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -210,7 +210,7 @@ namespace Api.Gateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content,item.Key);
+                info = GetReuslt(downparam, param, content, item.Key);
 
 
                 context.Response.StatusCode = info.status;
@@ -246,7 +246,7 @@ namespace Api.Gateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content,item.Key));
+                    result.Add(GetReuslt(downparam, param, content, item.Key));
                 }));
             }
 
@@ -347,7 +347,7 @@ namespace Api.Gateway
         private void CacheResult(UrlModel item, ReturnModel info = null, Dictionary<string, object> dic = null)
         {
             var model = new CacheModel();
-            model.Key = item.Key.ToLower();
+            model.Key = item.Key;
             model.TimeOut = DateTime.Now.AddDays(item.TimeOut);
 
             if (info != null)
