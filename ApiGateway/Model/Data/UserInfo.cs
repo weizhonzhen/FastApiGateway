@@ -32,8 +32,24 @@ namespace Api.Gateway.Model.Data
         public string Ip { get; set; }
 
         /// <summary>
+        /// power
+        /// </summary>
+        public List<Power> Power { get; set; }
+    }
+
+    /// <summary>
+    /// 地址权限
+    /// </summary>
+    public class Power
+    { 
+        /// <summary>
         /// 一次访问次数
         /// </summary>
         public int DayCount { get; set; }
+
+        /// <summary>
+        /// key
+        /// </summary>
+        public string Key { get; set; }
     }
 }

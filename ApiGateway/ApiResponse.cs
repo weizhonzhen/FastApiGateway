@@ -161,6 +161,14 @@ namespace Api.Gateway
                     dic.Add("result", "token授权ip地址异常");
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                 }
+
+                if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key))
+                {
+                    context.Response.StatusCode = 200;
+                    dic.Add("success", false);
+                    dic.Add("result", string.Format("{0}没有权限访问", item.Key));
+                    context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                }
             }
         }
         #endregion
@@ -175,7 +183,7 @@ namespace Api.Gateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.First();
-            var info = GetReuslt(downparam, param, content, item.Key);
+            var info = GetReuslt(downparam, param, content,item.Key);
 
             //缓存结果
             if (item.IsCache)
@@ -198,8 +206,8 @@ namespace Api.Gateway
             var rand = new Random();
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
-
-            var info = GetReuslt(downparam, param, content, item.Key);
+            
+            var info = GetReuslt(downparam, param, content,item.Key);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -210,7 +218,7 @@ namespace Api.Gateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content, item.Key);
+                info = GetReuslt(downparam, param, content,item.Key);
 
 
                 context.Response.StatusCode = info.status;
@@ -246,7 +254,7 @@ namespace Api.Gateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content, item.Key));
+                    result.Add(GetReuslt(downparam, param, content,item.Key));
                 }));
             }
 
