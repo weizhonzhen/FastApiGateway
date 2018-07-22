@@ -43,11 +43,6 @@ namespace Api.Gateway.Model.Data
     public class Power
     { 
         /// <summary>
-        /// 一次访问次数
-        /// </summary>
-        public int DayCount { get; set; }
-
-        /// <summary>
         /// key
         /// </summary>
         public string Key { get; set; }

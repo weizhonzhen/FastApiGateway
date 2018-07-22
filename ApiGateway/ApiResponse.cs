@@ -12,6 +12,7 @@ using Api.Gateway.Model.Return;
 using Api.Gateway.Model.Cache;
 using Untility.Core.Base;
 using MongoDb.Core;
+using System.Diagnostics;
 
 namespace Api.Gateway
 {
@@ -44,7 +45,7 @@ namespace Api.Gateway
                     if (item.IsCache)
                     {
                         var resultInfo = MongoDbInfo.GetModel<CacheModel>(a => a.Key.ToLower() == key);
-                        if (DateTime.Compare(resultInfo.TimeOut.AddHours(8), DateTime.Now) > 0)
+                        if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
                         {
                             context.Response.StatusCode = 200;
                             context.Response.WriteAsync(JsonConvert.SerializeObject(resultInfo.result).ToString(), Encoding.UTF8);
@@ -80,14 +81,17 @@ namespace Api.Gateway
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key)
+        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key,bool isLog)
         {
             var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key) ?? new WaitModel();
-            if (info.Key.ToLower() == key && DateTime.Compare(info.NextAction, DateTime.Now.AddHours(8)) > 0)
+            if (info.Key.ToLower() == key && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
                 return new ReturnModel { msg = "等待恢复", status = 404 };
             else
             {
                 var result = new ReturnModel();
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 if (downparam.Method.ToLower() == "post")
                 {
                     if (downparam.IsBody)
@@ -104,7 +108,8 @@ namespace Api.Gateway
                         var wait = new WaitModel();
                         wait.Key = key;
                         wait.WaitHour = downparam.WaitHour;
-                        wait.NextAction = DateTime.Now.AddHours(wait.WaitHour);
+                        wait.ErrorMsg = result.msg;
+                        wait.NextAction = DateTime.Now.AddHours(wait.WaitHour).AddHours(8);
 
                         MongoDbInfo.Add<WaitModel>(wait);
                     });
@@ -113,6 +118,20 @@ namespace Api.Gateway
                     Task.Factory.StartNew(() =>
                     {
                         MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key);
+                    });
+                }
+
+                stopwatch.Stop();
+                if (isLog)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        var logInfo = new LogModel();
+                        logInfo.Key = key;
+                        logInfo.ActionTime = DateTime.Now;
+                        logInfo.Success = result.status == 200 ? true : false;
+                        logInfo.Milliseconds = stopwatch.Elapsed.TotalMilliseconds;
+                        MongoDbInfo.Add(logInfo);
                     });
                 }
 
@@ -146,7 +165,7 @@ namespace Api.Gateway
             else
             {
                 var tokenInfo = MongoDbInfo.GetModel<UserInfo>(a => a.AccessToken.ToLower() == token);
-                if (DateTime.Compare(tokenInfo.AccessExpires.AddHours(8), DateTime.Now) < 0)
+                if (DateTime.Compare(tokenInfo.AccessExpires, DateTime.Now) < 0)
                 {
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
@@ -161,7 +180,7 @@ namespace Api.Gateway
                     dic.Add("result", "token授权ip地址异常");
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                 }
-
+                                
                 if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key))
                 {
                     context.Response.StatusCode = 200;
@@ -183,7 +202,7 @@ namespace Api.Gateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.First();
-            var info = GetReuslt(downparam, param, content,item.Key);
+            var info = GetReuslt(downparam, param, content,item.Key,item.IsLog);
 
             //缓存结果
             if (item.IsCache)
@@ -207,7 +226,7 @@ namespace Api.Gateway
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
             
-            var info = GetReuslt(downparam, param, content,item.Key);
+            var info = GetReuslt(downparam, param, content,item.Key, item.IsLog);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -218,7 +237,7 @@ namespace Api.Gateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content,item.Key);
+                info = GetReuslt(downparam, param, content,item.Key, item.IsLog);
 
 
                 context.Response.StatusCode = info.status;
@@ -254,7 +273,7 @@ namespace Api.Gateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content,item.Key));
+                    result.Add(GetReuslt(downparam, param, content,item.Key, item.IsLog));
                 }));
             }
 
@@ -310,7 +329,7 @@ namespace Api.Gateway
             {
                 var info = MongoDbInfo.GetModel<UserInfo>(a => a.AppKey.ToLower() == AppKey && a.AppSecret.ToLower() == AppSecret);
                 info.Ip = GetClientIp(context);
-                info.AccessExpires = DateTime.Now.AddHours(24);
+                info.AccessExpires = DateTime.Now.AddHours(24).AddHours(8);
                 info.AccessToken = BaseSymmetric.Generate(string.Format("{0}_{1}_{2}", info.AppKey, info.AppSecret, info.AccessExpires)).ToLower();
 
                 //修改信息
@@ -356,7 +375,7 @@ namespace Api.Gateway
         {
             var model = new CacheModel();
             model.Key = item.Key;
-            model.TimeOut = DateTime.Now.AddDays(item.TimeOut);
+            model.TimeOut = DateTime.Now.AddDays(item.TimeOut).AddHours(8);
 
             if (info != null)
                 model.result = BaseJson.JsonToDic(info.msg);

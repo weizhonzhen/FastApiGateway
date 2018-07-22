@@ -23,5 +23,10 @@ namespace Api.Gateway.Model.Data
         /// 无响应等待下次请求时间
         /// </summary>
         public DateTime NextAction { get; set; }
+
+        /// <summary>
+        /// error msg
+        /// </summary>
+        public string ErrorMsg { get; set; }
     }
 }

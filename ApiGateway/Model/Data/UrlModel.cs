@@ -39,6 +39,11 @@ namespace Api.Gateway.Model.Data
         /// 是否获取token
         /// </summary>
         public bool IsGetToken { get; set; }
+
+        /// <summary>
+        /// 是否日记
+        /// </summary>
+        public bool IsLog { get; set; }
     }
 
     public class DownParam

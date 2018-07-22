@@ -6,7 +6,7 @@ namespace Api.Gateway.Model.Cache
 {
     internal class CacheModel
     {
-       /// <summary>
+        /// <summary>
         /// url key
         /// </summary>
         public string Key { get; set; }
