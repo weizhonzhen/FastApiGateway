@@ -23,23 +23,25 @@ namespace Api.Gateway
             context.Response.ContentType = "application/Json";
             var key = context.Request.Path.Value.Replace("/", "").ToLower();
 
-            if (MongoDbInfo.GetCount<UrlModel>(a => a.Key.ToLower() == key) < 0)
+            if (MongoDbInfo.GetCount<UrlModel>(a => a.Key.ToLower() == key) <= 0 || string.IsNullOrEmpty(key))
             {
                 context.Response.StatusCode = 404;
                 context.Response.WriteAsync(string.Format("请求地址{0}无效", key), Encoding.UTF8);
             }
             else
             {
-                var item = MongoDbInfo.GetModel<UrlModel>(a => a.Key.ToLower() == key);
+                var item = MongoDbInfo.GetModel<UrlModel>(a => a.Key.ToLower() == key) ?? new UrlModel();
+                item.DownParam = item.DownParam ?? new List<DownParam>();
 
                 //获取token
                 if (item.IsGetToken)
-                    Token(item, context);
+                    Token(context);
                 else
                 {
                     //是否匿名访问
                     if (!item.IsAnonymous)
-                        CheckToken(item, context);
+                        if (!CheckToken(item, context))
+                            return;
 
                     //结果是否缓存
                     if (item.IsCache)
@@ -52,9 +54,9 @@ namespace Api.Gateway
                         }
                         else
                         {
-                            if (item.Schema.ToLower() == "polling") //polling 轮循请求
+                            if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
                                 Polling(item, context);
-                            else if (item.Schema.ToLower() == "composite") //composite 合并请求
+                            else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
                                 Composite(item, context);
                             else
                                 Normal(item, context);
@@ -62,9 +64,9 @@ namespace Api.Gateway
                     }
                     else
                     {
-                        if (item.Schema.ToLower() == "polling") //polling 轮循请求
+                        if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
                             Polling(item, context);
-                        else if (item.Schema.ToLower() == "composite") //composite 合并请求
+                        else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
                             Composite(item, context);
                         else
                             Normal(item, context);
@@ -83,8 +85,8 @@ namespace Api.Gateway
         /// <returns></returns>
         private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key,bool isLog)
         {
-            var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key) ?? new WaitModel();
-            if (info.Key.ToLower() == key && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
+            var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower()) ?? new WaitModel();
+            if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
                 return new ReturnModel { msg = "等待恢复", status = 404 };
             else
             {
@@ -92,15 +94,17 @@ namespace Api.Gateway
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                if (downparam.Method.ToLower() == "post")
+                if (downparam.Method.ToStr().ToLower() == "post")
                 {
                     if (downparam.IsBody)
                         result = BaseUrl.PostContent(downparam.Url, content);
                     else
                         result = BaseUrl.PostUrl(downparam.Url, param);
                 }
-                else if (downparam.Method.ToLower() == "get")
+                else if (downparam.Method.ToStr().ToLower() == "get")
                     result = BaseUrl.GetUrl(downparam.Url, param);
+                else
+                    result.status = 404;
 
                 if (result.status == 404)
                     Task.Factory.StartNew(() =>
@@ -113,11 +117,11 @@ namespace Api.Gateway
 
                         MongoDbInfo.Add<WaitModel>(wait);
                     });
-                else if (info.Key.ToLower() == key)
+                else if (info.Key.ToStr().ToLower() == key.ToLower())
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key);
+                        MongoDbInfo.Delete<WaitModel>(a => a.Key.ToLower() == key.ToLower());
                     });
                 }
 
@@ -146,7 +150,7 @@ namespace Api.Gateway
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private void CheckToken(UrlModel item, HttpContext context)
+        private bool CheckToken(UrlModel item, HttpContext context)
         {
             var dic = new Dictionary<string, object>();
             var token = "";
@@ -161,6 +165,7 @@ namespace Api.Gateway
                 dic.Add("success", false);
                 dic.Add("result", "token不存在");
                 context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                return false;
             }
             else
             {
@@ -171,6 +176,7 @@ namespace Api.Gateway
                     dic.Add("success", false);
                     dic.Add("result", "token过期");
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    return false;
                 }
 
                 if (tokenInfo.Ip != GetClientIp(context))
@@ -179,16 +185,20 @@ namespace Api.Gateway
                     dic.Add("success", false);
                     dic.Add("result", "token授权ip地址异常");
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    return false;
                 }
                                 
-                if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key))
+                if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key.ToLower()))
                 {
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
                     dic.Add("result", string.Format("{0}没有权限访问", item.Key));
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    return false;
                 }
             }
+
+            return true;
         }
         #endregion
 
@@ -201,7 +211,7 @@ namespace Api.Gateway
             var content = new StreamReader(context.Request.Body).ReadToEnd();
             var param = context.Request.QueryString.Value;
 
-            var downparam = item.DownParam.First();
+            var downparam = item.DownParam.FirstOrDefault() ?? new DownParam();
             var info = GetReuslt(downparam, param, content,item.Key,item.IsLog);
 
             //缓存结果
@@ -301,7 +311,7 @@ namespace Api.Gateway
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private void Token(UrlModel item, HttpContext context)
+        private void Token(HttpContext context)
         {
             var dic = new Dictionary<string, object>();
             var AppKey = "";
@@ -374,7 +384,7 @@ namespace Api.Gateway
         private void CacheResult(UrlModel item, ReturnModel info = null, Dictionary<string, object> dic = null)
         {
             var model = new CacheModel();
-            model.Key = item.Key;
+            model.Key = item.Key.ToLower();
             model.TimeOut = DateTime.Now.AddDays(item.TimeOut).AddHours(8);
 
             if (info != null)

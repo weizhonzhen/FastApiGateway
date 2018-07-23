@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,11 @@ namespace Api.Gateway.Model.Data
 {
     public class UserInfo
     {
+        /// <summary>
+        /// mongo id
+        /// </summary>
+        public ObjectId _id { get; set; }
+
         /// <summary>
         /// key
         /// </summary>

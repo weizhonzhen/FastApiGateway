@@ -1,10 +1,16 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 
 namespace Api.Gateway.Model.Data
 {
     public class UrlModel
     {
+        /// <summary>
+        /// mongo id
+        /// </summary>
+        public ObjectId _id { get; set; }
+
         /// <summary>
         /// key
         /// </summary>

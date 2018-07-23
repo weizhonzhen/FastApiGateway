@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,11 @@ namespace Api.Gateway.Model.Data
     /// </summary>
     public class WaitModel
     {
+        /// <summary>
+        /// mongo id
+        /// </summary>
+        public ObjectId _id { get; set; }
+
         /// <summary>
         /// key
         /// </summary>
