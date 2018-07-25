@@ -1,4 +1,4 @@
-﻿namespace MongoDb.Core
+﻿namespace Fast.MongoDb.Core
 {
     internal static class AppSettingKey
     {

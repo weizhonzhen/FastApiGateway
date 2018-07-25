@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {/// <summary>
  /// 标签：2015.7.13，魏中针
  /// 说明：XML处理

@@ -5,7 +5,7 @@ using System.Data.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     public static class BaseJson
     {

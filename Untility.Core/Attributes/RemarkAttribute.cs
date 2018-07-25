@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Untility.Core.Attributes
+namespace Fast.Untility.Core.Attributes
 {
     /// <summary>
     /// 特性

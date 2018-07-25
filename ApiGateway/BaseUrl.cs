@@ -1,11 +1,10 @@
-﻿using Api.Gateway.Model.Return;
-using Api.Gateway.Model.Data;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Fast.ApiGateway.Model.Return;
 
-namespace Api.Gateway
+namespace Fast.ApiGateway
 {
     /// <summary>
     /// post、get、put到url

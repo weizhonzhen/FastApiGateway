@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     /// <summary>
     /// 压缩

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using Untility.Core.Attributes;
+using Fast.Untility.Core.Attributes;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     public static class BaseRegular
     {

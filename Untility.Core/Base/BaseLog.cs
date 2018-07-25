@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     public static class BaseLog
     {

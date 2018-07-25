@@ -2,7 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
 
     public static class BaseSymmetric

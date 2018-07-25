@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Untility.Core.Builder
+namespace Fast.Untility.Core.Builder
 {
     /// <summary>
     /// lamda动态合并

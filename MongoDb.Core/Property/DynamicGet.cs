@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace MongoDb.Core.Property
+namespace Fast.MongoDb.Core.Property
 {
     /// <summary>
     /// 动态属性getvalue

@@ -1,4 +1,4 @@
-﻿namespace Untility.Core.Page
+﻿namespace Fast.Untility.Core.Page
 {
     /// <summary>
     /// 分页model

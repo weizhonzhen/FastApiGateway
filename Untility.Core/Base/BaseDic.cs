@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     /// <summary>
     /// 动态属性setvalue

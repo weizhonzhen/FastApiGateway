@@ -1,4 +1,4 @@
-﻿namespace MongoDb.Core
+﻿namespace Fast.MongoDb.Core
 {
     /// <summary>
     /// 配置实体

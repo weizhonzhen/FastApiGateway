@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace MongoDb.Core.Property
+namespace Fast.MongoDb.Core.Property
 {
     /// <summary>
     /// 缓存类

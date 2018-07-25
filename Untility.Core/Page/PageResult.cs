@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Untility.Core.Page
+namespace Fast.Untility.Core.Page
 {
     // <summary>
     /// 分页返回实体

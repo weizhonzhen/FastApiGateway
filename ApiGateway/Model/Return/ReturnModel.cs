@@ -1,4 +1,4 @@
-﻿namespace Api.Gateway.Model.Return
+﻿namespace Fast.ApiGateway.Model.Return
 {
     internal class ReturnModel
     {

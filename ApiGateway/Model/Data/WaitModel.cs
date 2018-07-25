@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Api.Gateway.Model.Data
+namespace Fast.ApiGateway.Model.Data
 {
     /// <summary>
     /// 下游响应等待处理

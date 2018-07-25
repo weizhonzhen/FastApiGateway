@@ -4,12 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Untility.Core.Base;
-using Untility.Core.Page;
-using MongoDb.Core.Property;
+using Fast.Untility.Core.Base;
+using Fast.Untility.Core.Page;
+using Fast.MongoDb.Core.Property;
 using System.Threading;
 
-namespace MongoDb.Core
+namespace Fast.MongoDb.Core
 {
     /// <summary>
     /// mongodb 操作类

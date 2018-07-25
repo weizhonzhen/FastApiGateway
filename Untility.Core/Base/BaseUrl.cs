@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     /// <summary>
     /// post、get、put到url

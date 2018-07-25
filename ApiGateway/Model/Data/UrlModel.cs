@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Api.Gateway.Model.Data
+namespace Fast.ApiGateway.Model.Data
 {
     public class UrlModel
     {

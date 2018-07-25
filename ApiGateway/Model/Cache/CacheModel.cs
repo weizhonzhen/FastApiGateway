@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Api.Gateway.Model.Cache
+namespace Fast.ApiGateway.Model.Cache
 {
     internal class CacheModel
     {

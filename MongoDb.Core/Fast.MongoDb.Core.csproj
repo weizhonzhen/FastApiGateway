@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Untility.Core\Untility.Core.csproj" />
+    <ProjectReference Include="..\Untility.Core\Fast.Untility.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

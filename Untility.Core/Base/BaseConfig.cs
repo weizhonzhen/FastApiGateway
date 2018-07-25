@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Untility.Core.Base
+namespace Fast.Untility.Core.Base
 {
     /// <summary>
     /// 获取配置文件

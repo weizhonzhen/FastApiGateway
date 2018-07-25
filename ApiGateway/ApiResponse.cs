@@ -1,5 +1,4 @@
-﻿using Api.Gateway.Model;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -7,14 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
-using Api.Gateway.Model.Data;
-using Api.Gateway.Model.Return;
-using Api.Gateway.Model.Cache;
-using Untility.Core.Base;
-using MongoDb.Core;
 using System.Diagnostics;
+using Fast.MongoDb.Core;
+using Fast.ApiGateway.Model.Return;
+using Fast.ApiGateway.Model.Data;
+using Fast.Untility.Core.Base;
+using Fast.ApiGateway.Model.Cache;
 
-namespace Api.Gateway
+namespace Fast.ApiGateway
 {
     public class ApiResponse : IResponse
     {

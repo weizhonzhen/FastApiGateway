@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
-namespace Api.Gateway
+namespace Fast.ApiGateway
 {
     public class ApiMiddleware
     {

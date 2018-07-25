@@ -1,4 +1,4 @@
-﻿namespace Untility.Core.BuilderMethod
+﻿namespace Fast.Untility.Core.BuilderMethod
 {
     public static class LambdaMethod
     {
