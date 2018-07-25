@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MongoDb.Core\Fast.MongoDb.Core.csproj" />
-    <ProjectReference Include="..\Untility.Core\Fast.Untility.Core.csproj" />
+    <ProjectReference Include="..\Fast.MongoDb.Core\Fast.MongoDb.Core.csproj" />
+    <ProjectReference Include="..\Fast.Untility.Core\Fast.Untility.Core.csproj" />
   </ItemGroup>
 
 </Project>

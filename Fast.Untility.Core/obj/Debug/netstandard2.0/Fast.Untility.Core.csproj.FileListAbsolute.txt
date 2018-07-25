@@ -1,0 +1,9 @@
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\bin\Debug\netstandard2.0\Fast.Untility.Core.deps.json
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\bin\Debug\netstandard2.0\Fast.Untility.Core.dll
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\bin\Debug\netstandard2.0\Fast.Untility.Core.pdb
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.csproj.CoreCompileInputs.cache
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.AssemblyInfoInputs.cache
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.AssemblyInfo.cs
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.dll
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.pdb
+F:\项目\GitHub\ApiGateway\Fast.Untility.Core\obj\Debug\netstandard2.0\Fast.Untility.Core.csprojAssemblyReference.cache

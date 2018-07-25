@@ -1,0 +1,12 @@
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\bin\Debug\netstandard2.0\Fast.MongoDb.Core.deps.json
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\bin\Debug\netstandard2.0\Fast.MongoDb.Core.dll
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\bin\Debug\netstandard2.0\Fast.MongoDb.Core.pdb
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\bin\Debug\netstandard2.0\Fast.Untility.Core.dll
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\bin\Debug\netstandard2.0\Fast.Untility.Core.pdb
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.csprojAssemblyReference.cache
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.csproj.CoreCompileInputs.cache
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.AssemblyInfoInputs.cache
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.AssemblyInfo.cs
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.csproj.CopyComplete
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.dll
+F:\项目\GitHub\ApiGateway\Fast.MongoDb.Core\obj\Debug\netstandard2.0\Fast.MongoDb.Core.pdb

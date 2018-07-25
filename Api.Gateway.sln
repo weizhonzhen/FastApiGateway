@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.ApiGateway", "ApiGateway\Fast.ApiGateway.csproj", "{8116B8FC-2FAB-4BBB-8C77-18E8064D098E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.ApiGateway", "Fast.ApiGateway\Fast.ApiGateway.csproj", "{8116B8FC-2FAB-4BBB-8C77-18E8064D098E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.MongoDb.Core", "MongoDb.Core\Fast.MongoDb.Core.csproj", "{C4008C59-CF62-41FE-840B-30A9F077DD78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.MongoDb.Core", "Fast.MongoDb.Core\Fast.MongoDb.Core.csproj", "{C4008C59-CF62-41FE-840B-30A9F077DD78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.Untility.Core", "Untility.Core\Fast.Untility.Core.csproj", "{94E14353-04E1-4C10-AC13-B2F2A27BE46E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fast.Untility.Core", "Fast.Untility.Core\Fast.Untility.Core.csproj", "{94E14353-04E1-4C10-AC13-B2F2A27BE46E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
