@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using Fast.ApiGateway.Model.Return;
+using Fast.Untility.Core.Base;
 
 namespace Fast.ApiGateway
 {
@@ -80,6 +82,30 @@ namespace Fast.ApiGateway
                 var response = http.PostAsync(new Uri(url), content).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
+                return model;
+            }
+            catch (Exception ex)
+            {
+                model.status = 408;
+                model.msg = ex.Message;
+                return model;
+            }
+        }
+        #endregion
+
+        #region Soap url
+        /// <summary>
+        /// Soap url
+        /// </summary>
+        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapParam,string soapMethod)
+        {
+            var hash = new Hashtable();
+            var model = new ReturnModel();
+            try
+            {
+                hash.Add(soapParamName, soapParam);
+                model.msg = BaseWebServiceSoap.QuerySoapWebServiceString(soapUrl, soapMethod, hash, 1);
+                model.status = 200;
                 return model;
             }
             catch (Exception ex)

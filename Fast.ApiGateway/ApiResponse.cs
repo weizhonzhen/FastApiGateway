@@ -86,14 +86,16 @@ namespace Fast.ApiGateway
         {
             var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower()) ?? new WaitModel();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
-                return new ReturnModel { msg = "等待恢复", status = 404 };
+                return new ReturnModel { msg = "等待恢复", status = 408 };
             else
             {
                 var result = new ReturnModel();
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                if (downparam.Method.ToStr().ToLower() == "post")
+                if (downparam.Protocol.ToLower() == "soap")
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, param, downparam.SoapMethod);
+                else if (downparam.Method.ToStr().ToLower() == "post")
                 {
                     if (downparam.IsBody)
                         result = BaseUrl.PostContent(downparam.Url, content);
@@ -103,9 +105,9 @@ namespace Fast.ApiGateway
                 else if (downparam.Method.ToStr().ToLower() == "get")
                     result = BaseUrl.GetUrl(downparam.Url, param);
                 else
-                    result.status = 404;
+                    result.status = 408;
 
-                if (result.status == 404)
+                if (result.status == 408)
                     Task.Factory.StartNew(() =>
                     {
                         var wait = new WaitModel();

@@ -71,5 +71,20 @@ namespace Fast.ApiGateway.Model.Data
         /// 无响应等待下次请求时间(小时单位)
         /// </summary>
         public int WaitHour { get; set; }
+
+        /// <summary>
+        /// 协议soap,http
+        /// </summary>
+        public string Protocol { get; set; }
+        
+        /// <summary>
+        /// soap method
+        /// </summary>
+        public string SoapMethod { get; set; }
+
+        /// <summary>
+        /// soap param name
+        /// </summary>
+        public string SoapParamName { get; set; }
     }
 }
