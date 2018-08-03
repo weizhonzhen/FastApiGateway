@@ -20,12 +20,15 @@ namespace Fast.ApiGateway
         public void Content(HttpContext context)
         {
             context.Response.ContentType = "application/Json";
-            var key = context.Request.Path.Value.Replace("/", "").ToLower();
+            var key = context.Request.Path.Value.ToStr().Replace("/", "").ToLower();
 
             if (MongoDbInfo.GetCount<UrlModel>(a => a.Key.ToLower() == key) <= 0 || string.IsNullOrEmpty(key))
             {
+                var dic = new Dictionary<string, object>();
+                dic.Add("success", false);
+                dic.Add("result", string.Format("请求地址{0}无效", key));
                 context.Response.StatusCode = 404;
-                context.Response.WriteAsync(string.Format("请求地址{0}无效", key), Encoding.UTF8);
+                context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
             }
             else
             {
@@ -82,11 +85,16 @@ namespace Fast.ApiGateway
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key, bool isLog)
+        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key,bool isLog)
         {
             var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()) ?? new WaitModel();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
-                return new ReturnModel { msg = "等待恢复", status = 408 };
+            {
+                var dic = new Dictionary<string, object>();
+                dic.Add("success", false);
+                dic.Add("result", "等待恢复");
+                return new ReturnModel { msg = JsonConvert.SerializeObject(dic).ToString(), status = 408 };
+            }
             else
             {
                 var result = new ReturnModel();
@@ -191,8 +199,8 @@ namespace Fast.ApiGateway
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                     return false;
                 }
-
-                if (!tokenInfo.Power.Exists(a => a.Key.ToLower() == item.Key.ToLower()))
+                                
+                if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key.ToLower()))
                 {
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
@@ -216,7 +224,7 @@ namespace Fast.ApiGateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.FirstOrDefault() ?? new DownParam();
-            var info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+            var info = GetReuslt(downparam, param, content,item.Key,item.IsLog);
 
             //缓存结果
             if (item.IsCache)
@@ -239,8 +247,8 @@ namespace Fast.ApiGateway
             var rand = new Random();
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
-
-            var info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+            
+            var info = GetReuslt(downparam, param, content,item.Key, item.IsLog);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -251,7 +259,7 @@ namespace Fast.ApiGateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+                info = GetReuslt(downparam, param, content,item.Key, item.IsLog);
 
 
                 context.Response.StatusCode = info.status;
@@ -287,7 +295,7 @@ namespace Fast.ApiGateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content, item.Key, item.IsLog));
+                    result.Add(GetReuslt(downparam, param, content,item.Key, item.IsLog));
                 }));
             }
 
