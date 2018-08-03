@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using Fast.Untility.Core.Attributes;
 
 namespace Fast.Untility.Core.Base
 {
@@ -397,30 +396,7 @@ namespace Fast.Untility.Core.Base
             }
         }
         #endregion
-
-        #region 获取特性内容
-        /// <summary>
-        /// 获取特性内容
-        /// </summary>
-        /// <typeparam name="T">泛型</typeparam>
-        /// <param name="item">泛型成员</param>
-        /// <returns></returns>
-        public static string ToEnum(this Enum item)
-        {
-            var value = "";
-            foreach (Attribute temp in item.GetType().GetField(item.ToString()).GetCustomAttributes())
-            {
-                if (temp.GetType() == typeof(RemarkAttribute))
-                {
-                    value = ((RemarkAttribute)temp).Remark;
-                    break;
-                }
-            }
-
-            return value;
-        }
-        #endregion
-
+        
         #region url
         /// <summary>
         /// url 

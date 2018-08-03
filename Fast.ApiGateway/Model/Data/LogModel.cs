@@ -21,7 +21,17 @@ namespace Fast.ApiGateway.Model.Data
         /// Success
         /// </summary>
         public bool Success { get; set; }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Url { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Protocol { get; set; }
+
         /// <summary>
         /// Milliseconds 
         /// </summary>
