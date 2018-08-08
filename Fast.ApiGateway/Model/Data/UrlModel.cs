@@ -66,17 +66,22 @@ namespace Fast.ApiGateway.Model.Data
         /// is body action
         /// </summary>
         public bool IsBody { get; set; }
-        
+
         /// <summary>
         /// 无响应等待下次请求时间(小时单位)
         /// </summary>
         public int WaitHour { get; set; }
 
         /// <summary>
-        /// 协议soap,http
+        /// 协议soap,http,mq
         /// </summary>
         public string Protocol { get; set; }
-        
+
+        /// <summary>
+        /// mq queueName
+        /// </summary>
+        public string QueueName { get; set; }
+
         /// <summary>
         /// soap method
         /// </summary>

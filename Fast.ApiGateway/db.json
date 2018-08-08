@@ -4,5 +4,11 @@
     "DbName": "ApiGateway",
     "Max": 60,
     "Min": 10
+  },
+  "Rabbit": {
+    "Host": "127.0.0.1",
+    "UserName": "admin",
+    "Password": "admin",
+    "VirtualHost": "test"
   }
 }
