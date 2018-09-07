@@ -59,10 +59,25 @@ public class UrlModel
         /// </summary>
         public bool IsBody { get; set; }
 
-        /// <summary>
-        /// param
+         /// <summary>
+        /// 协议soap,http,mq
         /// </summary>
-        public string Param { get; set; }
+        public string Protocol { get; set; }
+
+        /// <summary>
+        /// mq queueName
+        /// </summary>
+        public string QueueName { get; set; }
+
+        /// <summary>
+        /// soap method
+        /// </summary>
+        public string SoapMethod { get; set; }
+
+        /// <summary>
+        /// soap param name
+        /// </summary>
+        public string SoapParamName { get; set; }
     }
 }
 
