@@ -19,7 +19,7 @@ namespace FastApiGateway.Model.Data
         /// key
         /// </summary>
         public string Key { get; set; }
-
+        
         /// <summary>
         /// 无响应等待下次请求时间(小时单位)
         /// </summary>

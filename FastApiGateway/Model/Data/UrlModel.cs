@@ -32,9 +32,14 @@ namespace FastApiGateway.Model.Data
         public bool IsCache { get; set; }
 
         /// <summary>
-        /// 过期时间天单位
+        /// 缓存过期时间（天）
         /// </summary>
-        public int TimeOut { get; set; }
+        public int CacheTimeOut { get; set; }
+
+        /// <summary>
+        /// 请求过期时间（秒）
+        /// </summary>
+        public int RequestTimeOut { get; set; }
 
         /// <summary>
         /// 是否匿名访问
@@ -66,7 +71,7 @@ namespace FastApiGateway.Model.Data
         /// is body action
         /// </summary>
         public bool IsBody { get; set; }
-
+        
         /// <summary>
         /// 无响应等待下次请求时间(小时单位)
         /// </summary>
@@ -81,7 +86,7 @@ namespace FastApiGateway.Model.Data
         /// mq queueName
         /// </summary>
         public string QueueName { get; set; }
-
+        
         /// <summary>
         /// soap method
         /// </summary>

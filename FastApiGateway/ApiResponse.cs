@@ -85,7 +85,7 @@ namespace FastApiGateway
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key, bool isLog)
+        private ReturnModel GetReuslt(DownParam downparam, string param, string content, string key,bool isLog,int timeOut)
         {
             var info = MongoDbInfo.GetModel<WaitModel>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()) ?? new WaitModel();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
@@ -103,9 +103,9 @@ namespace FastApiGateway
                 stopwatch.Start();
 
                 if (downparam.Protocol.ToLower() == "soap")
-                {
+                {  
                     //soap
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, param, downparam.SoapMethod);
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, param, downparam.SoapMethod, timeOut);
                 }
                 else if (downparam.Protocol.ToLower() == "http")
                 {
@@ -113,12 +113,12 @@ namespace FastApiGateway
                     if (downparam.Method.ToStr().ToLower() == "post")
                     {
                         if (downparam.IsBody)
-                            result = BaseUrl.PostContent(downparam.Url, content);
+                            result = BaseUrl.PostContent(downparam.Url, content,key, timeOut);
                         else
-                            result = BaseUrl.PostUrl(downparam.Url, param);
+                            result = BaseUrl.PostUrl(downparam.Url, param,key, timeOut);
                     }
                     else if (downparam.Method.ToStr().ToLower() == "get")
-                        result = BaseUrl.GetUrl(downparam.Url, param);
+                        result = BaseUrl.GetUrl(downparam.Url, param,key, timeOut);
                 }
                 else if (downparam.Protocol.ToLower() == "mq")
                     //mq
@@ -209,8 +209,8 @@ namespace FastApiGateway
                     context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                     return false;
                 }
-
-                if (!tokenInfo.Power.Exists(a => a.Key.ToLower() == item.Key.ToLower()))
+                                
+                if(!tokenInfo.Power.Exists(a=>a.Key.ToLower()==item.Key.ToLower()))
                 {
                     context.Response.StatusCode = 200;
                     dic.Add("success", false);
@@ -234,7 +234,7 @@ namespace FastApiGateway
             var param = context.Request.QueryString.Value;
 
             var downparam = item.DownParam.FirstOrDefault() ?? new DownParam();
-            var info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+            var info = GetReuslt(downparam, param, content,item.Key,item.IsLog,item.RequestTimeOut);
 
             //缓存结果
             if (item.IsCache)
@@ -257,8 +257,8 @@ namespace FastApiGateway
             var rand = new Random();
             var index = rand.Next(1, item.DownParam.Count);
             var downparam = item.DownParam[index];
-
-            var info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+            
+            var info = GetReuslt(downparam, param, content,item.Key, item.IsLog,item.RequestTimeOut);
 
             if (info.status != 200 && item.DownParam.Count > 1)
             {
@@ -269,7 +269,7 @@ namespace FastApiGateway
                 }
 
                 downparam = item.DownParam[tempIndex];
-                info = GetReuslt(downparam, param, content, item.Key, item.IsLog);
+                info = GetReuslt(downparam, param, content,item.Key, item.IsLog,item.RequestTimeOut);
 
 
                 context.Response.StatusCode = info.status;
@@ -305,7 +305,7 @@ namespace FastApiGateway
             {
                 task.Add(Task.Factory.StartNew(() =>
                 {
-                    result.Add(GetReuslt(downparam, param, content, item.Key, item.IsLog));
+                    result.Add(GetReuslt(downparam, param, content,item.Key, item.IsLog,item.RequestTimeOut));
                 }));
             }
 
@@ -407,7 +407,7 @@ namespace FastApiGateway
         {
             var model = new CacheModel();
             model.Key = item.Key.ToLower();
-            model.TimeOut = DateTime.Now.AddDays(item.TimeOut).AddHours(8);
+            model.TimeOut = DateTime.Now.AddDays(item.CacheTimeOut).AddHours(8);
 
             if (info != null)
                 model.result = BaseJson.JsonToDic(info.msg);

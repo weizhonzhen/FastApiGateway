@@ -21,7 +21,7 @@ namespace FastApiGateway.Model.Data
         /// Success
         /// </summary>
         public bool Success { get; set; }
-
+        
         /// <summary>
         /// 
         /// </summary>

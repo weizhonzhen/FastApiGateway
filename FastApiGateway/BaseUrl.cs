@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,24 +14,21 @@ namespace FastApiGateway
     /// </summary>
     internal static class BaseUrl
     {
-        private static readonly HttpClient http;
-
-        static BaseUrl()
-        {
-            http = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip });
-            http.DefaultRequestHeaders.Connection.Add("keep-alive");
-            http.Timeout = new TimeSpan(0, 0, 30);
-        }
+        private static readonly IHttpClientFactory httpClientFactory;
 
         #region get url(select)
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(string url, string param)
+        public static ReturnModel GetUrl(string url,string param,string key, int timeOut)
         {
             var model = new ReturnModel();
             try
             {
+                var http = httpClientFactory.CreateClient(key);
+                http.DefaultRequestHeaders.Connection.Add("keep-alive");
+                http.Timeout = new TimeSpan(0, 0, timeOut);
+
                 var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
                 model.status = (int)response.StatusCode; ;
                 model.msg = response.Content.ReadAsStringAsync().Result;
@@ -51,11 +47,15 @@ namespace FastApiGateway
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(string url, string param)
+        public static ReturnModel PostUrl(string url,string param,string key, int timeOut)
         {
             var model = new ReturnModel();
             try
             {
+                var http = httpClientFactory.CreateClient(key);
+                http.DefaultRequestHeaders.Connection.Add("keep-alive");
+                http.Timeout = new TimeSpan(0, 0, timeOut);
+
                 var content = new StringContent("", Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
                 model.status = (int)response.StatusCode; ;
@@ -75,11 +75,15 @@ namespace FastApiGateway
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(string url, string param)
+        public static ReturnModel PostContent(string url,string param,string key,int timeOut)
         {
             var model = new ReturnModel();
             try
             {
+                var http = httpClientFactory.CreateClient(key);
+                http.DefaultRequestHeaders.Connection.Add("keep-alive");
+                http.Timeout = new TimeSpan(0, 0, timeOut);
+
                 var content = new StringContent(param, Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(url), content).Result;
                 model.status = (int)response.StatusCode;
@@ -99,14 +103,14 @@ namespace FastApiGateway
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapParam, string soapMethod)
+        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapParam,string soapMethod,int timeOut)
         {
             var hash = new Hashtable();
             var model = new ReturnModel();
             try
             {
                 hash.Add(soapParamName, soapParam);
-                model.msg = BaseWebServiceSoap.QuerySoapWebServiceString(soapUrl, soapMethod, hash, 1);
+                model.msg = BaseWebServiceSoap.QuerySoapWebServiceString(soapUrl, soapMethod, hash, timeOut);
                 model.status = 200;
                 return model;
             }
@@ -136,12 +140,12 @@ namespace FastApiGateway
                 {
                     var config = BaseConfig.GetValue<ConfigModel>("Rabbit", "db.json");
                     var uri = new Uri(config.Host);
-                    var factory = new RabbitMQ.Client.ConnectionFactory
+                    var factory = new ConnectionFactory
                     {
                         UserName = config.UserName,
                         Password = config.Password,
                         VirtualHost = config.VirtualHost,
-                        Endpoint = new RabbitMQ.Client.AmqpTcpEndpoint(uri),
+                        Endpoint = new AmqpTcpEndpoint(uri),
                         RequestedHeartbeat = 0,
                         AutomaticRecoveryEnabled = true
                     };
