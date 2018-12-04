@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastApiGateway", "FastApiGa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastMongoDb.Core", "FastMongoDb.Core\FastMongoDb.Core.csproj", "{C4008C59-CF62-41FE-840B-30A9F077DD78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastUntility.Core", "FastUntility.Core\FastUntility.Core.csproj", "{94E14353-04E1-4C10-AC13-B2F2A27BE46E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{C4008C59-CF62-41FE-840B-30A9F077DD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4008C59-CF62-41FE-840B-30A9F077DD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4008C59-CF62-41FE-840B-30A9F077DD78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{94E14353-04E1-4C10-AC13-B2F2A27BE46E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94E14353-04E1-4C10-AC13-B2F2A27BE46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94E14353-04E1-4C10-AC13-B2F2A27BE46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94E14353-04E1-4C10-AC13-B2F2A27BE46E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

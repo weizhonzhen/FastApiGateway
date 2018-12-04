@@ -1,0 +1,12 @@
+F:\项目\GitHub\FastApiGateway\FastApiGateway\bin\Debug\netstandard2.0\FastApiGateway.deps.json
+F:\项目\GitHub\FastApiGateway\FastApiGateway\bin\Debug\netstandard2.0\FastApiGateway.dll
+F:\项目\GitHub\FastApiGateway\FastApiGateway\bin\Debug\netstandard2.0\FastApiGateway.pdb
+F:\项目\GitHub\FastApiGateway\FastApiGateway\bin\Debug\netstandard2.0\FastMongoDb.Core.dll
+F:\项目\GitHub\FastApiGateway\FastApiGateway\bin\Debug\netstandard2.0\FastMongoDb.Core.pdb
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.csprojAssemblyReference.cache
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.csproj.CoreCompileInputs.cache
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.AssemblyInfoInputs.cache
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.AssemblyInfo.cs
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.csproj.CopyComplete
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.dll
+F:\项目\GitHub\FastApiGateway\FastApiGateway\obj\Debug\netstandard2.0\FastApiGateway.pdb

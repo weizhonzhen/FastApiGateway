@@ -10,7 +10,7 @@ using System.Diagnostics;
 using FastMongoDb.Core;
 using FastApiGateway.Model.Return;
 using FastApiGateway.Model.Data;
-using FastUntility.Core.Base;
+using FastMongoDb.Core.Base;
 using FastApiGateway.Model.Cache;
 
 namespace FastApiGateway

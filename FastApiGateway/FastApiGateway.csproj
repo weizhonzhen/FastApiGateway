@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.1</Version>
+    <PackageId>Fast.ApiGateway</PackageId>
+    <Company>Fast.ApiGateway</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FastMongoDb.Core\FastMongoDb.Core.csproj" />
-    <ProjectReference Include="..\FastUntility.Core\FastUntility.Core.csproj" />
   </ItemGroup>
 
 </Project>

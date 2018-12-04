@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FastApiGateway.Model.Return;
-using FastUntility.Core.Base;
+using FastMongoDb.Core.Base;
 using RabbitMQ.Client;
 
 namespace FastApiGateway
