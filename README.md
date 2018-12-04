@@ -1,4 +1,6 @@
-﻿```csharp
+﻿
+ nuget url: https://www.nuget.org/packages/Fast.ApiGateway/
+ ```csharp
 //ConfigureServices 方法里 注入api网关
 services.AddTransient<IResponse, ApiResponse>();
 
