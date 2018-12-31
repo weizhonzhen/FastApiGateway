@@ -5,7 +5,7 @@
 services.AddTransient<IFastApi, FastApi>();
 
 //Configure方法里 使用api网关 
-app.UseMiddleware();
+ app.UseMiddleware<FastApiGatewayHandler>();
 
 //mongodb里配url路由参数
 public class UrlModel
