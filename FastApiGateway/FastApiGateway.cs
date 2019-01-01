@@ -347,7 +347,7 @@ namespace FastApiGateway
             else if (context.Request.Method.ToLower() == "post")
             {
                 AppKey = context.Request.Form["AppKey"].ToStr().ToLower();
-                AppSecret = context.Request.Query["AppSecret"].ToStr().ToLower();
+                AppSecret = context.Request.Form["AppSecret"].ToStr().ToLower();
             }
 
             if (MongoDbInfo.GetCount<UserInfo>(a => a.AppKey.ToLower() == AppKey && a.AppSecret.ToLower() == AppSecret) <= 0)
