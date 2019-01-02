@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,13 @@ namespace FastApiGateway
     /// </summary>
     internal static class BaseUrl
     {
-        private static readonly IHttpClientFactory httpClientFactory;
+        private static readonly HttpClient http;
+
+        static BaseUrl()
+        {
+            http = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip });
+            http.DefaultRequestHeaders.Connection.Add("keep-alive");
+        }
 
         #region get url(select)
         /// <summary>
@@ -25,8 +32,6 @@ namespace FastApiGateway
             var model = new ReturnModel();
             try
             {
-                var http = httpClientFactory.CreateClient(key);
-                http.DefaultRequestHeaders.Connection.Add("keep-alive");
                 http.Timeout = new TimeSpan(0, 0, timeOut);
 
                 var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
@@ -52,8 +57,6 @@ namespace FastApiGateway
             var model = new ReturnModel();
             try
             {
-                var http = httpClientFactory.CreateClient(key);
-                http.DefaultRequestHeaders.Connection.Add("keep-alive");
                 http.Timeout = new TimeSpan(0, 0, timeOut);
 
                 var content = new StringContent("", Encoding.UTF8, "application/json");
@@ -80,8 +83,6 @@ namespace FastApiGateway
             var model = new ReturnModel();
             try
             {
-                var http = httpClientFactory.CreateClient(key);
-                http.DefaultRequestHeaders.Connection.Add("keep-alive");
                 http.Timeout = new TimeSpan(0, 0, timeOut);
 
                 var content = new StringContent(param, Encoding.UTF8, "application/json");
