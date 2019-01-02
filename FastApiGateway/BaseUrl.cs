@@ -15,7 +15,7 @@ namespace FastApiGateway
     /// </summary>
     internal static class BaseUrl
     {
-        private static readonly HttpClient http;
+        private static HttpClient http;
 
         static BaseUrl()
         {
