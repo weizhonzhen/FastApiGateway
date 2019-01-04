@@ -37,11 +37,6 @@ namespace FastApiGateway.Model.Data
         public int CacheTimeOut { get; set; }
 
         /// <summary>
-        /// 请求过期时间（秒）
-        /// </summary>
-        public int RequestTimeOut { get; set; }
-
-        /// <summary>
         /// 是否匿名访问
         /// </summary>
         public bool IsAnonymous { get; set; }
