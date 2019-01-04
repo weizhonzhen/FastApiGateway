@@ -1,8 +1,0 @@
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\bin\Debug\netstandard2.0\FastMongoDb.Core.deps.json
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\bin\Debug\netstandard2.0\FastMongoDb.Core.dll
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\bin\Debug\netstandard2.0\FastMongoDb.Core.pdb
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\obj\Debug\netstandard2.0\FastMongoDb.Core.csproj.CoreCompileInputs.cache
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\obj\Debug\netstandard2.0\FastMongoDb.Core.AssemblyInfoInputs.cache
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\obj\Debug\netstandard2.0\FastMongoDb.Core.AssemblyInfo.cs
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\obj\Debug\netstandard2.0\FastMongoDb.Core.dll
-F:\项目\GitHub\FastApiGateway\FastMongoDb.Core\obj\Debug\netstandard2.0\FastMongoDb.Core.pdb
