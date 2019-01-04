@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>https://github.com/weizhonzhen/FastApiGatewayDb</Description>
+    <PackageProjectUrl>https://github.com/weizhonzhen/FastApiGatewayDb</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fast.Data.Core" Version="1.1.9" />
+  </ItemGroup>
+
+</Project>
