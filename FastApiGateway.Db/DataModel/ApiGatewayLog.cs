@@ -43,6 +43,12 @@ namespace FastApiGatewayDb.DataModel
         public DateTime ActionTime { get; set; }
 
         /// <summary>
+        /// ip
+        /// </summary>
+        [Column(Comments = "ip", DataType = "varchar2", Length = 16, IsNull = true)]
+        public string ActionIp { get; set; }
+
+        /// <summary>
         /// 请求参数
         /// </summary>
         [Column(Comments = "请求参数", DataType = "clob", IsNull = true)]
