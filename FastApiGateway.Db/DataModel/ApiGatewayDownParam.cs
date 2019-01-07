@@ -51,9 +51,8 @@ namespace FastApiGatewayDb.DataModel
         [Column(Comments = "soap method", DataType = "varchar2", Length = 32, IsNull = true)]
         public string SoapMethod { get; set; }
 
-
         /// <summary>
-        /// soap param name
+        /// soap param name,| 隔开 
         /// </summary>
         [Column(Comments = "soap param name", DataType = "varchar2", Length = 255, IsNull = true)]
         public string SoapParamName { get; set; }

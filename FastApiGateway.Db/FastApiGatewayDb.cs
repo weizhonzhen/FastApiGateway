@@ -109,7 +109,10 @@ namespace FastApiGatewayDb
                 if (downparam.Protocol.ToLower() == "soap")
                 {
                     //soap
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, param, downparam.SoapMethod);
+                    if (string.IsNullOrEmpty(content))
+                        result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param);
+                    else
+                        result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, content);
                 }
                 else if (downparam.Protocol.ToLower() == "http")
                 {
@@ -159,7 +162,9 @@ namespace FastApiGatewayDb
                     logInfo.Milliseconds = stopwatch.Elapsed.TotalMilliseconds.ToStr();
                     logInfo.ActionIp = GetClientIp(context);
 
-                    if (downparam.IsBody == 1)
+                    if (downparam.Protocol.ToLower() == "soap")
+                        logInfo.ActionParam = string.IsNullOrEmpty(content) ? param : content;
+                    else if (downparam.IsBody == 1)
                         logInfo.ActionParam = content;
                     else
                         logInfo.ActionParam = param;
