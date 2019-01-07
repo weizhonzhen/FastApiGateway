@@ -41,5 +41,17 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "请求时间", DataType = "date", IsNull = false)]
         public DateTime ActionTime { get; set; }
+
+        /// <summary>
+        /// 请求参数
+        /// </summary>
+        [Column(Comments = "请求参数", DataType = "clob", IsNull = true)]
+        public string ActionParam { get; set; }
+
+        /// <summary>
+        /// 返回结果
+        /// </summary>
+        [Column(Comments = "返回结果", DataType = "clob", IsNull = true)]
+        public string Result { get; set; }
     }
 }
