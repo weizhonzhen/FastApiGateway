@@ -41,19 +41,19 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "请求时间", DataType = "date", IsNull = false)]
         public DateTime ActionTime { get; set; }
-
+        
         /// <summary>
         /// ip
         /// </summary>
         [Column(Comments = "ip", DataType = "varchar2", Length = 16, IsNull = true)]
-        public string ActionIp { get; set; }
+        public string ActionIp{ get; set; }
 
         /// <summary>
         /// 请求参数
         /// </summary>
         [Column(Comments = "请求参数", DataType = "clob", IsNull = true)]
         public string ActionParam { get; set; }
-
+        
         /// <summary>
         /// 返回结果
         /// </summary>

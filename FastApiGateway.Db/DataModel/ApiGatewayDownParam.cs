@@ -14,12 +14,18 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "接口key", DataType = "varchar2", Length = 16, IsNull = false)]
         public string Key { get; set; }
-
+        
         /// <summary>
         /// 下游url
         /// </summary>
         [Column(Comments = "下游url", DataType = "varchar2", Length = 255, IsNull = false)]
         public string Url { get; set; }
+
+        /// <summary>
+        /// 下游名称
+        /// </summary>
+        [Column(Comments = "下游名称", DataType = "varchar2", Length = 128, IsNull = true)]
+        public string Name { get; set; }
 
         /// <summary>
         /// 请求方法method
@@ -50,7 +56,7 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "soap method", DataType = "varchar2", Length = 32, IsNull = true)]
         public string SoapMethod { get; set; }
-
+        
         /// <summary>
         /// soap param name,| 隔开 
         /// </summary>
