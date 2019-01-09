@@ -162,7 +162,7 @@ namespace FastApiGatewayDb
                     wait.Url = downparam.Url;
                     wait.WaitHour = downparam.WaitHour.ToInt(0);
                     wait.ErrorMsg = result.msg;
-                    wait.NextAction = DateTime.Now.AddHours(wait.WaitHour.ToStr().ToDouble(0)).AddHours(8);
+                    wait.NextAction = DateTime.Now.AddHours(wait.WaitHour.ToStr().ToDouble(0));
 
                     FastWrite.Add(wait, db);
                 }
