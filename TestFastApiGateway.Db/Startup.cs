@@ -3,6 +3,7 @@ using FastData.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text;
 
 namespace TestFastApiGateway.Db
 {
@@ -10,6 +11,10 @@ namespace TestFastApiGateway.Db
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            //注册gbk
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Encoding encoding = Encoding.GetEncoding("GB2312");
+            
             //压缩
             services.AddResponseCompression();
 

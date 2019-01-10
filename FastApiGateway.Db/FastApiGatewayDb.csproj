@@ -2,8 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>https://github.com/weizhonzhen/FastApiGatewayDb</Description>
-    <PackageProjectUrl>https://github.com/weizhonzhen/FastApiGatewayDb</PackageProjectUrl>
+    <Description>https://github.com/weizhonzhen/FastApiGateway</Description>
+    <PackageProjectUrl>https://github.com/weizhonzhen/FastApiGateway</PackageProjectUrl>
+    <PackageId>Fast.ApiGateway</PackageId>
+    <Authors>Fast.ApiGateway</Authors>
+    <Product>Fast.ApiGateway</Product>
+    <Version>1.1.7</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

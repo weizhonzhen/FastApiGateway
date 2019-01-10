@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace FastApiGatewayDb
@@ -22,7 +23,6 @@ namespace FastApiGatewayDb
         {
             http = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip });
             http.DefaultRequestHeaders.Connection.Add("keep-alive");
-            http.Timeout = new TimeSpan(0, 0, timeOut);
         }
 
         #region get url(select)
@@ -34,8 +34,11 @@ namespace FastApiGatewayDb
             var model = new ReturnModel();
             try
             {
+                if (param.Substring(0, 1) == "?")
+                    param = param.Substring(1, param.Length - 1);
+               
                 var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
-                model.status = (int)response.StatusCode; ;
+                model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
             }
@@ -57,9 +60,12 @@ namespace FastApiGatewayDb
             var model = new ReturnModel();
             try
             {
+                if (param.Substring(0, 1) == "?")
+                    param = param.Substring(1, param.Length - 1);
+
                 var content = new StringContent("", Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
-                model.status = (int)response.StatusCode; ;
+                model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
             }
