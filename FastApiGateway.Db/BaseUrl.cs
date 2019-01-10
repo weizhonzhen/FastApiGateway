@@ -29,7 +29,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(string url, string param, string key)
+        public static ReturnModel GetUrl(string url,string param,string key)
         {
             var model = new ReturnModel();
             try
@@ -52,7 +52,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(string url, string param, string key)
+        public static ReturnModel PostUrl(string url,string param,string key)
         {
             var model = new ReturnModel();
             try
@@ -76,7 +76,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(string url, string param, string key)
+        public static ReturnModel PostContent(string url,string param,string key)
         {
             var model = new ReturnModel();
             try
@@ -100,11 +100,11 @@ namespace FastApiGatewayDb
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam)
+        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapMethod, string soapParam)
         {
             var hash = new Hashtable();
             var model = new ReturnModel();
-            var param = new Dictionary<string, object>();
+            var param = new Dictionary<string,object>();
             try
             {
                 if (soapParam.Substring(0, 1) == "?")
@@ -135,7 +135,7 @@ namespace FastApiGatewayDb
                     hash.Add(soapParamName, param.GetValue(soapParamName));
 
                 model.msg = BaseWebServiceSoap.QuerySoapWebServiceString(soapUrl, soapMethod, hash, timeOut);
-
+                
                 model.status = 200;
                 return model;
             }
