@@ -29,14 +29,11 @@ namespace FastApiGatewayDb
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(string url,string param,string key)
+        public static ReturnModel GetUrl(string url, string param, string key)
         {
             var model = new ReturnModel();
             try
             {
-                if (param.Substring(0, 1) == "?")
-                    param = param.Substring(1, param.Length - 1);
-               
                 var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
@@ -55,14 +52,11 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(string url,string param,string key)
+        public static ReturnModel PostUrl(string url, string param, string key)
         {
             var model = new ReturnModel();
             try
             {
-                if (param.Substring(0, 1) == "?")
-                    param = param.Substring(1, param.Length - 1);
-
                 var content = new StringContent("", Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
                 model.status = (int)response.StatusCode;
@@ -82,7 +76,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(string url,string param,string key)
+        public static ReturnModel PostContent(string url, string param, string key)
         {
             var model = new ReturnModel();
             try
@@ -143,16 +137,13 @@ namespace FastApiGatewayDb
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapMethod, string soapParam)
+        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam)
         {
             var model = new ReturnModel();
-            var dic = new Dictionary<string,object>();
+            var dic = new Dictionary<string, object>();
             var param = new Dictionary<string, object>();
             try
             {
-                if (soapParam.Substring(0, 1) == "?")
-                    soapParam = soapParam.Substring(1, soapParam.Length - 1);
-
                 if (soapParam.IndexOf('&') > 0)
                 {
                     foreach (var temp in soapParam.Split('&'))
@@ -178,7 +169,7 @@ namespace FastApiGatewayDb
                     param.Add(soapParamName, dic.GetValue(soapParamName));
 
                 model.msg = PostSoap(soapUrl, soapMethod, param);
-                
+
                 model.status = 200;
                 return model;
             }
