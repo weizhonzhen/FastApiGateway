@@ -34,7 +34,7 @@ namespace FastApiGatewayDb
             var model = new ReturnModel();
             try
             {
-                var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
+                var response = http.GetAsync(new Uri(string.Format("{0}?{1}", url, param))).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -58,7 +58,7 @@ namespace FastApiGatewayDb
             try
             {
                 var content = new StringContent("", Encoding.UTF8, "application/json");
-                var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
+                var response = http.PostAsync(new Uri(string.Format("{0}?{1}", url, param)), content).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
