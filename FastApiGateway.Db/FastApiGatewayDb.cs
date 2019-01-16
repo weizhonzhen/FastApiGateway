@@ -42,7 +42,7 @@ namespace FastApiGatewayDb
                 else
                 {
                     var item = FastRead.Query<ApiGatewayUrl>(a => a.Key.ToUpper() == key.ToUpper()).ToItem<ApiGatewayUrl>(db) ?? new ApiGatewayUrl();
-                    var downParam = FastRead.Query<ApiGatewayDownParam>(a => a.Key.ToUpper() == key.ToUpper()).ToList<ApiGatewayDownParam>(db);
+                    var downParam = FastRead.Query<ApiGatewayDownParam>(a => a.Key.ToUpper() == key.ToUpper()).OrderBy<ApiGatewayDownParam>(a => new { a.OrderBy }, false).ToList<ApiGatewayDownParam>(db);
 
                     //获取token
                     if (item.IsGetToken == 1)
@@ -307,27 +307,30 @@ namespace FastApiGatewayDb
         /// <param name="context"></param>
         private static void Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list,string urlParam)
         {
-            var downDic = new Dictionary<string, object>();
-            var result = new List<ReturnModel>();;
+            var result = new ReturnModel();
+            var lastResult = new ReturnModel();
 
             foreach (var downparam in list)
             {
-                result.Add(GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context));
+                if (downparam.SourceParam == 2)
+                    urlParam = lastResult.msg;
+
+                lastResult = GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context);
+
+                if (downparam.IsResult == 1 && string.IsNullOrEmpty(result.msg))
+                    result.msg = lastResult.msg;
+
+                if (downparam.IsResult == 1 && !string.IsNullOrEmpty(result.msg))
+                    result.msg = string.Format("{0}||{1}", result.msg, lastResult.msg);
             }
 
-            var count = 0;
-            foreach (var temp in result)
-            {
-                downDic.Add(string.Format("result{0}", count), BaseJson.JsonToDic(temp.msg));
-                count++;
-            }
 
             //缓存结果
             if (item.IsCache == 1)
-                CacheResult(item, db, null, downDic);
+                CacheResult(item, db, result, null);
 
             context.Response.StatusCode = 200;
-            context.Response.WriteAsync(BaseJson.ModelToJson(downDic), Encoding.UTF8);
+            context.Response.WriteAsync(result.msg, Encoding.UTF8);
         }
         #endregion
 
