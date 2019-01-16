@@ -7,7 +7,7 @@
     <PackageId>Fast.ApiGateway</PackageId>
     <Authors>Fast.ApiGateway</Authors>
     <Product>Fast.ApiGateway</Product>
-    <Version>1.2.4</Version>
+    <Version>1.2.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

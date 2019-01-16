@@ -322,6 +322,12 @@ namespace FastApiGatewayDb
 
                 lastResult = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
 
+                if (string.IsNullOrEmpty(lastResult.msg) || lastResult.status != 200)
+                {
+                    result.msg = "";
+                    break;
+                }
+
                 if (downparam.IsResult == 1 && string.IsNullOrEmpty(result.msg))
                     result.msg = lastResult.msg;
 
