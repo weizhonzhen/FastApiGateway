@@ -24,6 +24,8 @@ namespace FastApiGatewayDb
         public void Content(HttpContext context)
         {
             var urlParam = GetUrlParam(context);
+            var urlParamDecode = HttpUtility.UrlDecode(urlParam);
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             using (var db = new DataContext(DbApi))
@@ -66,21 +68,21 @@ namespace FastApiGatewayDb
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    Polling(item, context, db, downParam, urlParam);
+                                    Polling(item, context, db, downParam, urlParamDecode,urlParam);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    Composite(item, context, db, downParam, urlParam);
+                                    Composite(item, context, db, downParam, urlParamDecode, urlParam);
                                 else
-                                    Normal(item, context, db, downParam, urlParam);
+                                    Normal(item, context, db, downParam, urlParamDecode, urlParam);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                Polling(item, context, db, downParam, urlParam);
+                                Polling(item, context, db, downParam, urlParamDecode, urlParam);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                Composite(item, context, db, downParam, urlParam);
+                                Composite(item, context, db, downParam, urlParamDecode, urlParam);
                             else
-                                Normal(item, context, db, downParam, urlParam);
+                                Normal(item, context, db, downParam, urlParamDecode, urlParam);
                         }
                     }
                 }
@@ -246,10 +248,11 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 普通请求
         /// </summary>
-        private static void Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list,string urlParam)
+        private static void Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
-            var info = GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context);
+            var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
+            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
 
             //缓存结果
             if (item.IsCache == 1)
@@ -264,13 +267,13 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 轮循请求
         /// </summary>
-        private static void Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list,string urlParam)
+        private static void Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var rand = new Random();
             var index = rand.Next(1, list.Count);
             var downparam = list[index];
-
-            var info = GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context);
+            var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
+            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
 
             if (info.status != 200 && list.Count > 1)
             {
@@ -281,7 +284,7 @@ namespace FastApiGatewayDb
                 }
 
                 downparam = list[tempIndex];
-                info = GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context);
+                info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
 
 
                 context.Response.StatusCode = info.status;
@@ -305,17 +308,19 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static void Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list,string urlParam)
+        private static void Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var result = new ReturnModel();
             var lastResult = new ReturnModel();
 
             foreach (var downparam in list)
             {
-                if (downparam.SourceParam == 2)
-                    urlParam = lastResult.msg;
+                var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
 
-                lastResult = GetReuslt(downparam, urlParam, item.Key, item.IsLog, db, context);
+                if (downparam.SourceParam == 2)
+                    param = lastResult.msg;
+
+                lastResult = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
 
                 if (downparam.IsResult == 1 && string.IsNullOrEmpty(result.msg))
                     result.msg = lastResult.msg;
@@ -425,13 +430,13 @@ namespace FastApiGatewayDb
         /// <returns></returns>
         private static string GetUrlParam(HttpContext context)
         {
-            var content = HttpUtility.UrlDecode(new StreamReader(context.Request.Body).ReadToEnd());
-            var param = HttpUtility.UrlDecode(context.Request.QueryString.Value);
+            var content = new StreamReader(context.Request.Body).ReadToEnd();
+            var param = context.Request.QueryString.Value;
 
             if (string.IsNullOrEmpty(param))
                 param = content;
 
-            if (!string.IsNullOrEmpty(param)&&param.Substring(0, 1) == "?")
+            if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
                 param = param.Substring(1, param.Length - 1);
 
             return param;

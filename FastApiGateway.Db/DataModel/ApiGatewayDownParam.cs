@@ -62,6 +62,12 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "soap param name", DataType = "varchar2", Length = 255, IsNull = true)]
         public string SoapParamName { get; set; }
+        
+        /// <summary>
+        /// 是否解码 1- 解码 0-不处理
+        /// </summary>
+        [Column(Comments = "是否解码 1- 解码 0-不处理", DataType = "number(1,0)", IsNull = true)]
+        public int IsDecode { get; set; }
 
         /// <summary>
         /// 是否结果 1-是 0-否
