@@ -327,12 +327,13 @@ namespace FastApiGatewayDb
                     result.msg = "";
                     break;
                 }
-
-                if (downparam.IsResult == 1 && string.IsNullOrEmpty(result.msg))
-                    result.msg = lastResult.msg;
-
-                if (downparam.IsResult == 1 && !string.IsNullOrEmpty(result.msg))
-                    result.msg = string.Format("{0}||{1}", result.msg, lastResult.msg);
+                if (downparam.IsResult == 1)
+                {
+                    if (string.IsNullOrEmpty(result.msg))
+                        result.msg = lastResult.msg;
+                    else
+                        result.msg = string.Format("{0}||{1}", result.msg, lastResult.msg);
+                }
             }
 
 
