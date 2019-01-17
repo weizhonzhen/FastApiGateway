@@ -97,7 +97,7 @@ namespace FastApiGatewayDb
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isLog, DataContext db, HttpContext context)
+        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isLog, DataContext db, HttpContext context, string ActionId, int OrderBy)
         {
             var info = FastRead.Query<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()).ToItem<ApiGatewayWait>(db) ?? new ApiGatewayWait();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
@@ -160,6 +160,8 @@ namespace FastApiGatewayDb
                     if (isLog == 1)
                     {
                         var logInfo = new ApiGatewayLog();
+                        logInfo.ActionId = ActionId;
+                        logInfo.OrderBy = OrderBy;
                         logInfo.Key = key;
                         logInfo.ActionTime = logtime;
                         logInfo.Url = downparam.Url;
@@ -250,9 +252,10 @@ namespace FastApiGatewayDb
         /// </summary>
         private static void Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
+            var actionId = Guid.NewGuid().ToStr();
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
+            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context, actionId, 1);
 
             //缓存结果
             if (item.IsCache == 1)
@@ -269,14 +272,17 @@ namespace FastApiGatewayDb
         /// </summary>
         private static void Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
+            var orderBy = 1;
+            var actionId = Guid.NewGuid().ToStr();
             var rand = new Random();
             var index = rand.Next(1, list.Count);
             var downparam = list[index];
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
+            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
 
             if (info.status != 200 && list.Count > 1)
             {
+                orderBy++;
                 var tempIndex = rand.Next(1, list.Count);
                 while (index == tempIndex)
                 {
@@ -284,7 +290,7 @@ namespace FastApiGatewayDb
                 }
 
                 downparam = list[tempIndex];
-                info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
+                info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
 
 
                 context.Response.StatusCode = info.status;
@@ -310,6 +316,8 @@ namespace FastApiGatewayDb
         /// <param name="context"></param>
         private static void Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
+            var actionId = Guid.NewGuid().ToStr();
+            var orderBy = 1;
             var result = new ReturnModel();
             var lastResult = new ReturnModel();
 
@@ -320,7 +328,7 @@ namespace FastApiGatewayDb
                 if (downparam.SourceParam == 2)
                     param = lastResult.msg;
 
-                lastResult = GetReuslt(downparam, param, item.Key, item.IsLog, db, context);
+                lastResult = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
 
                 if (string.IsNullOrEmpty(lastResult.msg) || lastResult.status != 200)
                 {
@@ -334,6 +342,7 @@ namespace FastApiGatewayDb
                     else
                         result.msg = string.Format("{0}||{1}", result.msg, lastResult.msg);
                 }
+                orderBy++;
             }
 
 

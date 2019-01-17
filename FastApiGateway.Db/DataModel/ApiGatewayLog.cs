@@ -59,5 +59,17 @@ namespace FastApiGatewayDb.DataModel
         /// </summary>
         [Column(Comments = "返回结果", DataType = "clob", IsNull = true)]
         public string Result { get; set; }
+
+        /// <summary>
+        /// 请求id
+        /// </summary>
+        [Column(Comments = "请求id", DataType = "varchar2", Length = 36, IsNull = true)]
+        public string ActionId { get; set; }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        [Column(Comments = "排序", DataType = "number(1,0)", IsNull = true)]
+        public int OrderBy { get; set; }
     }
 }
