@@ -97,7 +97,7 @@ namespace FastApiGatewayDb
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isLog, DataContext db, HttpContext context, string ActionId, int OrderBy)
+        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog,int isDbLog, DataContext db, HttpContext context, string ActionId, int OrderBy)
         {
             var info = FastRead.Query<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()).ToItem<ApiGatewayWait>(db) ?? new ApiGatewayWait();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
@@ -157,7 +157,7 @@ namespace FastApiGatewayDb
                 stopwatch.Reset();
                 Task.Factory.StartNew(() =>
                 {
-                    if (isLog == 1)
+                    if (isDbLog == 1)
                     {
                         var logInfo = new ApiGatewayLog();
                         logInfo.ActionId = ActionId;
@@ -173,6 +173,9 @@ namespace FastApiGatewayDb
                         logInfo.ActionParam = param;
 
                         FastWrite.Add(logInfo, null, DbApi);
+                        
+                        if (isTextLog == 1)
+                            BaseLog.SaveLog(BaseJson.ModelToJson(logInfo), logInfo.Key);
                     }
                 });
                 return result;
@@ -255,7 +258,7 @@ namespace FastApiGatewayDb
             var actionId = Guid.NewGuid().ToStr();
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context, actionId, 1);
+            var info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context, actionId, 1);
 
             //缓存结果
             if (item.IsCache == 1)
@@ -278,7 +281,7 @@ namespace FastApiGatewayDb
             var index = rand.Next(1, list.Count);
             var downparam = list[index];
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
+            var info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
 
             if (info.status != 200 && list.Count > 1)
             {
@@ -290,7 +293,7 @@ namespace FastApiGatewayDb
                 }
 
                 downparam = list[tempIndex];
-                info = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
+                info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
 
 
                 context.Response.StatusCode = info.status;
@@ -328,7 +331,7 @@ namespace FastApiGatewayDb
                 if (downparam.SourceParam == 2)
                     param = lastResult.msg;
 
-                lastResult = GetReuslt(downparam, param, item.Key, item.IsLog, db, context,actionId,orderBy);
+                lastResult = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
 
                 if (string.IsNullOrEmpty(lastResult.msg) || lastResult.status != 200)
                 {

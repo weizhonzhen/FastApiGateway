@@ -51,9 +51,15 @@ namespace FastApiGatewayDb.DataModel
         public int IsGetToken { get; set; }
 
         /// <summary>
-        /// 是否日记
+        /// 是否数据日记
         /// </summary>
-        [Column(Comments = "是否日记 1=是 0=否", DataType = "number(1,0)")]
-        public int IsLog { get; set; }
+        [Column(Comments = "是否数据日记 1=是 0=否", DataType = "number(1,0)")]
+        public int IsDbLog { get; set; }
+
+        /// <summary>
+        /// 是否文本日记
+        /// </summary>
+        [Column(Comments = "是否文本日记 1=是 0=否", DataType = "number(1,0)")]
+        public int IsTxtLog { get; set; }
     }
 }
