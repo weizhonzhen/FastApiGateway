@@ -157,26 +157,24 @@ namespace FastApiGatewayDb
                 stopwatch.Reset();
                 Task.Factory.StartNew(() =>
                 {
-                    if (isDbLog == 1)
-                    {
-                        var logInfo = new ApiGatewayLog();
-                        logInfo.ActionId = ActionId;
-                        logInfo.OrderBy = OrderBy;
-                        logInfo.Key = key;
-                        logInfo.ActionTime = logtime;
-                        logInfo.Url = downparam.Url;
-                        logInfo.Protocol = downparam.Protocol;
-                        logInfo.Success = result.status == 200 ? 1 : 0;
-                        logInfo.Result = result.msg;
-                        logInfo.Milliseconds = Milliseconds;
-                        logInfo.ActionIp = ip;
-                        logInfo.ActionParam = param;
+                    var logInfo = new ApiGatewayLog();
+                    logInfo.ActionId = ActionId;
+                    logInfo.OrderBy = OrderBy;
+                    logInfo.Key = key;
+                    logInfo.ActionTime = logtime;
+                    logInfo.Url = downparam.Url;
+                    logInfo.Protocol = downparam.Protocol;
+                    logInfo.Success = result.status == 200 ? 1 : 0;
+                    logInfo.Result = result.msg;
+                    logInfo.Milliseconds = Milliseconds;
+                    logInfo.ActionIp = ip;
+                    logInfo.ActionParam = param;
 
+                    if (isDbLog == 1)
                         FastWrite.Add(logInfo, null, DbApi);
-                        
-                        if (isTextLog == 1)
-                            BaseLog.SaveLog(BaseJson.ModelToJson(logInfo), logInfo.Key);
-                    }
+
+                    if (isTextLog == 1)
+                        BaseLog.SaveLog(BaseJson.ModelToJson(logInfo), logInfo.Key);
                 });
                 return result;
             }
