@@ -9,7 +9,7 @@ using System.Diagnostics;
 using FastUntility.Core.Base;
 using FastData.Core;
 using FastData.Core.Context;
-using FastApiGatewayDb.DataModel;
+using FastApiGatewayDb.DataModel.Oracle;
 using FastApiGatewayDb.Model;
 using System.Web;
 using System.Threading.Tasks;

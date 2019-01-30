@@ -1,7 +1,7 @@
 ﻿using FastData.Core.Property;
 using System;
 
-namespace FastApiGatewayDb.DataModel
+namespace FastApiGatewayDb.DataModel.Oracle
 {
     /// <summary>
     /// 缓存

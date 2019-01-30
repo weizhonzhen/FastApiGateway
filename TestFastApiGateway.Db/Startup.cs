@@ -27,8 +27,18 @@ namespace TestFastApiGateway.Db
                 options.AddPolicy("any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
             });
 
-            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.dll");
-            FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.dll");
+            //oracle
+            FastMap.InstanceProperties("FastApiGatewayDb.DataModel.Oracle", "FastApiGatewayDb.dll");
+            FastMap.InstanceTable("FastApiGatewayDb.DataModel.Oracle", "FastApiGatewayDb.dll");
+            
+            //mysql
+           // FastMap.InstanceProperties("FastApiGatewayDb.DataModel.MySql", "FastApiGatewayDb.dll");
+           // FastMap.InstanceTable("FastApiGatewayDb.DataModel.MySql", "FastApiGatewayDb.dll");
+            
+            //sqlserver
+           // FastMap.InstanceProperties("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
+           // FastMap.InstanceTable("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
+
             FastMap.InstanceMap();
         }
 
