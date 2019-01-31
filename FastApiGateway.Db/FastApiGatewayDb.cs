@@ -26,8 +26,6 @@ namespace FastApiGatewayDb
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             using (var db = new DataContext(DbApi))
             {
                 context.Response.ContentType = "application/Json";
