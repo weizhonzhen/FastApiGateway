@@ -16,13 +16,14 @@ namespace FastApiGatewayDb
     /// </summary>
     internal static class BaseUrl
     {
-        private static int timeOut = 60;
+        private static int timeOut = 30;
         private static HttpClient http;
 
         static BaseUrl()
         {
             http = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip });
             http.DefaultRequestHeaders.Connection.Add("keep-alive");
+            http.Timeout = new TimeSpan(0, 0, timeOut);
         }
 
         #region get url(select)

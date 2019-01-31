@@ -38,8 +38,6 @@ namespace TestFastApiGateway.Db
             //sqlserver
            // FastMap.InstanceProperties("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
            // FastMap.InstanceTable("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
-
-            FastMap.InstanceMap();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -33,8 +33,8 @@ namespace FastApiGatewayDb.DataModel.SqlServer
         /// <summary>
         /// 响应时间 
         /// </summary>
-        [Column(Comments = "响应时间", DataType = "char", Length = 12, IsNull = false)]
-        public string Milliseconds { get; set; }
+        [Column(Comments = "响应时间", DataType = "decimal(16,6)", Length = 12, IsNull = false)]
+        public double Milliseconds { get; set; }
 
         /// <summary>
         /// 请求时间

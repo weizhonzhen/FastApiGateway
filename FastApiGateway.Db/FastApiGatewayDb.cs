@@ -150,7 +150,7 @@ namespace FastApiGatewayDb
 
                 stopwatch.Stop();
                 var ip = GetClientIp(context);
-                var Milliseconds = stopwatch.Elapsed.TotalMilliseconds.ToStr();
+                var Milliseconds = stopwatch.Elapsed.TotalMilliseconds;
                 var logtime = DateTime.Now;
                 stopwatch.Reset();
                 Task.Factory.StartNew(() =>
