@@ -10,7 +10,7 @@ namespace TestFastApiGateway.Db
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             //注册gbk
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding encoding = Encoding.GetEncoding("GB2312");
