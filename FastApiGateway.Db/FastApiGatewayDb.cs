@@ -149,21 +149,19 @@ namespace FastApiGatewayDb
                     FastWrite.Delete<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower(), db);
 
                 stopwatch.Stop();
-                var ip = GetClientIp(context);
-                var Milliseconds = stopwatch.Elapsed.TotalMilliseconds;
-                var logtime = DateTime.Now;
                 stopwatch.Reset();
+
                 var logInfo = new ApiGatewayLog();
                 logInfo.ActionId = ActionId;
                 logInfo.OrderBy = OrderBy;
                 logInfo.Key = key;
-                logInfo.ActionTime = logtime;
+                logInfo.ActionTime = DateTime.Now; 
                 logInfo.Url = downparam.Url;
                 logInfo.Protocol = downparam.Protocol;
                 logInfo.Success = result.status == 200 ? 1 : 0;
                 logInfo.Result = result.msg;
-                logInfo.Milliseconds = Milliseconds;
-                logInfo.ActionIp = ip;
+                logInfo.Milliseconds = stopwatch.Elapsed.TotalMilliseconds; 
+                logInfo.ActionIp = GetClientIp(context); 
                 logInfo.ActionParam = param;
 
                 if (isDbLog == 1)
