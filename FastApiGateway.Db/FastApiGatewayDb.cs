@@ -21,7 +21,7 @@ namespace FastApiGatewayDb
         //接口数据库
         public static string ParamKey = "param";
         public static string DbApi = "ApiGateway";
-        public void Content(HttpContext context)
+        public Task ContentAsync(HttpContext context)
         {
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
@@ -37,7 +37,7 @@ namespace FastApiGatewayDb
                     dic.Add("success", false);
                     dic.Add("result", string.Format("请求地址{0}无效", key));
                     context.Response.StatusCode = 404;
-                    context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                 }
                 else
                 {
@@ -46,13 +46,13 @@ namespace FastApiGatewayDb
 
                     //获取token
                     if (item.IsGetToken == 1)
-                        Token(context, db, urlParam);
+                        return Token(context, db, urlParam);
                     else
                     {
                         //是否匿名访问
                         if (item.IsAnonymous == 0)
                             if (!CheckToken(item, context, db, urlParam))
-                                return;
+                                return Task.CompletedTask;
 
                         //结果是否缓存
                         if (item.IsCache == 1)
@@ -61,26 +61,26 @@ namespace FastApiGatewayDb
                             if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
                             {
                                 context.Response.StatusCode = 200;
-                                context.Response.WriteAsync(resultInfo.result, Encoding.UTF8);
+                                return context.Response.WriteAsync(resultInfo.result, Encoding.UTF8);
                             }
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    Polling(item, context, db, downParam, urlParamDecode,urlParam);
+                                    return Polling(item, context, db, downParam, urlParamDecode,urlParam);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    Composite(item, context, db, downParam, urlParamDecode, urlParam);
+                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam);
                                 else
-                                    Normal(item, context, db, downParam, urlParamDecode, urlParam);
+                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                Polling(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Polling(item, context, db, downParam, urlParamDecode, urlParam);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                Composite(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Composite(item, context, db, downParam, urlParamDecode, urlParam);
                             else
-                                Normal(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Normal(item, context, db, downParam, urlParamDecode, urlParam);
                         }
                     }
                 }
@@ -247,7 +247,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 普通请求
         /// </summary>
-        private static void Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var actionId = Guid.NewGuid().ToStr();
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
@@ -259,7 +259,7 @@ namespace FastApiGatewayDb
                 CacheResult(item, db, info);
 
             context.Response.StatusCode = info.status;
-            context.Response.WriteAsync(info.msg, Encoding.UTF8);
+            return context.Response.WriteAsync(info.msg, Encoding.UTF8);
         }
         #endregion
 
@@ -267,7 +267,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 轮循请求
         /// </summary>
-        private static void Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var orderBy = 1;
             var actionId = Guid.NewGuid().ToStr();
@@ -291,7 +291,7 @@ namespace FastApiGatewayDb
 
 
                 context.Response.StatusCode = info.status;
-                context.Response.WriteAsync(info.msg, Encoding.UTF8);
+               return context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
             else
             {
@@ -300,7 +300,7 @@ namespace FastApiGatewayDb
                     CacheResult(item, db, info);
 
                 context.Response.StatusCode = info.status;
-                context.Response.WriteAsync(info.msg, Encoding.UTF8);
+               return context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
         }
         #endregion
@@ -311,7 +311,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static void Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
         {
             var actionId = Guid.NewGuid().ToStr();
             var orderBy = 1;
@@ -348,7 +348,7 @@ namespace FastApiGatewayDb
                 CacheResult(item, db, result, null);
 
             context.Response.StatusCode = 200;
-            context.Response.WriteAsync(result.msg, Encoding.UTF8);
+            return context.Response.WriteAsync(result.msg, Encoding.UTF8);
         }
         #endregion
 
@@ -358,7 +358,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static void Token(HttpContext context, DataContext db,string urlParam)
+        private static Task Token(HttpContext context, DataContext db,string urlParam)
         {
             var dic = new Dictionary<string, object>();
             var AppKey = GetUrlParamKey(urlParam, "AppKey");
@@ -369,7 +369,7 @@ namespace FastApiGatewayDb
                 context.Response.StatusCode = 200;
                 dic.Add("success", false);
                 dic.Add("result", "AppKey和AppSecret参数不存在");
-                context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
             }
             else
             {
@@ -388,7 +388,7 @@ namespace FastApiGatewayDb
                 dic.Add("AccessExpires", info.AccessExpires);
 
                 context.Response.StatusCode = 200;
-                context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+               return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
             }
         }
         #endregion

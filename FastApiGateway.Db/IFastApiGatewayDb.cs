@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace FastApiGatewayDb
 {
     public interface IFastApiGatewayDb
     {
-        void Content(HttpContext content);
+        Task ContentAsync(HttpContext content);
     }
 }

@@ -9,8 +9,7 @@ namespace FastApiGatewayDb
 
         public Task InvokeAsync(HttpContext context, IFastApiGatewayDb response)
         {
-            response.Content(context);
-            return Task.CompletedTask;
+            return response.ContentAsync(context);
         }
     }
 }
