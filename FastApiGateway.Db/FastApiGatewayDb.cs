@@ -149,7 +149,6 @@ namespace FastApiGatewayDb
                     FastWrite.Delete<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower(), db);
 
                 stopwatch.Stop();
-                stopwatch.Reset();
 
                 var logInfo = new ApiGatewayLog();
                 logInfo.ActionId = ActionId;
