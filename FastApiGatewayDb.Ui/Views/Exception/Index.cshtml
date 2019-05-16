@@ -1,0 +1,31 @@
+﻿@model FastApiGatewayDb.Ui.Models.QueryPageUrlModel
+<section class="content-header"></section>
+<section class="content">
+    <form class="form-inline" id="ExceptionForm" style="margin-top:-5px;">
+        <div class="form-group" style="width:250px;margin-left:20px;">
+            <label>地址</label>
+            @Html.TextBoxFor(a => a.Key, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="ExceptionQuery">查询</button>
+    </form>
+    <div id="ExceptionContent" style="margin-top:5px;"></div>
+</section>
+<script>
+     $(function () {
+        $("#ExceptionQuery").click();
+     });
+
+    $("#ExceptionQuery").click(function () {
+        layer.load(2);
+        $.ajax({
+            type: "POST",
+            url: "/Exception/List",
+            data: $("#ExceptionForm").serialize(),
+            success: function (result) {
+                layer.closeAll('loading');
+                $("#ExceptionContent").html(result);
+                $("#ExceptionTable tbody tr").children().first().click();
+            }
+        });
+    });
+</script>
