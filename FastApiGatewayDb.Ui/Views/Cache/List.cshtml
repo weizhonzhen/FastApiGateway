@@ -1,0 +1,63 @@
+﻿@using System.Collections.Generic;
+@using FastUntility.Core.Base;
+@using FastApiGatewayDb.Ui.Models;
+@model FastUntility.Core.Page.PageResult
+
+@{
+    var page = new PageSizeModel();
+
+    page.PageId = Model.pModel.PageId;
+    page.PageSize = Model.pModel.PageSize;
+    page.TotalPage = Model.pModel.TotalPage;
+    page.TotalRecord = Model.pModel.TotalRecord;
+
+    page.FormId = "CacheForm";
+    page.ContentId = "CacheContent";
+    page.Url = "/Cache/List";
+    page.TableId = "CacheTable";
+}
+
+<div class="box-body table-responsive">
+    <table id="CacheTable" class="table table-bordered" style="overflow: hidden;overflow-x: auto;white-space: nowrap;">
+        <thead>
+            <tr>
+                <td align="center">key</td>
+                <td align="center">内容</td>
+                <td align="center">过期时间</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null && Model.list != null)
+                {
+                    foreach (var item in Model.list)
+                    {
+                        <tr>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("KEY")</td>
+                            <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">
+                                @(item.GetValue("RESULT").ToStr().Length>10?item.GetValue("RESULT").ToStr().Substring(0,10)+"...":item.GetValue("RESULT") )
+                                <a href="#" data-value="@item.GetValue("RESULT")" onclick="FnShow(this)">更多</a> 
+                            </td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("TIMEOUT")</td>
+                        </tr>
+                    }
+                    if (Model.list.Count == 0)
+                    {
+                        <tr><td colspan="3">找不到相关信息</td></tr>}
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("page", page)
+</div>
+<script>
+    $('#CacheTable tbody tr').click(function () {
+        $(this).css('background-color', '#6CC2CC');
+        $('#CacheTable tbody tr:odd').not(this).css('background-color', '#ffffff');
+        $('#CacheTable tbody tr:even').not(this).css('background-color', '#f3f4f5');
+    });
+
+     function FnShow(obj) {
+        layer.msg($(obj).data("value"));
+    }
+</script>

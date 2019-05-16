@@ -1,0 +1,31 @@
+﻿@model FastApiGatewayDb.Ui.Models.QueryPageUrlModel
+<section class="content-header"></section>
+<section class="content">
+    <form class="form-inline" id="CacheForm" style="margin-top:-5px;">
+        <div class="form-group" style="width:250px;margin-left:20px;">
+            <label>地址</label>
+            @Html.TextBoxFor(a => a.Key, new { @class = "form-control" , @autocomplete = "off"})
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="CacheQuery">查询</button>
+    </form>
+    <div id="CacheContent" style="margin-top:5px;"></div>
+</section>
+<script>
+     $(function () {
+        $("#CacheQuery").click();
+     });
+
+    $("#CacheQuery").click(function () {
+        layer.load(2);
+        $.ajax({
+            type: "POST",
+            url: "/Cache/List",
+            data: $("#CacheForm").serialize(),
+            success: function (result) {
+                layer.closeAll('loading');
+                $("#CacheContent").html(result);
+                $("#CacheTable tbody tr").children().first().click();
+            }
+        });
+    });
+</script>
