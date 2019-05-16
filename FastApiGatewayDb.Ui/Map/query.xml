@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap>
+  <select id="Api.Url">
+     select * from apigatewayurl a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.key like '#Key#%'</isNotNullOrEmpty>
+    </dynamic>
+  </select>
+  
+  <select id="Api.DownUrl">
+    select * from apigatewaydownparam a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.key like '#Key#%'</isNotNullOrEmpty>
+    </dynamic>
+    order by key,orderby
+  </select>
+
+  <select id="Api.User">
+    select * from apigatewayuser a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.APPKEY like '#Key#%'</isNotNullOrEmpty>
+    </dynamic>
+  </select>
+
+  <select id="Api.Cache">
+    select * from apigatewaycache a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.key like '#Key#%'</isNotNullOrEmpty>
+    </dynamic>
+  </select>
+
+  <select id="Api.Exception">
+    select * from apigatewaywait a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.key like '#Key#%'</isNotNullOrEmpty>
+    </dynamic>
+  </select>
+
+  <select id="Api.Log">
+    select * from apigatewaylog a
+    <dynamic prepend=" where 1=1">
+      <isNotNullOrEmpty prepend=" and " property="Key">a.key like '#Key#%'</isNotNullOrEmpty>
+      <isNotNullOrEmpty prepend=" and " property="Ip">a.ACTIONIP = :Ip</isNotNullOrEmpty>
+      <isNotNullOrEmpty prepend=" and " property="Day">a.ACTIONTIME >=:Day</isNotNullOrEmpty>
+      <isNotNullOrEmpty prepend=" and " property="Success">a.SUCCESS =:Success</isNotNullOrEmpty>
+    </dynamic>
+  </select>
+</sqlMap>
