@@ -1,0 +1,50 @@
+﻿@model FastApiGatewayDb.Ui.Models.QueryPageUrlModel
+@{ 
+    var select = new List<SelectListItem>();
+    select.Add(new SelectListItem { Value = "", Text = "全部" ,Selected=true });
+    select.Add(new SelectListItem { Value = "1", Text = "成功" });
+    select.Add(new SelectListItem { Value = "0", Text = "失败" });
+}
+<section class="content-header"></section>
+<section class="content">
+    <form class="form-inline" id="LogForm" style="margin-top:-5px;">
+        <div class="form-group" style="width:250px;margin-left:10px;">
+            <label>地址</label>
+            @Html.TextBoxFor(a => a.Key, new { @class = "form-control" , @autocomplete = "off"})
+        </div>
+        <div class="form-group" style="width:250px;margin-left:10px;">
+            <label>Ip</label>
+            @Html.TextBoxFor(a => a.Ip, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="form-group" style="width:250px;margin-left:10px;">
+            <label>日期</label>
+            @Html.TextBoxFor(a => a.Day, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="form-group" style="width:150px;margin-left:10px;">
+            <label>状态</label>
+            @Html.DropDownListFor(a => a.Success,select, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="LogQuery">查询</button>
+    </form>
+    <div id="LogContent" style="margin-top:5px;"></div>
+</section>
+<script>
+     $(function () {
+         $("#LogQuery").click();
+         laydate.render({ elem: '#Day', type: 'date' });
+     });
+
+    $("#LogQuery").click(function () {
+        layer.load(2);
+        $.ajax({
+            type: "POST",
+            url: "/log/List",
+            data: $("#LogForm").serialize(),
+            success: function (result) {
+                layer.closeAll('loading');
+                $("#LogContent").html(result);
+                $("#LogTable tbody tr").children().first().click();
+            }
+        });
+    });
+</script>

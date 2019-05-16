@@ -1,0 +1,77 @@
+﻿@using System.Collections.Generic;
+@using FastUntility.Core.Base;
+@using FastApiGatewayDb.Ui.Models;
+@model FastUntility.Core.Page.PageResult
+
+@{
+    var page = new PageSizeModel();
+
+    page.PageId = Model.pModel.PageId;
+    page.PageSize = Model.pModel.PageSize;
+    page.TotalPage = Model.pModel.TotalPage;
+    page.TotalRecord = Model.pModel.TotalRecord;
+
+    page.FormId = "LogForm";
+    page.ContentId = "LogContent";
+    page.Url = "/Log/List";
+    page.TableId = "LogTable";
+}
+<div class="box-body table-responsive">
+    <table id="LogTable" class="table table-bordered" style="overflow: hidden;overflow-x: auto;white-space: nowrap;">
+        <thead>
+            <tr>
+                <td align="center">key</td>
+                <td align="center">状况</td>
+                <td align="center">url</td>
+                <td align="center">协议</td>
+                <td align="center">时间</td>
+                <td align="center">ip</td>
+                <td align="center">请求参数</td>
+                <td align="center">返回结果</td>
+                <td align="center">响应时间</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null && Model.list != null)
+                {
+                    foreach (var item in Model.list)
+                    {
+                        <tr>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("KEY")</td>
+                            <td align="center">@(item.GetValue("SUCCESS").ToStr() == "1" ? "成功" : "失败")</td>
+                            <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">@item.GetValue("URL")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("PROTOCOL")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("ACTIONTIME")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("ACTIONIP")</td>
+                            <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">
+                                @(item.GetValue("ACTIONPARAM").ToStr().Length > 10 ? item.GetValue("ACTIONPARAM").ToStr().Substring(0, 10) + "..." : item.GetValue("ACTIONPARAM"))
+                                <a href="#" data-value="@item.GetValue("ACTIONPARAM")" onclick="FnShow(this)">更多</a>
+                            </td>
+                            <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">
+                                @(item.GetValue("RESULT").ToStr().Length > 10 ? item.GetValue("RESULT").ToStr().Substring(0, 10) + "..." : item.GetValue("RESULT"))
+                                <a href="#" data-value="@item.GetValue("RESULT")" onclick="FnShow(this)">更多</a>
+                            </td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("MILLISECONDS") 毫秒</td>
+                        </tr>
+                    }
+                    if (Model.list.Count == 0)
+                    {
+                        <tr><td colspan="9">找不到相关信息</td></tr>}
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("page", page)
+</div>
+<script>
+    $('#LogTable tbody tr').click(function () {
+        $(this).css('background-color', '#6CC2CC');
+        $('#LogTable tbody tr:odd').not(this).css('background-color', '#ffffff');
+        $('#LogTable tbody tr:even').not(this).css('background-color', '#f3f4f5');
+    });
+
+    function FnShow(obj) {
+        layer.msg($(obj).data("value"));
+    }
+</script>
