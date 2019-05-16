@@ -1,0 +1,77 @@
+﻿@using System.Collections.Generic;
+@using FastUntility.Core.Base;
+@using FastApiGatewayDb.Ui.Models;
+@model FastUntility.Core.Page.PageResult
+
+@{
+    var page = new PageSizeModel();
+
+    page.PageId = Model.pModel.PageId;
+    page.PageSize = Model.pModel.PageSize;
+    page.TotalPage = Model.pModel.TotalPage;
+    page.TotalRecord = Model.pModel.TotalRecord;
+
+    page.FormId = "UserForm";
+    page.ContentId = "UserContent";
+    page.Url = "/User/List";
+    page.TableId = "UserTable";
+}
+
+<div class="box-body table-responsive">
+    <table id="UserTable" class="table table-bordered" style="overflow: hidden;overflow-x: auto;white-space: nowrap;">
+        <thead>
+            <tr>
+                <td align="center">key</td>
+                <td align="center">密钥</td>
+                <td align="center">token</td>
+                <td align="center">过期时间</td>
+                <td align="center">IP</td>
+                <td align="center">访问</td>
+                <td align="center">操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null && Model.list != null)
+                {
+                    foreach (var item in Model.list)
+                    {
+                        <tr>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("APPKEY")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("APPSECRET")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("ACCESSTOKEN")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("ACCESSEXPIRES")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("IP")</td>
+                            <td style="padding-left:20px;" align="left">@item.GetValue("POWER")</td>
+                            <td align="center"><a href="#" onclick="FnEdit('@item.GetValue("APPKEY")')">修改</a></td>
+                        </tr>
+                    }
+                    if (Model.list.Count == 0)
+                    {<tr><td colspan="7">找不到相关信息</td></tr>}
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("page", page)
+</div>
+<script>
+    $('#UserTable tbody tr').click(function () {
+        $(this).css('background-color', '#6CC2CC');
+        $('#UserTable tbody tr:odd').not(this).css('background-color', '#ffffff');
+        $('#UserTable tbody tr:even').not(this).css('background-color', '#f3f4f5');
+    });
+          
+    function FnEdit(name) {
+         var index = layer.open({
+            type: 2,
+            area: ['750px', '660px'],
+            fixed: true, maxmin: false,
+            content: '/User/Option?Key=' + $("#Key").val(),
+            title: name,
+            end: function () {
+                $("#UserQuery").click();
+            }
+        });
+        layer.full(index);
+    }
+</script>

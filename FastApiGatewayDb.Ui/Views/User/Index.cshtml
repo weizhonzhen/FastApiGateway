@@ -1,0 +1,46 @@
+﻿@model FastApiGatewayDb.Ui.Models.QueryPageUrlModel
+<section class="content-header"></section>
+<section class="content">
+    <form class="form-inline" id="UserForm" style="margin-top:-5px;">
+        <div class="form-group" style="width:250px;margin-left:20px;">
+            <label>地址</label>
+            @Html.TextBoxFor(a => a.Key, new { @class = "form-control", @autocomplete = "off"})
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="UserQuery">查询</button>
+        <button type="button" class="btn btn-primary btn-sm" id="UserAdd">增加</button>
+    </form>
+    <div id="UserContent" style="margin-top:5px;"></div>
+</section>
+<script>
+     $(function () {
+        $("#UserQuery").click();
+     });
+
+    $("#UserQuery").click(function () {
+        layer.load(2);
+        $.ajax({
+            type: "POST",
+            url: "/User/List",
+            data: $("#UserForm").serialize(),
+            success: function (result) {
+                layer.closeAll('loading');
+                $("#UserContent").html(result);
+                $("#UserTable tbody tr").children().first().click();
+            }
+        });
+    });
+
+    $("#UserAdd").click(function () {
+       var index = layer.open({
+            type: 2,
+            area: ['750px', '660px'],
+            fixed: true, maxmin: false,
+            content: '/User/Option',
+            title: "用户接口",
+            end: function () {
+                $("#UserQuery").click();
+            }
+        });
+        layer.full(index);
+    });
+</script>
