@@ -1,4 +1,6 @@
 ﻿
+ ![](https://raw.githubusercontent.com/weizhonzhen/FastApiGateway/master/img.png)
+ 
  nuget url: https://www.nuget.org/packages/Fast.ApiGateway/
  ```csharp
 //ConfigureServices 方法里 注入api网关
