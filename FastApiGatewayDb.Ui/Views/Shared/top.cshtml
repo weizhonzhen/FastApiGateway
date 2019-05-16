@@ -1,0 +1,20 @@
+﻿@{
+    var dic = FastApiGateway.ApiInfo;
+}
+<header class="header">
+    <label class="logo">微服务网关</label>
+    <nav class="navbar navbar-static-top">
+        <div class="sidebar-toggle" style="width:100%;">
+            <table style="width:100%;color:#ffffff;">
+                <tr>
+                    <td width="16%" align="center">请求接口：@dic.GetValue("api")个</td>
+                    <td width="16%" align="center">转发接口：@dic.GetValue("route")个</td>
+                    <td width="16%" align="center">授权用户：@dic.GetValue("user")个</td>
+                    <td width="16%" align="center">缓存接口：@dic.GetValue("cache")个</td>
+                    <td width="16%" align="center">异常接口：@dic.GetValue("exception")个</td>
+                    <td width="16%" align="center">今天请求：@dic.GetValue("day")次</td>
+                </tr>
+            </table>
+        </div>
+    </nav>
+</header>

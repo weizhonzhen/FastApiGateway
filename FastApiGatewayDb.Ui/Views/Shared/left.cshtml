@@ -1,0 +1,46 @@
+﻿<ul class="nav nav-tabs" style="background-color:#f9f9f9;">
+    @if (Context.Request.Path.Value.Contains("Home/index")||Context.Request.Path.Value=="/")
+    {
+        <li role="presentation" class="active"><a href="/Home/index"><i class="fa fa-calendar"></i>&nbsp;接口管理</a></li>
+    }
+    else
+    {
+        <li role="presentation"><a href="/Home/index"><i class="fa fa-calendar"></i>&nbsp;接口管理</a></li>
+    }
+
+    @if (Context.Request.Path.Value.Contains("User/index"))
+    {
+        <li role="presentation" class="active"><a href="/User/index"><i class="fa fa-bar-chart-o"></i>&nbsp;用户管理</a></li>
+    }
+    else
+    {
+        <li role="presentation"><a href="/User/index"><i class="fa fa-bar-chart-o"></i>&nbsp;用户管理</a></li>
+    }
+
+    @if (Context.Request.Path.Value.Contains("Exception/index"))
+    {
+        <li role="presentation" class="active"><a href="/Check/index"><i class="fa fa-power-off"></i>&nbsp;异常接口</a></li>
+    }
+    else
+    {
+        <li role="presentation"><a href="/Exception/index"><i class="fa fa-power-off"></i>&nbsp;异常接口</a></li>
+    }
+
+    @if (Context.Request.Path.Value.Contains("Cache/index"))
+    {
+        <li role="presentation" class="active"><a href="/Cache/index"><i class="fa fa-tasks"></i>&nbsp;缓存数据</a></li>
+    }
+    else
+    {
+        <li role="presentation"><a href="/Cache/index"><i class="fa fa-tasks"></i>&nbsp;缓存数据</a></li>
+    }
+
+    @if (Context.Request.Path.Value.Contains("Log/index"))
+    {
+        <li role="presentation" class="active"><a href="/Log/index"><i class="fa fa-desktop"></i>&nbsp;接口日志</a></li>
+    }
+    else
+    {
+        <li role="presentation"><a href="/Log/index"><i class="fa fa-desktop"></i>&nbsp;接口日志</a></li>
+    }
+</ul>

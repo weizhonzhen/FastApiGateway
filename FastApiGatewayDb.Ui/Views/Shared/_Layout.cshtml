@@ -1,0 +1,17 @@
+﻿<html>
+<head>
+    <title>微服务网关</title>
+    @Html.Partial("Meta")
+    @Html.Partial("link")
+    @Html.Partial("script")
+</head>
+<body class="skin-blue" style="     background: #f9f9f9;">
+    @Html.Partial("top")
+    <div class="wrapper row-offcanvas row-offcanvas-left">
+        @Html.Partial("left")
+        <aside>
+            @RenderBody()
+        </aside>
+    </div>
+</body>
+</html>
