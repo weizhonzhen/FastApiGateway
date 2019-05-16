@@ -1,0 +1,50 @@
+﻿@model FastApiGatewayDb.Ui.Models.QueryPageUrlModel
+<section class="content-header"></section>
+<section class="content">
+    <form class="form-inline" id="UrlForm" style="margin-top:-5px;">
+        <div class="form-group" style="width:250px;margin-left:20px;">
+            <label>地址</label>
+            @Html.TextBoxFor(a => a.Key, new { @class = "form-control" , @autocomplete = "off"})
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="ApiQuery">查询</button>
+        <button type="button" class="btn btn-primary btn-sm" id="ApiAdd">增加</button>
+    </form>
+    <form id="DownForm">
+        @Html.HiddenFor(a => a.Key, new { @class = "form-control" })
+    </form>
+    <div id="UrlContent" style="margin-top:5px; float:left;width:38%;"></div>
+<div id="DownContent" style="margin-top:-40px; float:right;width:60%;"></div>
+</section>
+<script>
+     $(function () {
+        $("#ApiQuery").click();
+     });
+
+    $("#ApiQuery").click(function () {
+        layer.load(2);
+        $.ajax({
+            type: "POST",
+            url: "/Home/UrlList",
+            data: $("#UrlForm").serialize(),
+            success: function (result) {
+                layer.closeAll('loading');
+                $("#UrlContent").html(result);
+                $("#UrlTable tbody tr").children().first().click();
+            }
+        });
+    });
+
+    $("#ApiAdd").click(function () {
+       var index = layer.open({
+            type: 2,
+            area: ['750px', '660px'],
+            fixed: true, maxmin: false,
+            content: '/Home/Option',
+            title: "增加接口",
+            end: function () {
+                $("#ApiQuery").click();
+            }
+        });
+        layer.full(index);
+    });
+</script>
