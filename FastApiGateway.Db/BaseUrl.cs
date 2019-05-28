@@ -34,7 +34,10 @@ namespace FastApiGatewayDb
         {
             var model = new ReturnModel();
             try
-            {
+            {                
+                if (!url.Contains("?"))
+                    url = string.Format("{0}?", url);
+                
                 var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
@@ -57,7 +60,10 @@ namespace FastApiGatewayDb
         {
             var model = new ReturnModel();
             try
-            {
+            {                
+                if (!url.Contains("?"))
+                    url = string.Format("{0}?", url);
+                
                 var content = new StringContent("", Encoding.UTF8, "application/json");
                 var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
                 model.status = (int)response.StatusCode;
