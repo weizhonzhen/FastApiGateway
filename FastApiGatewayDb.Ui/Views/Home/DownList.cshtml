@@ -28,6 +28,7 @@
                 <td align="center">是否流</td>
                 <td align="center">soap方法</td>
                 <td align="center">soap参数</td>
+                <td align="center">排序</td>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +37,7 @@
                 {
                     foreach (var item in Model.list)
                     {
-                        <tr>
+                        <tr data-value="@item.GetValue("IsShowForm")" data-orderby="@item.GetValue("orderby")">
                             <td style="padding-left:20px;" align="left">@item.GetValue("name")</td>
                             <td align="left" style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;">@item.GetValue("url")</td>
                             <td>@item.GetValue("PROTOCOL")</td>
@@ -44,10 +45,11 @@
                             <td>@(item.GetValue("ISBODY").ToStr() == "1" ? "是" : "否")</td>
                             <td style="padding-left:20px;" align="left">@item.GetValue("SOAPMETHOD")</td>
                             <td style="padding-left:20px;" align="left">@item.GetValue("SOAPPARAMNAME")</td>
+                            <td>@item.GetValue("orderby")</td>
                         </tr>
                     }
                     if (Model.list.Count == 0)
-                    {<tr><td colspan="7">找不到相关信息</td></tr>}
+                    {<tr><td colspan="8">找不到相关信息</td></tr>}
                 }
             }
         </tbody>
@@ -59,5 +61,9 @@
         $(this).css('background-color', '#6CC2CC');
         $('#DownTable tbody tr:odd').not(this).css('background-color', '#ffffff');
         $('#DownTable tbody tr:even').not(this).css('background-color', '#f3f4f5');
+        if ($(this).data("value") == "1") {
+            $("#OrderBy").val($(this).data("orderby"));
+            ShowDownForm();
+        }
     });
 </script>

@@ -1,0 +1,107 @@
+﻿@model FastApiGatewayDb.Ui.Models.DownUrlModel
+@{
+    Layout = null;
+    var selectList = new List<SelectListItem>();
+    selectList.Add(new SelectListItem { Value = "1", Text = "是" });
+    selectList.Add(new SelectListItem { Value = "0", Text = "否" });
+
+    var typeList = new List<SelectListItem>();
+    typeList.Add(new SelectListItem { Value = "Http", Text = "Http" });
+    typeList.Add(new SelectListItem { Value = "Soap", Text = "Soap" });
+
+    var methodList = new List<SelectListItem>();
+    methodList.Add(new SelectListItem { Value = "Post", Text = "Post" });
+    methodList.Add(new SelectListItem { Value = "Get", Text = "Get" });
+
+    var sourceList = new List<SelectListItem>();
+    sourceList.Add(new SelectListItem { Value = "1", Text = "当前请求" });
+    sourceList.Add(new SelectListItem { Value = "2", Text = "上个请求" });
+}
+<html>
+<head>
+    @Html.Partial("Meta")
+    @Html.Partial("link")
+    @Html.Partial("script")
+</head>
+
+<body class="form-body">
+    <form id="SubmitLeafForm">
+        <H4 style="text-align:center;margin-bottom:20px;"><b>下游接口参数</b></H4>
+        @Html.HiddenFor(a=>a.Key)
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>请求方法</label></div>
+            @Html.DropDownListFor(a => a.Method, methodList, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>请求排序</label></div>
+            @Html.TextBoxFor(a => a.OrderBy, new { @class = "form-control shorLength" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>下游名称</label></div>
+            @Html.TextBoxFor(a => a.Name, new { @class = "form-control textLength1", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>下游地址</label></div>
+            @Html.TextBoxFor(a => a.Url, new { @class = "form-control textLength1", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>是&nbsp;否&nbsp;流</label></div>
+            @Html.DropDownListFor(a => a.IsBody, selectList, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>请求协议</label></div>
+            @Html.DropDownListFor(a => a.Protocol, typeList, new { @class = "form-control shorLength" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>是否解码</label></div>
+            @Html.DropDownListFor(a => a.IsDecode, selectList, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>等待(小时)</label></div>
+            @Html.TextBoxFor(a => a.WaitHour, new { @class = "form-control shorLength", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>是否结果</label></div>
+            @Html.DropDownListFor(a => a.IsResult, selectList, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>参数来源</label></div>
+            @Html.DropDownListFor(a => a.SourceParam, sourceList, new { @class = "form-control shorLength" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>soap方法</label></div>
+            @Html.TextBoxFor(a => a.SoapMethod, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>soap参数</label></div>
+            @Html.TextBoxFor(a => a.SoapParamName, new { @class = "form-control shorLength" })
+        </div>
+        <div class="center" style="margin-top:20px;margin-bottom:20px;">
+            <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
+            <button type="button" class="btn btn-primary center" id="resetBtn">重置</button>
+            <button type="button" class="btn btn-primary center" id="CancelBtn">关闭</button>
+        </div>
+    </form>
+    <script>
+        $("#resetBtn").click(function () {
+            debugger;
+            $("#SubmitLeafForm #OrderBy").val("");
+            $("#SubmitLeafForm #Name").val("");
+            $("#SubmitLeafForm #Url").val("");
+            $("#SubmitLeafForm #WaitHour").val("");
+            $("#SubmitLeafForm #SoapMethod").val("");
+            $("#SubmitLeafForm #SoapParamName").val("");
+        });
+
+        $("#CancelBtn").click(function () {
+            parent.layer.closeAll('iframe');
+        });
+
+        $("#saveBtn").click(function () {
+            layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/Home/DownUrlOption",
+                data: $("#SubmitLeafForm").serialize(),
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.success) 
+                    { ShowDownList(); $("#resetBtn").click();}
+                    else
+                        layer.alert(result.msg);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

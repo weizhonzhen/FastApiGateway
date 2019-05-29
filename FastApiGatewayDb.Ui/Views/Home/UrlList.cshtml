@@ -41,7 +41,10 @@
                         <tr data-value="@item.GetValue("key")">
                             <td style="padding-left:20px;" align="left">@item.GetValue("key")<font color="red">&nbsp;@label</font></td>
                             <td style="padding-left:20px;" align="left">@item.GetValue("name")</td>
-                            <td align="center"><a href="#" onclick="FnEdit('@item.GetValue("name")')">修改</a></td>
+                            <td align="center">
+                                <a href="#" onclick="FnEdit('@item.GetValue("name")')">修改</a>&nbsp;&nbsp;
+                                <a href="#" onclick="FnDel('@item.GetValue("key")')">删除</a>
+                            </td>
                         </tr>
                     }
                     if (Model.list.Count == 0)
@@ -75,20 +78,26 @@
         });
     }
 
-    function FnDel() {
-        layer.load(2);
-        $.ajax({
-            type: "POST",
-            url: "/Home/DelUrl",
-            data: $("#DownForm").serialize(),
-            success: function (result) {
-                layer.closeAll('loading');
-                if (result.success)
-                    $("#ApiQuery").click();
-                else
-                    layer.alert(result.msg);
-            }
-        });
+    function FnDel(key) {
+        var index = layer.confirm("是否删除接口：<font color='red'>" + key + "</font>", {
+            btn: ['是', '否']
+        }, function () {
+            layer.close(index);
+            layer.load(2);
+                layer.load(2);
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/DelUrl",
+                    data: { "key": key },
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        if (result.success)
+                            $("#ApiQuery").click();
+                        else
+                            layer.alert(result.msg);
+                    }
+                });
+        }, function () { });       
     }
 
     function FnEdit(name) {

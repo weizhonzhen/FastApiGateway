@@ -1,1 +1,131 @@
-﻿@{ Layout = null;}
+﻿@using FastUntility.Core.Cache;
+@using FastUntility.Core.Base;
+@using FastApiGatewayDb.Ui.Models;
+
+@model FastApiGatewayDb.Ui.Models.UrlModel
+@{
+    Layout = null;
+    var selectList = new List<SelectListItem>();
+    selectList.Add(new SelectListItem { Value = "1", Text = "是" });
+    selectList.Add(new SelectListItem { Value = "0", Text = "否" });
+
+    var typeList = new List<SelectListItem>();
+    typeList.Add(new SelectListItem { Value = "", Text = "普通请求" });
+    typeList.Add(new SelectListItem { Value = "Composite", Text = "合并请求" });
+    typeList.Add(new SelectListItem { Value = "Polling", Text = "轮循请求" });
+}
+<html>
+<head>
+    @Html.Partial("Meta")
+    @Html.Partial("link")
+    @Html.Partial("script")
+</head>
+<body class="form-body">
+    <form id="DownForm">
+        @Html.HiddenFor(a => a.Key, new { @class = "form-control" })
+        @Html.Hidden("Success", "1")
+        @Html.Hidden("OrderBy", "1")
+    </form>
+    <div id="DownContent" style="clear:both;"></div>
+
+    <div style="float:left;width:50%;margin-top:-60px;" id="DownFormContent"></div>
+
+    <div style="float:right;width:45%;margin-top:-10px;">
+        <div style="clear:both;">
+            <form id="SubmitForm">
+                <H4 style="text-align:center;margin-bottom:20px;"><b>接口参数</b></H4>
+                <div class="input-group">
+                    <div class="input-group-addon input-group-none"><label>接口地址</label></div>
+                    @Html.TextBoxFor(a => a.Key, new { @class = "form-control shorLength", @autocomplete = "off" })
+                    <div class="input-group-addon input-group-none"><label>是否token</label></div>
+                    @Html.DropDownListFor(a => a.IsGetToken, selectList, new { @class = "form-control shorLength" })
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon input-group-none"><label>接口名称</label></div>
+                    @Html.TextBoxFor(a => a.Name, new { @class = "form-control textLength", @autocomplete = "off" })
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon input-group-none"><label>接口类型</label></div>
+                    @Html.DropDownListFor(a => a.Schema, typeList, new { @class = "form-control shorLength" })
+                    <div class="input-group-addon input-group-none"><label>是否匿名</label></div>
+                    @Html.DropDownListFor(a => a.IsAnonymous, selectList, new { @class = "form-control shorLength" })
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon input-group-none"><label>是否缓存</label></div>
+                    @Html.DropDownListFor(a => a.IsCache, selectList, new { @class = "form-control shorLength" })
+                    <div class="input-group-addon input-group-none"><label>过期(天)</label></div>
+                    @Html.TextBoxFor(a => a.CacheTimeOut, new { @class = "form-control shorLength", @autocomplete = "off" })
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon input-group-none"><label>文本日记</label></div>
+                    @Html.DropDownListFor(a => a.IsTxtLog, selectList, new { @class = "form-control shorLength" })
+                    <div class="input-group-addon input-group-none"><label>数据日记</label></div>
+                    @Html.DropDownListFor(a => a.IsDbLog, selectList, new { @class = "form-control shorLength" })
+                </div>
+                <div class="center" style="margin-top:20px;margin-bottom:20px;">
+                    <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
+                    <button type="button" class="btn btn-primary center" id="CancelBtn">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            ShowDownList();
+            if ($("#DownForm #key").val() != "")
+                ShowDownForm();
+        });
+
+        $("#CancelBtn").click(function () {
+            parent.layer.closeAll('iframe');
+        });
+
+        function ShowDownList() {
+            layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/Home/DownList",
+                data: $("#DownForm").serialize(),
+                success: function (result) {
+                    layer.closeAll('loading');
+                    $("#DownContent").html(result);
+                    $("#DownTable tbody tr").children().first().click();
+                }
+            });
+        }
+
+        function ShowDownForm() {
+            layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/Home/DownForm",
+                data: $("#DownForm").serialize(),
+                success: function (result) {
+                    layer.closeAll('loading');
+                    $("#DownFormContent").html(result);
+                }
+            });
+        }
+
+        $("#saveBtn").click(function () {
+            layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/Home/UrlOption",
+                data: $("#SubmitForm").serialize(),
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.success) {
+                        $("#DownForm #key").val($("#SubmitForm #key").val());
+                        ShowDownForm();
+                        ShowDownList();
+                    }
+                    else
+                        layer.alert(result.msg);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

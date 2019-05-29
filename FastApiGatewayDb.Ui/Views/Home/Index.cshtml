@@ -10,7 +10,8 @@
         <button type="button" class="btn btn-primary btn-sm" id="ApiAdd">增加</button>
     </form>
     <form id="DownForm">
-        @Html.HiddenFor(a => a.Key, new { @class = "form-control" })
+        @Html.HiddenFor(a => a.Key)        
+        @Html.Hidden("Success", "0")
     </form>
     <div id="UrlContent" style="margin-top:5px; float:left;width:38%;"></div>
 <div id="DownContent" style="margin-top:-40px; float:right;width:60%;"></div>
@@ -19,6 +20,8 @@
      $(function () {
         $("#ApiQuery").click();
      });
+
+    $("#Key").keyup(function () { $("#ApiQuery").click(); });
 
     $("#ApiQuery").click(function () {
         layer.load(2);
