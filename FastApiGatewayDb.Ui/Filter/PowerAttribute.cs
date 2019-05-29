@@ -28,10 +28,7 @@ namespace FastApiGatewayDb.Ui.Filter
             {
                 var item = controller.ViewData.ModelState.Values.ToList().Find(a => a.Errors.Count > 0);
                 var error = item.Errors.Where(a => !string.IsNullOrEmpty(a.ErrorMessage)).Take(1).SingleOrDefault().ErrorMessage;
-                var dic = new Dictionary<string, object>();
-                dic.Add("success", false);
-                dic.Add("msg", error);
-                filterContext.Result = new JsonResult(BaseJson.ModelToJson(dic));
+                filterContext.Result = new JsonResult(new { success = false, msg = error });
                 return;
             }
             #endregion
