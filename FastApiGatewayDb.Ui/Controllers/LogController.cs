@@ -38,7 +38,7 @@ namespace FastApiGatewayDb.Ui.Controllers
         [HttpPost]
         public IActionResult List(QueryPageUrlModel item)
         {
-            using (var db = new DataContext(DbKey.Api))
+            using (var db = new DataContext(App.DbKey.Api))
             {
                 var page = new PageModel();
                 page.PageSize = item.PageSize == 0 ? 10 : item.PageSize;
@@ -50,7 +50,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 param.Add(new OracleParameter { ParameterName = "Day", Value = item.Day.ToDate("yyyy-MM-dd").ToDate() });
                 param.Add(new OracleParameter { ParameterName = "Success", Value = item.Success });
 
-                var info = FastMap.QueryPage(page, "Api.Log", param.ToArray(), null, DbKey.Api);
+                var info = FastMap.QueryPage(page, "Api.Log", param.ToArray(), db);
 
                 return PartialView("List", info);
             }

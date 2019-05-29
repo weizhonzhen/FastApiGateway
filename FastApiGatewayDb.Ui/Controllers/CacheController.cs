@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FastApiGatewayDb.Ui.Models;
 using FastData.Core;
 using FastData.Core.Context;
+using FastUntility.Core.Base;
 using FastUntility.Core.Page;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
@@ -34,7 +35,7 @@ namespace FastApiGatewayDb.Ui.Controllers
         [HttpPost]
         public IActionResult List(QueryPageUrlModel item)
         {
-            using (var db = new DataContext(DbKey.Api))
+            using (var db = new DataContext(App.DbKey.Api))
             {
                 var page = new PageModel();
                 page.PageSize = item.PageSize == 0 ? 10 : item.PageSize;
@@ -42,7 +43,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
                 var param = new List<OracleParameter>();
                 param.Add(new OracleParameter { ParameterName = "Key", Value = item.Key });
-                var info = FastMap.QueryPage(page, "Api.Cache", param.ToArray(), null, DbKey.Api);
+                var info = FastMap.QueryPage(page, "Api.Cache", param.ToArray(), db);
 
                 return PartialView("List", info);
             }
