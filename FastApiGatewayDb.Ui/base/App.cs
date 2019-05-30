@@ -35,4 +35,8 @@ namespace App
         public readonly static string Api = "ApiGateway";
     }
 
+    public static class Cache
+    {
+        public readonly static string UserInfo = "user";
+    }
 }
