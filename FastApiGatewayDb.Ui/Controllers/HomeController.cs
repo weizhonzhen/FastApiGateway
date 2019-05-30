@@ -7,11 +7,55 @@ using FastUntility.Core.Page;
 using FastApiGatewayDb.Ui.Models;
 using FastApiGatewayDb.DataModel;
 using FastUntility.Core.Base;
+using FastUntility.Core.Cache;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FastApiGatewayDb.Ui.Controllers
 {
     public class HomeController : Controller
     {
+        #region 加载登陆
+        /// <summary>
+        /// 加载登陆
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            var model = new LoginModel();
+            ViewData.Model = model;
+            return View();
+        }
+        #endregion
+
+        #region 登陆
+        /// <summary>
+        /// 登陆
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Login(LoginModel item)
+        {
+            var isSuccess = false;
+
+            using (var db = new DataContext(App.DbKey.Api))
+            {
+                var info = FastRead.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToItem<ApiGatewayLogin>(db);
+
+                isSuccess = BaseSymmetric.Generate(item.Pwd).ToLower() == info.UserPwd.ToLower();
+
+                if (isSuccess)
+                {
+                    BaseCache.Set<ApiGatewayLogin>(App.Cache.UserInfo, info);
+                    return RedirectToActionPermanent("index", "Home");
+                }
+                else
+                    return Json(new { success = isSuccess, msg = "密码不正确" });
+            }
+        }
+        #endregion
+
         #region 加载接口
         /// <summary>
         /// 加载接口
