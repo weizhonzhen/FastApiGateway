@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using FastUntility.Core.Base;
+using FastUntility.Core.Cache;
 using System.IO.Compression;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace FastApiGatewayDb.Ui.Filter
 {
@@ -20,8 +20,14 @@ namespace FastApiGatewayDb.Ui.Filter
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
-
+            
             var controller = filterContext.Controller as Controller;
+            
+            foreach (var item in controller.ControllerContext.ActionDescriptor.FilterDescriptors.ToList())
+            {
+                if (item.Filter is AllowAnonymousFilter)
+                    return;
+            }
 
             #region model验证处理
             if (!controller.ModelState.IsValid)
@@ -29,6 +35,14 @@ namespace FastApiGatewayDb.Ui.Filter
                 var item = controller.ViewData.ModelState.Values.ToList().Find(a => a.Errors.Count > 0);
                 var error = item.Errors.Where(a => !string.IsNullOrEmpty(a.ErrorMessage)).Take(1).SingleOrDefault().ErrorMessage;
                 filterContext.Result = new JsonResult(new { success = false, msg = error });
+                return;
+            }
+            #endregion
+
+            #region 登陆验证
+            if(!BaseCache.Exists(App.Cache.UserInfo))
+            {
+                filterContext.Result = new RedirectToActionResult("login", "Home", "default");
                 return;
             }
             #endregion
