@@ -25,12 +25,6 @@ namespace FastApiGatewayDb.Ui.Filter
             
             var controller = filterContext.Controller as Controller;
             
-            foreach (var item in controller.ControllerContext.ActionDescriptor.FilterDescriptors.ToList())
-            {
-                if (item.Filter is AllowAnonymousFilter)
-                    return;
-            }
-
             #region model验证处理
             if (!controller.ModelState.IsValid)
             {
@@ -40,9 +34,15 @@ namespace FastApiGatewayDb.Ui.Filter
                 return;
             }
             #endregion
+            
+            foreach (var item in controller.ControllerContext.ActionDescriptor.FilterDescriptors.ToList())
+            {
+                if (item.Filter is AllowAnonymousFilter)
+                    return;
+            }
 
             #region 登陆验证
-            if(!BaseCache.Exists(App.Cache.UserInfo))
+            if (!BaseCache.Exists(App.Cache.UserInfo))
             {
                 filterContext.Result = new RedirectToActionResult("login", "Home", "default");
                 return;
