@@ -35,20 +35,23 @@ namespace FastApiGatewayDb.Ui.Controllers
         /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Login(LoginModel item)
         {
             var isSuccess = false;
 
             using (var db = new DataContext(App.DbKey.Api))
             {
-                var info = FastRead.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToItem<ApiGatewayLogin>(db);
+                var info = FastRead.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToDic(db);
 
-                isSuccess = BaseSymmetric.Generate(item.Pwd).ToLower() == info.UserPwd.ToLower();
+                isSuccess = BaseSymmetric.Generate(item.Pwd).ToLower() == info.GetValue("UserPwd").ToStr().ToLower();
+
+                info.Add("ip", App.Ip.Get(HttpContext));
 
                 if (isSuccess)
                 {
-                    BaseCache.Set<ApiGatewayLogin>(App.Cache.UserInfo, info);
-                    return RedirectToActionPermanent("index", "Home");
+                    BaseCache.Set<Dictionary<string,object>>(App.Cache.UserInfo, info);
+                    return Json(new { success = isSuccess, url = "home/index" });
                 }
                 else
                     return Json(new { success = isSuccess, msg = "密码不正确" });
