@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using FastUntility.Core.Cache;
 using System.IO.Compression;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using FastUntility.Core.Base;
 
 namespace FastApiGatewayDb.Ui.Filter
 {
@@ -44,6 +46,12 @@ namespace FastApiGatewayDb.Ui.Filter
             {
                 filterContext.Result = new RedirectToActionResult("login", "Home", "default");
                 return;
+            }
+            else
+            {
+                var dic = BaseCache.Get<Dictionary<string, object>>(App.Cache.UserInfo);
+                if (dic.GetValue("ip").ToStr() != App.Ip.Get(filterContext.HttpContext))
+                    filterContext.Result = new RedirectToActionResult("login", "Home", "default");
             }
             #endregion
         }
