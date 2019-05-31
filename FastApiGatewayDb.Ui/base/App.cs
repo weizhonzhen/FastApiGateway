@@ -4,6 +4,8 @@ using FastData.Core.Context;
 using FastData.Core;
 using FastApiGatewayDb.DataModel;
 using FastUntility.Core.Base;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace App
 {
@@ -38,5 +40,17 @@ namespace App
     public static class Cache
     {
         public readonly static string UserInfo = "user";
+    }
+
+    public static class Ip
+    {
+        public static string Get(HttpContext context)
+        {
+            var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrEmpty(ip))
+                ip = context.Connection.RemoteIpAddress.ToString();
+
+            return ip;
+        }
     }
 }
