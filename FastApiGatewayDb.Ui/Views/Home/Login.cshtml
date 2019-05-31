@@ -16,7 +16,7 @@
         <div class="box-login form-login">
             <div class="form-group">
                 <span class="input-icon">
-                    @Html.TextBoxFor(a => a.Code, new { @class = "form-control", @placeholder = "工号" })
+                    @Html.TextBoxFor(a => a.Code, new { @class = "form-control", @placeholder = "用户名" })
                 </span>
             </div>
             <div class="form-group form-actions">
@@ -43,6 +43,13 @@
 </body>
 </html>
 <script>
+    window.isSubmit = true;
+    $(document).keyup(function (event) {
+        if (event.keyCode == 13 && window.isSubmit) {
+            $(".btn").click();
+        }
+    });
+
     $(".btn").click(function () {
         layer.load(2);
         $.ajax({
@@ -58,7 +65,7 @@
                 if (result.success) {
                     window.location.href = result.url;
                 } else {
-                    layer.alert(result.msg);
+                    layer.msg(result.msg, function () { window.isSubmit = true; });
                 }
             }
         });
