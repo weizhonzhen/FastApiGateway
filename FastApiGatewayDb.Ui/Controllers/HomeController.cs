@@ -187,6 +187,13 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.SourceParam = item.SourceParam;
                 model.Url = item.Url;
                 model.WaitHour = item.WaitHour;
+
+                if(model.Key==null)
+                {
+                    model.IsResult = 1;
+                    model.IsDecode = 1;
+                    model.IsBody = 0;
+                }
             }
 
             return PartialView("OptionLeaf", model);
@@ -207,9 +214,9 @@ namespace FastApiGatewayDb.Ui.Controllers
                 var success = true;
                 var model = new ApiGatewayDownParam();
                 model.Key = item.Key;
-                model.IsBody = item.IsBody;
-                model.IsDecode = item.IsDecode;
-                model.IsResult = item.IsResult;
+                model.IsBody = (int)item.IsBody;
+                model.IsDecode = (int)item.IsDecode;
+                model.IsResult = (int)item.IsResult;
                 model.Method = item.Method;
                 model.Name = item.Name;
                 model.OrderBy = item.OrderBy;
@@ -307,6 +314,27 @@ namespace FastApiGatewayDb.Ui.Controllers
                     db.RollbackTrans();
                     return Json(new { success = isSuccess, msg = "删除失败" });
                 }
+            }
+        }
+        #endregion
+
+        #region 下游接口删除
+        /// <summary>
+        /// 下游接口删除
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult DownUrlDel(DownUrlModel item)
+        {
+            using (var db = new DataContext(App.DbKey.Api))
+            {
+                var isSuccess = db.Delete<ApiGatewayDownParam>(a => a.Key == item.Key && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
+                
+                if (isSuccess)
+                    return Json(new { success = isSuccess, msg = "删除成功" });
+                else
+                    return Json(new { success = isSuccess, msg = "删除失败" });
             }
         }
         #endregion
