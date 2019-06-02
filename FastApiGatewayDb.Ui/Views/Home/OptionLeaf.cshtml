@@ -1,9 +1,10 @@
 ﻿@model FastApiGatewayDb.Ui.Models.DownUrlModel
 @{
+    Model.WaitHour = "1";
     Layout = null;
     var selectList = new List<SelectListItem>();
     selectList.Add(new SelectListItem { Value = "1", Text = "是" });
-    selectList.Add(new SelectListItem { Value = "0", Text = "否" });
+    selectList.Add(new SelectListItem { Value = "0", Text = "否", Selected = true });
 
     var typeList = new List<SelectListItem>();
     typeList.Add(new SelectListItem { Value = "Http", Text = "Http" });
@@ -29,10 +30,10 @@
         <H4 style="text-align:center;margin-bottom:20px;"><b>下游接口参数</b></H4>
         @Html.HiddenFor(a=>a.Key)
         <div class="input-group">
-            <div class="input-group-addon input-group-none"><label>请求方法</label></div>
-            @Html.DropDownListFor(a => a.Method, methodList, new { @class = "form-control shorLength" })
             <div class="input-group-addon input-group-none"><label>请求排序</label></div>
             @Html.TextBoxFor(a => a.OrderBy, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"><label>请求方法</label></div>
+            @Html.DropDownListFor(a => a.Method, methodList, new { @class = "form-control shorLength" })
         </div>
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>下游名称</label></div>
@@ -68,6 +69,7 @@
         </div>
         <div class="center" style="margin-top:20px;margin-bottom:20px;">
             <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
+            <button type="button" class="btn btn-primary center" id="delBtn">删除</button>
             <button type="button" class="btn btn-primary center" id="resetBtn">重置</button>
             <button type="button" class="btn btn-primary center" id="CancelBtn">关闭</button>
         </div>
@@ -85,6 +87,21 @@
 
         $("#CancelBtn").click(function () {
             parent.layer.closeAll('iframe');
+        });
+
+        $("#delBtn").click(function () {
+            layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/Home/DownUrlDel",
+                data: $("#SubmitLeafForm").serialize(),
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.success) { ShowDownList(); $("#resetBtn").click(); }
+                    else
+                        layer.alert(result.msg);
+                }
+            });
         });
 
         $("#saveBtn").click(function () {
