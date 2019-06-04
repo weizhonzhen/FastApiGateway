@@ -90,18 +90,23 @@
         });
 
         $("#delBtn").click(function () {
-            layer.load(2);
-            $.ajax({
-                type: "POST",
-                url: "/Home/DownUrlDel",
-                data: $("#SubmitLeafForm").serialize(),
-                success: function (result) {
-                    layer.closeAll('loading');
-                    if (result.success) { ShowDownList(); $("#resetBtn").click(); }
-                    else
-                        layer.alert(result.msg);
-                }
-            });
+            var index = layer.confirm("是否删除接口", {
+                btn: ['是', '否']
+            }, function () {
+                layer.close(index);
+                layer.load(2);
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/DownUrlDel",
+                    data: $("#SubmitLeafForm").serialize(),
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        if (result.success) { ShowDownList(); $("#resetBtn").click(); }
+                        else
+                            layer.alert(result.msg);
+                    }
+                });
+            }, function () { });
         });
 
         $("#saveBtn").click(function () {
