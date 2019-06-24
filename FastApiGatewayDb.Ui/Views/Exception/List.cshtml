@@ -41,7 +41,7 @@
                             <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">@item.GetValue("NEXTACTION")</td>
                             <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left" >
                                 @(item.GetValue("ERRORMSG").ToStr().Length>10?item.GetValue("ERRORMSG").ToStr().Substring(0,10)+"...":item.GetValue("ERRORMSG") )
-                                <a href="#" data-value="@item.GetValue("ERRORMSG")" onclick="FnShow(this)">更多</a> 
+                                <a href="#" data-value="@item.GetValue("ERRORMSG").ToStr().Replace("<", "&lt;").Replace(">", "&gt;")" onclick="FnShow(this)">更多</a> 
                             </td>
                         </tr>
                     }
