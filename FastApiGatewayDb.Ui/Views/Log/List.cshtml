@@ -46,11 +46,11 @@
                             <td style="padding-left:20px;" align="left">@item.GetValue("ACTIONIP")</td>
                             <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">
                                 @(item.GetValue("ACTIONPARAM").ToStr().Length > 10 ? item.GetValue("ACTIONPARAM").ToStr().Substring(0, 10) + "..." : item.GetValue("ACTIONPARAM"))
-                                <a href="#" data-value="@item.GetValue("ACTIONPARAM")" onclick="FnShow(this)">更多</a>
+                                <a href="#" data-value="@item.GetValue("ACTIONPARAM").ToStr().Replace("<", "&lt;").Replace(">", "&gt;")" onclick="FnShow(this)">更多</a>
                             </td>
                             <td style="padding-left:20px;word-wrap:break-word;word-break:break-all;white-space:normal;" align="left">
                                 @(item.GetValue("RESULT").ToStr().Length > 10 ? item.GetValue("RESULT").ToStr().Substring(0, 10) + "..." : item.GetValue("RESULT"))
-                                <a href="#" data-value="@item.GetValue("RESULT")" onclick="FnShow(this)">更多</a>
+                                <a href="#" data-value="@item.GetValue("RESULT").ToStr().Replace("<", "&lt;").Replace(">", "&gt;")" onclick="FnShow(this)">更多</a>
                             </td>
                             <td style="padding-left:20px;" align="left">@item.GetValue("MILLISECONDS") 毫秒</td>
                         </tr>
