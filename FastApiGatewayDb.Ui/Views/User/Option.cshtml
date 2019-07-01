@@ -1,5 +1,76 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@using FastApiGatewayDb.DataModel;
+@model FastApiGatewayDb.Ui.Models.UserModel
 @{
+    Layout = null;
+    var list = ViewBag.list as List<ApiGatewayUrl>;
+    var power = ViewBag.Power as string[];
 }
+<html>
+<head>
+    @Html.Partial("Meta")
+    @Html.Partial("link")
+    @Html.Partial("script")
+</head>
+<body class="form-body">
+    <form id="SubmitForm">
+        <div class="input-group" style="margin-top:-15px;">
+            <div class="input-group-addon input-group-none"><label>权限</label></div>
+            <select id="Power" name="Power" class="form-control chosen-select" data-placeholder="请选择接口" multiple>
+                @foreach (var item in list)
+                {
+                    if (power.Count(a => a == item.Key) > 0)
+                    {
+                        <option selected="selected" value="@(item.Key)">@(item.Name)</option>
+                    }
+                    else
+                    {
+                        <option value="@(item.Key)">@(item.Name)</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>AppKey</label></div>
+            @Html.TextBoxFor(a => a.AppKey, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>ip地址</label></div>
+            @Html.TextBoxFor(a => a.Ip, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="center" style="margin-top:20px;margin-bottom:20px;">
+            <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
+            <button type="button" class="btn btn-primary center" id="CancelBtn">关闭</button>
+        </div>
+    </form>
+    <script>
+        $(function () {
+            $(".chosen-select").chosen({
+                no_results_text: "没有找到结果！",
+                search_contains: true,
+                allow_single_deselect: true,
+                max_selected_options: 10
+            });
+        });
+               
+        $("#CancelBtn").click(function () {
+            parent.layer.closeAll('iframe');
+        });
+
+        $("#saveBtn").click(function () {
+            parent.layer.load(2);
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: "/User/UserOption",
+                data: { "AppKey": $("#AppKey").val(), "Ip": $("#Ip").val(), "Power": $("#Power").val().join(",")},
+                success: function (result) {
+                    parent.layer.closeAll('loading');
+                    if (result.success) { $("#CancelBtn").click(); }
+                    else
+                        parent.layer.alert(result.msg);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
