@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fast.Data.Core" Version="1.5.1" />
+    <PackageReference Include="Fast.Data.Core" Version="1.5.3" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.18.6" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Filter\" />
+    <Folder Include="wwwroot\Scripts\chosen\" />
   </ItemGroup>
 
   <ItemGroup>
