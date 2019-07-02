@@ -228,7 +228,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.WaitHour = item.WaitHour;
 
                 if (FastRead.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).ToCount(db) > 0)
-                    success = db.Update<ApiGatewayDownParam>(model, a => a.Key.ToLower() == a.Key.ToLower() && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
+                    success = db.Update<ApiGatewayDownParam>(model, a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
                 else
                     success = db.Add(model).writeReturn.IsSuccess;
 
@@ -265,7 +265,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Schema = item.Schema;
                 
                 if (FastRead.Query<ApiGatewayUrl>(a => a.Key.ToLower() == item.Key.ToLower()).ToCount(db) > 0)
-                    success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == a.Key.ToLower()).writeReturn.IsSuccess;
+                    success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == item.Key.ToLower()).writeReturn.IsSuccess;
                 else
                     success = db.Add(model).writeReturn.IsSuccess;
 
