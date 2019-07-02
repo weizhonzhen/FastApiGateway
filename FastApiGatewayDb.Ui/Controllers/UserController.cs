@@ -75,6 +75,8 @@ namespace FastApiGatewayDb.Ui.Controllers
                     else
                         ViewBag.Power = new string[0];
                 }
+                else
+                    ViewBag.Power = new string[0];
             }
 
             ViewBag.List = list;
