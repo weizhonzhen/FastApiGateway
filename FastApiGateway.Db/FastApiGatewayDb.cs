@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -9,10 +9,11 @@ using System.Diagnostics;
 using FastUntility.Core.Base;
 using FastData.Core;
 using FastData.Core.Context;
-using FastApiGatewayDb.DataModel.Oracle;
+using FastApiGatewayDb.DataModel;
 using FastApiGatewayDb.Model;
 using System.Web;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace FastApiGatewayDb
 {
@@ -21,7 +22,7 @@ namespace FastApiGatewayDb
         //接口数据库
         public static string ParamKey = "param";
         public static string DbApi = "ApiGateway";
-        public Task ContentAsync(HttpContext context)
+        public Task ContentAsync(HttpContext context, IHttpClientFactory client)
         {
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
@@ -66,21 +67,21 @@ namespace FastApiGatewayDb
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    return Polling(item, context, db, downParam, urlParamDecode,urlParam);
+                                    return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam);
+                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
                                 else
-                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam);
+                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                return Polling(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                return Composite(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
                             else
-                                return Normal(item, context, db, downParam, urlParamDecode, urlParam);
+                                return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
                         }
                     }
                 }
@@ -95,7 +96,7 @@ namespace FastApiGatewayDb
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog,int isDbLog, DataContext db, HttpContext context, string ActionId, int OrderBy)
+        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog, int isDbLog, DataContext db, HttpContext context, string ActionId, int OrderBy, IHttpClientFactory client)
         {
             var info = FastRead.Query<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()).ToItem<ApiGatewayWait>(db) ?? new ApiGatewayWait();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
@@ -113,19 +114,19 @@ namespace FastApiGatewayDb
                 stopwatch.Start();
 
                 if (downparam.Protocol.ToLower() == "soap")
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param);
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client);
                 else if (downparam.Protocol.ToLower() == "http")
                 {
                     //http
                     if (downparam.Method.ToStr().ToLower() == "post")
                     {
                         if (downparam.IsBody == 1)
-                            result = BaseUrl.PostContent(downparam.Url, param, key);
+                            result = BaseUrl.PostContent(downparam.Url, param, key,client);
                         else
-                            result = BaseUrl.PostUrl(downparam.Url, param, key);
+                            result = BaseUrl.PostUrl(downparam.Url, param, key,client);
                     }
                     else if (downparam.Method.ToStr().ToLower() == "get")
-                        result = BaseUrl.GetUrl(downparam.Url, param, key);
+                        result = BaseUrl.GetUrl(downparam.Url, param, key,client);
                 }
                 //else if (downparam.Protocol.ToLower() == "mq")
                 //    //mq
@@ -154,13 +155,13 @@ namespace FastApiGatewayDb
                 logInfo.ActionId = ActionId;
                 logInfo.OrderBy = OrderBy;
                 logInfo.Key = key;
-                logInfo.ActionTime = DateTime.Now; 
+                logInfo.ActionTime = DateTime.Now;
                 logInfo.Url = downparam.Url;
                 logInfo.Protocol = downparam.Protocol;
                 logInfo.Success = result.status == 200 ? 1 : 0;
                 logInfo.Result = result.msg;
-                logInfo.Milliseconds = stopwatch.Elapsed.TotalMilliseconds; 
-                logInfo.ActionIp = GetClientIp(context); 
+                logInfo.Milliseconds = stopwatch.Elapsed.TotalMilliseconds;
+                logInfo.ActionIp = GetClientIp(context);
                 logInfo.ActionParam = param;
 
                 if (isDbLog == 1)
@@ -180,7 +181,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static bool CheckToken(ApiGatewayUrl item, HttpContext context, DataContext db,string urlParam)
+        private static bool CheckToken(ApiGatewayUrl item, HttpContext context, DataContext db, string urlParam)
         {
             var dic = new Dictionary<string, object>();
             var token = GetUrlParamKey(urlParam, "token");
@@ -244,12 +245,12 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 普通请求
         /// </summary>
-        private static Task Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Normal(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var actionId = Guid.NewGuid().ToStr();
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context, actionId, 1);
+            var info = GetReuslt(downparam, param, item.Key, item.IsTxtLog, item.IsDbLog, db, context, actionId, 1,client);
 
             //缓存结果
             if (item.IsCache == 1)
@@ -264,7 +265,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 轮循请求
         /// </summary>
-        private static Task Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Polling(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var orderBy = 1;
             var actionId = Guid.NewGuid().ToStr();
@@ -272,7 +273,7 @@ namespace FastApiGatewayDb
             var index = rand.Next(1, list.Count);
             var downparam = list[index];
             var param = downparam.IsDecode == 1 ? urlParamDecode : urlParam;
-            var info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
+            var info = GetReuslt(downparam, param, item.Key, item.IsTxtLog, item.IsDbLog, db, context, actionId, orderBy,client);
 
             if (info.status != 200 && list.Count > 1)
             {
@@ -284,11 +285,11 @@ namespace FastApiGatewayDb
                 }
 
                 downparam = list[tempIndex];
-                info = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
+                info = GetReuslt(downparam, param, item.Key, item.IsTxtLog, item.IsDbLog, db, context, actionId, orderBy,client);
 
 
                 context.Response.StatusCode = info.status;
-               return context.Response.WriteAsync(info.msg, Encoding.UTF8);
+                return context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
             else
             {
@@ -297,7 +298,7 @@ namespace FastApiGatewayDb
                     CacheResult(item, db, info);
 
                 context.Response.StatusCode = info.status;
-               return context.Response.WriteAsync(info.msg, Encoding.UTF8);
+                return context.Response.WriteAsync(info.msg, Encoding.UTF8);
             }
         }
         #endregion
@@ -308,7 +309,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static Task Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam)
+        private static Task Composite(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var actionId = Guid.NewGuid().ToStr();
             var orderBy = 1;
@@ -322,7 +323,7 @@ namespace FastApiGatewayDb
                 if (downparam.SourceParam == 2)
                     param = lastResult.msg;
 
-                lastResult = GetReuslt(downparam, param, item.Key,item.IsTxtLog,item.IsDbLog, db, context,actionId,orderBy);
+                lastResult = GetReuslt(downparam, param, item.Key, item.IsTxtLog, item.IsDbLog, db, context, actionId, orderBy,client);
 
                 if (string.IsNullOrEmpty(lastResult.msg) || lastResult.status != 200)
                 {
@@ -355,7 +356,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static Task Token(HttpContext context, DataContext db,string urlParam)
+        private static Task Token(HttpContext context, DataContext db, string urlParam)
         {
             var dic = new Dictionary<string, object>();
             var AppKey = GetUrlParamKey(urlParam, "AppKey");
@@ -385,7 +386,7 @@ namespace FastApiGatewayDb
                 dic.Add("AccessExpires", info.AccessExpires);
 
                 context.Response.StatusCode = 200;
-               return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
             }
         }
         #endregion
