@@ -15,6 +15,9 @@ namespace TestFastApiGateway.Db
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding encoding = Encoding.GetEncoding("GB2312");
             
+            //http请求
+            services.AddHttpClient();
+
             //压缩
             services.AddResponseCompression();
 
