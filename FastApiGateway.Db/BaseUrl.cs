@@ -2,6 +2,7 @@ using FastApiGatewayDb.Model;
 using FastUntility.Core.Base;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 
@@ -19,7 +20,10 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel GetUrl(string url,string param,string key, IHttpClientFactory client)
         {
-            var http = client.CreateClient();
+            var handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
+            
+            var http = client.CreateClient(key);
+            
             var model = new ReturnModel();
             try
             {
@@ -46,7 +50,8 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel PostUrl(string url,string param,string key, IHttpClientFactory client)
         {
-            var http = client.CreateClient();
+            var http = client.CreateClient(key);
+
             var model = new ReturnModel();
             try
             {
@@ -74,7 +79,7 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel PostContent(string url,string param,string key, IHttpClientFactory client)
         {
-            var http = client.CreateClient();
+            var http = client.CreateClient(key);
             var model = new ReturnModel();
             try
             {
