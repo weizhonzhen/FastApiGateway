@@ -17,21 +17,22 @@ services.AddCors(options =>
 });
 
 //http请求
-            using (var db = new DataContext("ApiGateway"))
-            {
-                var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol.ToUpper() == "HTTP", a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
-                foreach (var item in list)
-                {
-                    services.AddHttpClient(item.Key, client =>
-                    {
-                        client.BaseAddress = new Uri(item.Url);
-                    }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-                    {
-                        AllowAutoRedirect = false,
-                        AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-                    });
-                }
-            }
+using (var db = new DataContext("ApiGateway"))
+{
+    var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol.ToUpper() == "HTTP", 
+        a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
+    foreach (var item in list)
+    {
+        services.AddHttpClient(item.Key, client =>
+        {
+            client.BaseAddress = new Uri(item.Url);
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+        });
+    }
+}
 
 //oracle
 FastMap.InstanceProperties("FastApiGatewayDb.DataModel.Oracle", "FastApiGatewayDb.dll");
