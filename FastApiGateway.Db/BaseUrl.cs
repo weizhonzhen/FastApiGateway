@@ -1,10 +1,9 @@
-using FastApiGatewayDb.Model;
 using FastUntility.Core.Base;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text;
+using FastApiGatewayDb.Model;
 
 namespace FastApiGatewayDb
 {
@@ -13,24 +12,25 @@ namespace FastApiGatewayDb
     /// </summary>
     internal static class BaseUrl
     {
-
         #region get url(select)
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(string url,string param,string key, IHttpClientFactory client)
+        public static ReturnModel GetUrl(string url, string param, string key, IHttpClientFactory client)
         {
-            var handler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
-            
             var http = client.CreateClient(key);
-            
             var model = new ReturnModel();
             try
             {
                 if (!url.Contains("?"))
-                    url = string.Format("{0}?", url);
+                    param = string.Format("?{0}", param);
 
-                var response = http.GetAsync(new Uri(string.Format("{0}{1}", url, param))).Result;
+                var handle = new HttpRequestMessage();
+                handle.Content = new StringContent("", Encoding.UTF8, "application/json");
+                handle.Method = HttpMethod.Get;
+                handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
+
+                var response = http.SendAsync(handle).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -48,18 +48,21 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(string url,string param,string key, IHttpClientFactory client)
+        public static ReturnModel PostUrl(string url, string param, string key, IHttpClientFactory client)
         {
             var http = client.CreateClient(key);
-
             var model = new ReturnModel();
             try
             {
                 if (!url.Contains("?"))
-                    url = string.Format("{0}?", url);
+                    param = string.Format("?{0}", param);
 
-                var content = new StringContent("", Encoding.UTF8, "application/json");
-                var response = http.PostAsync(new Uri(string.Format("{0}{1}", url, param)), content).Result;
+                var handle = new HttpRequestMessage();
+                handle.Content = new StringContent("", Encoding.UTF8, "application/json");
+                handle.Method = HttpMethod.Post;
+                handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
+
+                var response = http.SendAsync(handle).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -77,14 +80,18 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(string url,string param,string key, IHttpClientFactory client)
+        public static ReturnModel PostContent(string url, string param, string key, IHttpClientFactory client)
         {
             var http = client.CreateClient(key);
             var model = new ReturnModel();
             try
             {
-                var content = new StringContent(param, Encoding.UTF8, "application/json");
-                var response = http.PostAsync(new Uri(url), content).Result;
+                var handle = new HttpRequestMessage();
+                handle.Content = new StringContent(param, Encoding.UTF8, "application/json");
+                handle.Method = HttpMethod.Post;
+                handle.RequestUri = new Uri(url);
+
+                var response = http.SendAsync(handle).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
                 return model;
@@ -103,9 +110,9 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client)
+        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key)
         {
-            var http = client.CreateClient();
+            var http = client.CreateClient(key);
             var xml = new StringBuilder();
             xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xml.Append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">");
@@ -121,8 +128,13 @@ namespace FastApiGatewayDb
             xml.Append("</soap:Body>");
             xml.Append("</soap:Envelope>");
 
-            var content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
-            var response = http.PostAsync(new Uri(url), content).Result;
+
+            var handle = new HttpRequestMessage();
+            handle.Content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
+            handle.Method = HttpMethod.Post;
+            handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
+
+            var response = http.SendAsync(handle).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsStringAsync().Result;
 
@@ -140,10 +152,11 @@ namespace FastApiGatewayDb
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client)
+        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client, string key)
         {
+            var http = client.CreateClient();
             var model = new ReturnModel();
-            var dic = new Dictionary<string,object>();
+            var dic = new Dictionary<string, object>();
             var param = new Dictionary<string, object>();
             try
             {
@@ -171,8 +184,8 @@ namespace FastApiGatewayDb
                 else
                     param.Add(soapParamName, dic.GetValue(soapParamName));
 
-                model.msg = PostSoap(soapUrl, soapMethod, param,client);
-                
+                model.msg = PostSoap(soapUrl, soapMethod, param, client, key);
+
                 model.status = 200;
                 return model;
             }
