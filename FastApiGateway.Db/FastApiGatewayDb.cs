@@ -114,7 +114,7 @@ namespace FastApiGatewayDb
                 stopwatch.Start();
 
                 if (downparam.Protocol.ToLower() == "soap")
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client);
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client,key);
                 else if (downparam.Protocol.ToLower() == "http")
                 {
                     //http
