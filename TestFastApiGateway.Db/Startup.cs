@@ -31,6 +31,7 @@ namespace TestFastApiGateway.Db
                         client.BaseAddress = new Uri(item.Url);
                     }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                     {
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
                         AllowAutoRedirect = false,
                         AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
                     });
