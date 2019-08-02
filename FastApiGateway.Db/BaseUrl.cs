@@ -132,7 +132,7 @@ namespace FastApiGatewayDb
             var handle = new HttpRequestMessage();
             handle.Content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
             handle.Method = HttpMethod.Post;
-            handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
+            handle.RequestUri = new Uri(url);
 
             var response = http.SendAsync(handle).Result;
             response.EnsureSuccessStatusCode();
@@ -154,7 +154,6 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client, string key)
         {
-            var http = client.CreateClient();
             var model = new ReturnModel();
             var dic = new Dictionary<string, object>();
             var param = new Dictionary<string, object>();
