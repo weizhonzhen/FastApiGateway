@@ -22,7 +22,7 @@ namespace FastApiGatewayDb
         //接口数据库
         public static string ParamKey = "param";
         public static string DbApi = "ApiGateway";
-        public Task ContentAsync(HttpContext context, IHttpClientFactory client)
+        public async Task ContentAsync(HttpContext context, IHttpClientFactory client)
         {
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
@@ -38,7 +38,7 @@ namespace FastApiGatewayDb
                     dic.Add("success", false);
                     dic.Add("result", string.Format("请求地址{0}无效", key));
                     context.Response.StatusCode = 404;
-                    return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8).ConfigureAwait(false);
                 }
                 else
                 {
@@ -47,13 +47,13 @@ namespace FastApiGatewayDb
 
                     //获取token
                     if (item.IsGetToken == 1)
-                        return Token(context, db, urlParam);
+                        await Token(context, db, urlParam).ConfigureAwait(false);
                     else
                     {
                         //是否匿名访问
                         if (item.IsAnonymous == 0)
                             if (!CheckToken(item, context, db, urlParam))
-                                return Task.CompletedTask;
+                                await Task.CompletedTask.ConfigureAwait(false);
 
                         //结果是否缓存
                         if (item.IsCache == 1)
@@ -62,26 +62,26 @@ namespace FastApiGatewayDb
                             if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
                             {
                                 context.Response.StatusCode = 200;
-                                return context.Response.WriteAsync(resultInfo.result, Encoding.UTF8);
+                                await context.Response.WriteAsync(resultInfo.result, Encoding.UTF8).ConfigureAwait(false);
                             }
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                                 else
-                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                             else
-                                return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                         }
                     }
                 }
