@@ -8,9 +8,9 @@ namespace FastApiGatewayDb
     {
         public FastApiGatewayDbHandler(RequestDelegate request) { }
 
-        public Task InvokeAsync(HttpContext context, IFastApiGatewayDb response, IHttpClientFactory client)
+        public async Task Invoke(HttpContext context, IFastApiGatewayDb response, IHttpClientFactory client)
         {
-            return response.ContentAsync(context, client);
+            await response.ContentAsync(context, client).ConfigureAwait(false);
         }
     }
 }
