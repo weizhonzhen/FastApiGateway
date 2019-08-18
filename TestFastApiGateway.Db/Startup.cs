@@ -19,7 +19,9 @@ namespace TestFastApiGateway.Db
             //注册gbk
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding encoding = Encoding.GetEncoding("GB2312");
-
+            
+            services.AddMemoryCache();
+            
             //http请求
             using (var db = new DataContext("ApiGateway"))
             {
