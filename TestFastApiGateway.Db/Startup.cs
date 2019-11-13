@@ -1,5 +1,5 @@
 using FastApiGatewayDb;
-using FastApiGatewayDb.DataModel;
+using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core;
 using FastData.Core.Context;
 using Microsoft.AspNetCore.Builder;
@@ -19,13 +19,12 @@ namespace TestFastApiGateway.Db
             //注册gbk
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding encoding = Encoding.GetEncoding("GB2312");
-            
-            services.AddMemoryCache();
-            
+
             //http请求
             using (var db = new DataContext("ApiGateway"))
             {
-                var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol.ToUpper() == "HTTP", a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
+                var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol != "", 
+                    a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
                 foreach (var item in list)
                 {
                     services.AddHttpClient(item.Key, client =>
@@ -52,8 +51,17 @@ namespace TestFastApiGateway.Db
                 options.AddPolicy("any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
             });
 
-            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.dll");
-            //FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.dll");
+            //oracle
+            FastMap.InstanceProperties("FastApiGatewayDb.DataModel.Oracle", "FastApiGatewayDb.dll");
+            FastMap.InstanceTable("FastApiGatewayDb.DataModel.Oracle", "FastApiGatewayDb.dll");
+
+            //MySql
+            //FastMap.InstanceProperties("FastApiGatewayDb.DataModel.MySql", "FastApiGatewayDb.dll");
+            //FastMap.InstanceTable("FastApiGatewayDb.DataModel.MySql", "FastApiGatewayDb.dll");
+
+            //SqlServer
+            //FastMap.InstanceProperties("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
+            //FastMap.InstanceTable("FastApiGatewayDb.DataModel.SqlServer", "FastApiGatewayDb.dll");
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
