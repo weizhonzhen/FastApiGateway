@@ -26,6 +26,7 @@ namespace FastApiGatewayDb
                     param = string.Format("?{0}", param);
 
                 var handle = new HttpRequestMessage();
+                handle.Version = new Version(2, 0);
                 handle.Content = new StringContent("", Encoding.UTF8, "application/json");
                 handle.Method = HttpMethod.Get;
                 handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
@@ -33,6 +34,7 @@ namespace FastApiGatewayDb
                 var response = http.SendAsync(handle).Result;
                 model.status = (int)response.StatusCode;
                 model.msg = response.Content.ReadAsStringAsync().Result;
+
                 return model;
             }
             catch (Exception ex)
@@ -58,6 +60,7 @@ namespace FastApiGatewayDb
                     param = string.Format("?{0}", param);
 
                 var handle = new HttpRequestMessage();
+                handle.Version = new Version(2, 0);
                 handle.Content = new StringContent("", Encoding.UTF8, "application/json");
                 handle.Method = HttpMethod.Post;
                 handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
@@ -87,6 +90,7 @@ namespace FastApiGatewayDb
             try
             {
                 var handle = new HttpRequestMessage();
+                handle.Version = new Version(2, 0);
                 handle.Content = new StringContent(param, Encoding.UTF8, "application/json");
                 handle.Method = HttpMethod.Post;
                 handle.RequestUri = new Uri(url);
@@ -127,9 +131,9 @@ namespace FastApiGatewayDb
             xml.AppendFormat("</{0}>", method);
             xml.Append("</soap:Body>");
             xml.Append("</soap:Envelope>");
-
-
+            
             var handle = new HttpRequestMessage();
+            handle.Version = new Version(2, 0);
             handle.Content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
             handle.Method = HttpMethod.Post;
             handle.RequestUri = new Uri(url);
