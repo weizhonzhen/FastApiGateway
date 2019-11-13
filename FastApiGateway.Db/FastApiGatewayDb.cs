@@ -22,7 +22,7 @@ namespace FastApiGatewayDb
         //接口数据库
         public static string ParamKey = "param";
         public static string DbApi = "ApiGateway";
-        public async Task ContentAsync(HttpContext context, IHttpClientFactory client)
+        public Task ContentAsync(HttpContext context, IHttpClientFactory client)
         {
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
@@ -38,7 +38,7 @@ namespace FastApiGatewayDb
                     dic.Add("success", false);
                     dic.Add("result", string.Format("请求地址{0}无效", key));
                     context.Response.StatusCode = 404;
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8).ConfigureAwait(false);
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
                 }
                 else
                 {
@@ -47,13 +47,13 @@ namespace FastApiGatewayDb
 
                     //获取token
                     if (item.IsGetToken == 1)
-                        await Token(context, db, urlParam).ConfigureAwait(false);
+                        return Token(context, db, urlParam);
                     else
                     {
                         //是否匿名访问
                         if (item.IsAnonymous == 0)
                             if (!CheckToken(item, context, db, urlParam))
-                                await Task.CompletedTask.ConfigureAwait(false);
+                                return Task.CompletedTask;
 
                         //结果是否缓存
                         if (item.IsCache == 1)
@@ -62,26 +62,26 @@ namespace FastApiGatewayDb
                             if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
                             {
                                 context.Response.StatusCode = 200;
-                                await context.Response.WriteAsync(resultInfo.result, Encoding.UTF8).ConfigureAwait(false);
+                                return context.Response.WriteAsync(resultInfo.result, Encoding.UTF8);
                             }
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                    return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
                                 else
-                                    await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
                             else
-                                await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
                         }
                     }
                 }
@@ -441,18 +441,16 @@ namespace FastApiGatewayDb
         /// <returns></returns>
         private static string GetUrlParam(HttpContext context)
         {
-            using (var content = new StreamReader(context.Request.Body))
-            {
-                var param = context.Request.QueryString.Value;
+            var content = new StreamReader(context.Request.Body).ReadToEnd();
+            var param = context.Request.QueryString.Value;
 
-                if (string.IsNullOrEmpty(param))
-                    param = content.ReadToEnd();
+            if (string.IsNullOrEmpty(param))
+                param = content;
 
-                if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
-                    param = param.Substring(1, param.Length - 1);
+            if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
+                param = param.Substring(1, param.Length - 1);
 
-                return param;
-            }
+            return param;
         }
         #endregion
 
