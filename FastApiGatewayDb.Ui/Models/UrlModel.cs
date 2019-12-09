@@ -1,14 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FastApiGatewayDb.Ui.Validation;
+using FastApiGatewayDb.Ui.Mvc.Validation;
 
-namespace FastApiGatewayDb.Ui.Models
+namespace FastApiGatewayDb.Ui.Mvc.Models
 {
     public class UrlModel
     {
+        [StringLength(16, ErrorMessage = "{0}最大长度16")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "键")]
         public string Key { get; set; }
 
+        [StringLength(16, ErrorMessage = "{0}最大长度16")]
         [Schema(IsNull =true)]
         [Display(Name = "请求类型")]
         public string Schema { get; set; }
@@ -43,6 +45,7 @@ namespace FastApiGatewayDb.Ui.Models
         [Display(Name = "是否文本日记")]
         public int IsTxtLog { get; set; }
 
+        [StringLength(128, ErrorMessage = "{0}最大长度128")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "名称")]
         public string Name { get; set; }

@@ -1,18 +1,21 @@
-﻿using FastApiGatewayDb.Ui.Validation;
+﻿using FastApiGatewayDb.Ui.Mvc.Validation;
 using System.ComponentModel.DataAnnotations;
 
-namespace FastApiGatewayDb.Ui.Models
+namespace FastApiGatewayDb.Ui.Mvc.Models
 {
     public class DownUrlModel
     {
+        [StringLength(16, ErrorMessage = "{0}最大长度16")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "键")]
         public string Key { get; set; }
 
+        [StringLength(255, ErrorMessage = "{0}最大长度255")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "下游url")]
         public string Url { get; set; }
 
+        [StringLength(128, ErrorMessage = "{0}最大长度128")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "下游名称")]
         public string Name { get; set; }
@@ -32,9 +35,11 @@ namespace FastApiGatewayDb.Ui.Models
         [Protocol]
         public string Protocol { get; set; }
 
+        [StringLength(32, ErrorMessage = "{0}最大长度32")]
         [Display(Name = "soap方法")]
         public string SoapMethod { get; set; }
-        
+
+        [StringLength(255, ErrorMessage = "{0}最大长度255")]
         [Display(Name = "soap参数")]
         public string SoapParamName { get; set; }
         
@@ -58,8 +63,8 @@ namespace FastApiGatewayDb.Ui.Models
         [Display(Name = "排序")]
         public int OrderBy { get; set; }
 
+        [StringLength(2, ErrorMessage = "{0}最大长度16")]
         [Required(ErrorMessage = "{0}不能为空")]
-        [StringLength(2)]
         [Display(Name = "无响应等待下次请求时间")]
         public string WaitHour { get; set; }
     }
