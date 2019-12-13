@@ -165,10 +165,10 @@ namespace FastApiGatewayDb
                 logInfo.ActionParam = param;
 
                 if (isDbLog == 1)
-                    FastWrite.Add(logInfo, null, DbApi);
+                    FastWrite.AddAsy(logInfo, null, DbApi);
 
                 if (isTextLog == 1)
-                    BaseLog.SaveLog(BaseJson.ModelToJson(logInfo), logInfo.Key);
+                    BaseLog.SaveLogAsy(BaseJson.ModelToJson(logInfo), logInfo.Key);
 
                 return result;
             }
