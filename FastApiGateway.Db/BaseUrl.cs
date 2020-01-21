@@ -114,14 +114,15 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key, int marjor = 1, int minor = 1)
+        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key,string Namespace= "http://tempuri.org/", int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
             var xml = new StringBuilder();
             xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xml.Append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">");
+            xml.Append("<soap:Header />");
             xml.Append("<soap:Body>");
-            xml.AppendFormat("<{0} xmlns=\"http://openmas.chinamobile.com/pulgin\">", method);
+            xml.AppendFormat("<{0} xmlns=\"{1}\">", method,Namespace);
 
             foreach (KeyValuePair<string, object> item in param)
             {
@@ -134,6 +135,7 @@ namespace FastApiGatewayDb
             
             var handle = new HttpRequestMessage();
             handle.Version = new Version(marjor, minor);
+            handle.Headers.Add("SOAPAction", string.Format("http://tempuri.org/{0}", method));
             handle.Content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
             handle.Method = HttpMethod.Post;
             handle.RequestUri = new Uri(url);
@@ -148,6 +150,7 @@ namespace FastApiGatewayDb
             result = result.Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", "");
             result = result.Replace(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
             result = result.Replace(" xmlns=\"http://openmas.chinamobile.com/pulgin\"", "");
+            result = result.Replace(string.Format(" xmlns=\"{0}\"", Namespace), "");
             return BaseXml.GetXmlString(result, string.Format("Envelope/Body/{0}Response/{0}Result", method)).Replace("&lt;", "<").Replace("&gt;", ">");
         }
         #endregion
@@ -156,7 +159,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client, string key)
+        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client, string key, string Namespace)
         {
             var model = new ReturnModel();
             var dic = new Dictionary<string, object>();
@@ -187,7 +190,7 @@ namespace FastApiGatewayDb
                 else
                     param.Add(soapParamName, dic.GetValue(soapParamName));
 
-                model.msg = PostSoap(soapUrl, soapMethod, param, client, key);
+                model.msg = PostSoap(soapUrl, soapMethod, param, client, key,Namespace);
 
                 model.status = 200;
                 return model;
