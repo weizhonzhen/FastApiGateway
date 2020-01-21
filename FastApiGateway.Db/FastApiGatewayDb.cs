@@ -22,7 +22,7 @@ namespace FastApiGatewayDb
         //接口数据库
         public static string ParamKey = "param";
         public static string DbApi = "ApiGateway";
-        public Task ContentAsync(HttpContext context, IHttpClientFactory client)
+        public async Task ContentAsync(HttpContext context, IHttpClientFactory client)
         {
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
@@ -38,7 +38,7 @@ namespace FastApiGatewayDb
                     dic.Add("success", false);
                     dic.Add("result", string.Format("请求地址{0}无效", key));
                     context.Response.StatusCode = 404;
-                    return context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8);
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(dic).ToString(), Encoding.UTF8).ConfigureAwait(false);
                 }
                 else
                 {
@@ -47,13 +47,13 @@ namespace FastApiGatewayDb
 
                     //获取token
                     if (item.IsGetToken == 1)
-                        return Token(context, db, urlParam);
+                        await Token(context, db, urlParam).ConfigureAwait(false);
                     else
                     {
                         //是否匿名访问
                         if (item.IsAnonymous == 0)
                             if (!CheckToken(item, context, db, urlParam))
-                                return Task.CompletedTask;
+                                await Task.CompletedTask.ConfigureAwait(false);
 
                         //结果是否缓存
                         if (item.IsCache == 1)
@@ -62,26 +62,30 @@ namespace FastApiGatewayDb
                             if (DateTime.Compare(resultInfo.TimeOut, DateTime.Now) > 0)
                             {
                                 context.Response.StatusCode = 200;
-                                return context.Response.WriteAsync(resultInfo.result, Encoding.UTF8);
+                                await context.Response.WriteAsync(resultInfo.result, Encoding.UTF8).ConfigureAwait(false);
                             }
                             else
                             {
                                 if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                    return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                                 else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                    return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                                else if (item.Schema.ToStr().ToLower() == "compositeasyn")//compositeasyn 合并异步请求
+                                    await CompositeAsyn(item, context, db, downParam, urlParamDecode, urlParam, client).ConfigureAwait(false);
                                 else
-                                    return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                    await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                             }
                         }
                         else
                         {
                             if (item.Schema.ToStr().ToLower() == "polling") //polling 轮循请求
-                                return Polling(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Polling(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                             else if (item.Schema.ToStr().ToLower() == "composite") //composite 合并请求
-                                return Composite(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Composite(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
+                            else if (item.Schema.ToStr().ToLower() == "compositeasyn")//compositeasyn 合并异步请求
+                                await CompositeAsyn(item, context, db, downParam, urlParamDecode, urlParam, client).ConfigureAwait(false);
                             else
-                                return Normal(item, context, db, downParam, urlParamDecode, urlParam,client);
+                                await Normal(item, context, db, downParam, urlParamDecode, urlParam,client).ConfigureAwait(false);
                         }
                     }
                 }
@@ -114,7 +118,7 @@ namespace FastApiGatewayDb
                 stopwatch.Start();
 
                 if (downparam.Protocol.ToLower() == "soap")
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client,key);
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client,key,downparam.SoapNamespace);
                 else if (downparam.Protocol.ToLower() == "http")
                 {
                     //http
@@ -350,6 +354,46 @@ namespace FastApiGatewayDb
         }
         #endregion
 
+        #region 合并请求异步
+        /// <summary>
+        /// 合并请求异步
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="context"></param>
+        /// <param name="db"></param>
+        /// <param name="list"></param>
+        /// <param name="urlParamDecode"></param>
+        /// <param name="urlParam"></param>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        private static Task CompositeAsyn(ApiGatewayUrl item, HttpContext context, DataContext db, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
+        {
+            var actionId = Guid.NewGuid().ToStr();
+            var result = new ReturnModel();
+            var task = new List<Task>();
+            var resultMsg = new ReturnModel[list.Count];
+
+            for (var i = 0; i <= list.Count; i++)
+            {
+                task.Add(Task.Run(() =>
+                {
+                    var param = list[i].IsDecode == 1 ? urlParamDecode : urlParam;
+                    resultMsg[i] = GetReuslt(list[i], param, item.Key, item.IsDbLog, item.IsTxtLog, db, context, actionId, i, client);
+                }));
+            }
+
+            Task.WaitAll(task.ToArray());
+
+            //缓存结果
+            if (item.IsCache == 1)
+                CacheResult(item, db, result, null);
+
+            result.msg = BaseJson.ModelToJson(resultMsg);
+            context.Response.StatusCode = 200;
+            return context.Response.WriteAsync(result.msg, Encoding.UTF8);
+        }
+        #endregion
+
         #region 获取token
         /// <summary>
         /// 获取token
@@ -441,16 +485,18 @@ namespace FastApiGatewayDb
         /// <returns></returns>
         private static string GetUrlParam(HttpContext context)
         {
-            var content = new StreamReader(context.Request.Body).ReadToEnd();
-            var param = context.Request.QueryString.Value;
+            using (var content = new StreamReader(context.Request.Body))
+            {
+                var param = context.Request.QueryString.Value;
 
-            if (string.IsNullOrEmpty(param))
-                param = content;
+                if (string.IsNullOrEmpty(param))
+                    param = content.ReadToEnd();
 
-            if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
-                param = param.Substring(1, param.Length - 1);
+                if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
+                    param = param.Substring(1, param.Length - 1);
 
-            return param;
+                return param;
+            }
         }
         #endregion
 
