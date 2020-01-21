@@ -86,5 +86,11 @@ namespace FastApiGatewayDb.DataModel.MySql
         /// </summary>
         [Column(Comments = "排序", DataType = "int", IsNull = true)]
         public int OrderBy { get; set; }
+        
+        /// <summary>
+        /// soap Namespace
+        /// </summary>
+        [Column(Comments = "soap Namespace", DataType = "varchar2", Length = 128, IsNull = true)]
+        public string SoapNamespace { get; set; }
     }
 }
