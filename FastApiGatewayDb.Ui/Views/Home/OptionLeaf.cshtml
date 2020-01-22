@@ -1,4 +1,4 @@
-﻿@model FastApiGatewayDb.Ui.Models.DownUrlModel
+@model FastApiGatewayDb.Ui.Mvc.Models.DownUrlModel
 @{
     Model.WaitHour = "1";
     Layout = null;
@@ -28,7 +28,7 @@
 <body class="form-body">
     <form id="SubmitLeafForm">
         <H4 style="text-align:center;margin-bottom:20px;"><b>下游接口参数</b></H4>
-        @Html.HiddenFor(a=>a.Key)
+        @Html.HiddenFor(a => a.Key)
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>请求排序</label></div>
             @Html.TextBoxFor(a => a.OrderBy, new { @class = "form-control shorLength" })
@@ -42,6 +42,10 @@
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>下游地址</label></div>
             @Html.TextBoxFor(a => a.Url, new { @class = "form-control textLength1", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>命名空间</label></div>
+            @Html.TextBoxFor(a => a.SoapNamespace, new { @class = "form-control textLength1", @autocomplete = "off" })
         </div>
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>是&nbsp;否&nbsp;流</label></div>
@@ -89,37 +93,37 @@
         });
 
         $("#delBtn").click(function () {
-            var index = layer.confirm("是否删除接口", {
+            var index = parent.layer.confirm("是否删除接口", {
                 btn: ['是', '否']
             }, function () {
-                layer.close(index);
-                layer.load(2);
+                parent.layer.close(index);
+                parent.layer.load(2);
                 $.ajax({
                     type: "POST",
                     url: "/Home/DownUrlDel",
                     data: $("#SubmitLeafForm").serialize(),
                     success: function (result) {
-                        layer.closeAll('loading');
+                        parent.layer.closeAll('loading');
                         if (result.success) { ShowDownList(); $("#resetBtn").click(); }
                         else
-                            layer.alert(result.msg);
+                            parent.layer.alert(result.msg);
                     }
                 });
             }, function () { });
         });
 
         $("#saveBtn").click(function () {
-            layer.load(2);
+            parent.layer.load(2);
             $.ajax({
                 type: "POST",
                 url: "/Home/DownUrlOption",
                 data: $("#SubmitLeafForm").serialize(),
                 success: function (result) {
-                    layer.closeAll('loading');
+                    parent.layer.closeAll('loading');
                     if (result.success) 
                     { ShowDownList(); $("#resetBtn").click();}
                     else
-                        layer.alert(result.msg);
+                        parent.layer.alert(result.msg);
                 }
             });
         });
