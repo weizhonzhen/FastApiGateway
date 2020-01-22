@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using FastData.Core;
 using FastData.Core.Context;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using FastUntility.Core.Page;
-using FastApiGatewayDb.Ui.Models;
+using FastApiGatewayDb.Ui.Mvc.Models;
 using FastApiGatewayDb.DataModel;
 using FastUntility.Core.Base;
 using FastUntility.Core.Cache;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FastApiGatewayDb.Ui.Controllers
+namespace FastApiGatewayDb.Ui.Mvc.Controllers
 {
     public class HomeController : Controller
     {
@@ -51,7 +51,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 if (isSuccess)
                 {
                     BaseCache.Set<Dictionary<string,object>>(App.Cache.UserInfo, info);
-                    return Json(new { success = isSuccess, url = "home/index" });
+                    return Json(new { success = isSuccess, url = "/home/index" });
                 }
                 else
                     return Json(new { success = isSuccess, msg = "密码不正确" });
