@@ -1,4 +1,4 @@
-﻿using FastApiGatewayDb.Ui.Mvc.Validation;
+using FastApiGatewayDb.Ui.Mvc.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace FastApiGatewayDb.Ui.Mvc.Models
@@ -7,7 +7,7 @@ namespace FastApiGatewayDb.Ui.Mvc.Models
     {
         [StringLength(16, ErrorMessage = "{0}最大长度16")]
         [Required(ErrorMessage = "{0}不能为空")]
-        [Display(Name = "键")]
+        [Display(Name = "接口地址")]
         public string Key { get; set; }
 
         [StringLength(255, ErrorMessage = "{0}最大长度255")]
@@ -63,9 +63,22 @@ namespace FastApiGatewayDb.Ui.Mvc.Models
         [Display(Name = "排序")]
         public int OrderBy { get; set; }
 
-        [StringLength(2, ErrorMessage = "{0}最大长度16")]
+        [StringLength(16, ErrorMessage = "{0}最大长度16")]
         [Required(ErrorMessage = "{0}不能为空")]
         [Display(Name = "无响应等待下次请求时间")]
         public string WaitHour { get; set; }
+
+        [StringLength(16, ErrorMessage = "{0}最大长度16")]
+        [Required(ErrorMessage = "{0}不能为空")]
+        [Display(Name = "无响应等待下次请求时间")]
+        public string NameSpance { get; set; }
+
+
+        /// <summary>
+        /// Soap Namespace
+        /// </summary>
+        [StringLength(128, ErrorMessage = "{0}最大长度128")]
+        [Display(Name = "Soap Namespace")]
+        public string SoapNamespace { get; set; }
     }
 }
