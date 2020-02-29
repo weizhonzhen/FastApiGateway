@@ -1,4 +1,4 @@
-﻿using FastData.Core.Property;
+using FastData.Core.Property;
 using System;
 
 namespace FastApiGatewayDb.DataModel.SqlServer
@@ -90,7 +90,7 @@ namespace FastApiGatewayDb.DataModel.SqlServer
         /// <summary>
         /// soap Namespace
         /// </summary>
-        [Column(Comments = "soap Namespace", DataType = "varchar2", Length = 128, IsNull = true)]
+        [Column(Comments = "soap Namespace", DataType = "char", Length = 128, IsNull = true)]
         public string SoapNamespace { get; set; }
     }
 }
