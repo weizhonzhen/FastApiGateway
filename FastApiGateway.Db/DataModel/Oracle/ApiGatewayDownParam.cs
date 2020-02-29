@@ -1,4 +1,4 @@
-﻿using FastData.Core.Property;
+using FastData.Core.Property;
 using System;
 
 namespace FastApiGatewayDb.DataModel.Oracle
@@ -86,7 +86,7 @@ namespace FastApiGatewayDb.DataModel.Oracle
         /// </summary>
         [Column(Comments = "排序", DataType = "number(1,0)", IsNull = true)]
         public int OrderBy { get; set; }
-        
+
         /// <summary>
         /// soap Namespace
         /// </summary>
