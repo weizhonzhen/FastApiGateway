@@ -1,9 +1,9 @@
+using FastApiGatewayDb.Model;
 using FastUntility.Core.Base;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using FastApiGatewayDb.Model;
 
 namespace FastApiGatewayDb
 {
@@ -12,11 +12,12 @@ namespace FastApiGatewayDb
     /// </summary>
     internal static class BaseUrl
     {
+
         #region get url(select)
         /// <summary>
         /// get url(select)
         /// </summary>
-        public static ReturnModel GetUrl(string url, string param, string key, IHttpClientFactory client,int marjor=1,int minor=1)
+        public static ReturnModel GetUrl(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
             var model = new ReturnModel();
@@ -26,7 +27,7 @@ namespace FastApiGatewayDb
                     param = string.Format("?{0}", param);
 
                 var handle = new HttpRequestMessage();
-                handle.Version = new Version(marjor, minor);
+                handle.Version = new Version(marjor,minor);
                 handle.Content = new StringContent("", Encoding.UTF8, "application/json");
                 handle.Method = HttpMethod.Get;
                 handle.RequestUri = new Uri(string.Format("{0}{1}", url, param));
@@ -50,13 +51,13 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post url(insert)
         /// </summary>
-        public static ReturnModel PostUrl(string url, string param, string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
+        public static ReturnModel PostUrl(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
             var model = new ReturnModel();
             try
             {
-                if (!url.Contains("?"))
+               if (!url.Contains("?"))
                     param = string.Format("?{0}", param);
 
                 var handle = new HttpRequestMessage();
@@ -83,7 +84,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        public static ReturnModel PostContent(string url, string param, string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
+        public static ReturnModel PostContent(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
             var model = new ReturnModel();
@@ -114,15 +115,14 @@ namespace FastApiGatewayDb
         /// <summary>
         /// post content(insert)
         /// </summary>
-        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key,string Namespace= "http://tempuri.org/", int marjor = 1, int minor = 1)
+        private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key, string Namespace = "http://tempuri.org/", int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
             var xml = new StringBuilder();
             xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xml.Append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">");
-            xml.Append("<soap:Header />");
             xml.Append("<soap:Body>");
-            xml.AppendFormat("<{0} xmlns=\"{1}\">", method,Namespace);
+            xml.AppendFormat("<{0} xmlns=\"{1}\">", method, Namespace);
 
             foreach (KeyValuePair<string, object> item in param)
             {
@@ -132,10 +132,10 @@ namespace FastApiGatewayDb
             xml.AppendFormat("</{0}>", method);
             xml.Append("</soap:Body>");
             xml.Append("</soap:Envelope>");
-            
+
             var handle = new HttpRequestMessage();
-            handle.Version = new Version(marjor, minor);
-            handle.Headers.Add("SOAPAction", string.Format("http://tempuri.org/{0}", method));
+            handle.Version = new Version(marjor,minor);
+            handle.Headers.Add("SOAPAction", string.Format("{0}{1}", Namespace, method));
             handle.Content = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
             handle.Method = HttpMethod.Post;
             handle.RequestUri = new Uri(url);
@@ -159,10 +159,10 @@ namespace FastApiGatewayDb
         /// <summary>
         /// Soap url
         /// </summary>
-        public static ReturnModel SoapUrl(string soapUrl, string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client, string key, string Namespace)
+        public static ReturnModel SoapUrl(string soapUrl,string soapParamName, string soapMethod, string soapParam, IHttpClientFactory client,string key, string Namespace)
         {
             var model = new ReturnModel();
-            var dic = new Dictionary<string, object>();
+            var dic = new Dictionary<string,object>();
             var param = new Dictionary<string, object>();
             try
             {
@@ -190,8 +190,8 @@ namespace FastApiGatewayDb
                 else
                     param.Add(soapParamName, dic.GetValue(soapParamName));
 
-                model.msg = PostSoap(soapUrl, soapMethod, param, client, key,Namespace);
-
+                model.msg = PostSoap(soapUrl, soapMethod, param,client,key,Namespace);
+                
                 model.status = 200;
                 return model;
             }
