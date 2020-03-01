@@ -9,11 +9,11 @@ using System.Diagnostics;
 using FastUntility.Core.Base;
 using FastData.Core;
 using FastData.Core.Context;
-using FastApiGatewayDb.DataModel;
 using FastApiGatewayDb.Model;
 using System.Web;
 using System.Threading.Tasks;
 using System.Net.Http;
+using FastApiGatewayDb.DataModel.Oracle;
 
 namespace FastApiGatewayDb
 {
