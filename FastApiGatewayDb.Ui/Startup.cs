@@ -3,19 +3,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FastApiGatewayDb.Ui.Mvc.Filter;
-using System.Text.Encodings.Web;
-using System.Text.Unicode;
+using FastApiGatewayDb.Ui.Filter;
+using Microsoft.AspNetCore.Diagnostics;
+using FastUntility.Core.Base;
+using Microsoft.AspNetCore.Http;
 
-namespace FastApiGatewayDb.Ui.Mvc
+namespace FastApiGatewayDb.Ui
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.Mvc.dll");
-            FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.Mvc.dll");
+            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
+            FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
             FastMap.InstanceMap();
         }
 
@@ -23,7 +24,6 @@ namespace FastApiGatewayDb.Ui.Mvc
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
             services.AddMvc(options =>
             {
                 //全局过滤器
@@ -32,17 +32,29 @@ namespace FastApiGatewayDb.Ui.Mvc
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
+            app.UseExceptionHandler(error =>
+            {
+                error.Use(async (context, next) =>
+                {
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
+                    {
+                        BaseLog.SaveLog(contextFeature.Error.Message, "error");
+                        context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = 404;
+                        await context.Response.WriteAsync(contextFeature.Error.Message);
+                    }
+                });
+            });
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                     name: "Default",
-                     template: "{controller}/{action}/{id?}",
-                     defaults: new { controller = "Home", action = "Index" }
-                 );
+                name: "default",
+                template: "{controller=Home}/{action=login}/{id?}");
             });            
         }
     }
