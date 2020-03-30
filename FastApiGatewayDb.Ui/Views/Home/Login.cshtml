@@ -3,10 +3,10 @@
 <html>
 <head>
     <title>微服务网关</title>
-    @Html.Partial("Meta")
-    @Html.Partial("link")
+    @await Html.PartialAsync("Meta")
+    @await Html.PartialAsync("link")
     <link href="/content/css/login.css" rel="stylesheet" type="text/css" />
-    @Html.Partial("script")
+    @await Html.PartialAsync("script")
 </head>
 <body class="login">
     <div class="main-login">

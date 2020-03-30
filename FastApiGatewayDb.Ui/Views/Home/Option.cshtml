@@ -16,9 +16,9 @@
 }
 <html>
 <head>
-    @Html.Partial("Meta")
-    @Html.Partial("link")
-    @Html.Partial("script")
+    @await Html.PartialAsync("Meta")
+    @await Html.PartialAsync("link")
+    @await Html.PartialAsync("script")
 </head>
 <body class="form-body">
     <form id="DownForm">
@@ -82,13 +82,13 @@
         });
 
         function ShowDownList() {
-            layer.load(2);
+            parent.layer.load(2);
             $.ajax({
                 type: "POST",
                 url: "/Home/DownList",
                 data: $("#DownForm").serialize(),
                 success: function (result) {
-                    layer.closeAll('loading');
+                    parent.layer.closeAll('loading');
                     $("#DownContent").html(result);
                     $("#DownTable tbody tr").children().first().click();
                 }
@@ -96,33 +96,33 @@
         }
 
         function ShowDownForm() {
-            layer.load(2);
+            parent.layer.load(2);
             $.ajax({
                 type: "POST",
                 url: "/Home/DownForm",
                 data: $("#DownForm").serialize(),
                 success: function (result) {
-                    layer.closeAll('loading');
+                    parent.layer.closeAll('loading');
                     $("#DownFormContent").html(result);
                 }
             });
         }
 
         $("#saveBtn").click(function () {
-            layer.load(2);
+            parent.layer.load(2);
             $.ajax({
                 type: "POST",
                 url: "/Home/UrlOption",
                 data: $("#SubmitForm").serialize(),
                 success: function (result) {
-                    layer.closeAll('loading');
+                    parent.layer.closeAll('loading');
                     if (result.success) {
                         $("#DownForm #key").val($("#SubmitForm #key").val());
                         ShowDownForm();
                         ShowDownList();
                     }
                     else
-                        layer.alert(result.msg);
+                        parent.layer.alert(result.msg);
                 }
             });
         });

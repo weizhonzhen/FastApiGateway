@@ -53,7 +53,7 @@
             }
         </tbody>
     </table>
-    @Html.Partial("page", page)
+    @await Html.PartialAsync("page", page)
 </div>
 <script>
     $('#UrlTable tbody tr').click(function () {

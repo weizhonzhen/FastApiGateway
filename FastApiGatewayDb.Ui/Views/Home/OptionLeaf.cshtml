@@ -1,4 +1,4 @@
-@model FastApiGatewayDb.Ui.Mvc.Models.DownUrlModel
+﻿@model FastApiGatewayDb.Ui.Models.DownUrlModel
 @{
     Model.WaitHour = "1";
     Layout = null;
@@ -20,15 +20,15 @@
 }
 <html>
 <head>
-    @Html.Partial("Meta")
-    @Html.Partial("link")
-    @Html.Partial("script")
+    @await Html.PartialAsync("Meta")
+    @await Html.PartialAsync("link")
+    @await Html.PartialAsync("script")
 </head>
 
 <body class="form-body">
     <form id="SubmitLeafForm">
         <H4 style="text-align:center;margin-bottom:20px;"><b>下游接口参数</b></H4>
-        @Html.HiddenFor(a => a.Key)
+        @Html.HiddenFor(a=>a.Key)
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>请求排序</label></div>
             @Html.TextBoxFor(a => a.OrderBy, new { @class = "form-control shorLength" })
@@ -42,10 +42,6 @@
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>下游地址</label></div>
             @Html.TextBoxFor(a => a.Url, new { @class = "form-control textLength1", @autocomplete = "off" })
-        </div>
-        <div class="input-group">
-            <div class="input-group-addon input-group-none"><label>命名空间</label></div>
-            @Html.TextBoxFor(a => a.SoapNamespace, new { @class = "form-control textLength1", @autocomplete = "off" })
         </div>
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>是&nbsp;否&nbsp;流</label></div>
