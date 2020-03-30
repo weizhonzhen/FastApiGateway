@@ -62,7 +62,7 @@
             }
         </tbody>
     </table>
-    @Html.Partial("page", page)
+    @await Html.PartialAsync("page", page)
 </div>
 <script>
     $('#LogTable tbody tr').click(function () {
@@ -72,6 +72,6 @@
     });
 
     function FnShow(obj) {
-           layer.msg(JSON.stringify($(obj).data("value")));
+        layer.msg(JSON.stringify($(obj).data("value")));
     }
 </script>

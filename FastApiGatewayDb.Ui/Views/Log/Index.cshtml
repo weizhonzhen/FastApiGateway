@@ -34,6 +34,11 @@
          laydate.render({ elem: '#Day', type: 'date' });
      });
 
+    $("#Key").keyup(function () { $("#LogQuery").click(); });
+    $("#Ip").keyup(function () { $("#LogQuery").click(); });
+    $("#Day").change(function () { $("#LogQuery").click(); });
+    $("#Success").change(function () { $("#LogQuery").click(); });
+
     $("#LogQuery").click(function () {
         layer.load(2);
         $.ajax({
