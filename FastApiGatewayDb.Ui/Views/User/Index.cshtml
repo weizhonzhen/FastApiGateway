@@ -16,6 +16,8 @@
         $("#UserQuery").click();
      });
 
+    $("#Key").keyup(function () { $("#UserQuery").click(); });
+
     $("#UserQuery").click(function () {
         layer.load(2);
         $.ajax({
@@ -31,16 +33,15 @@
     });
 
     $("#UserAdd").click(function () {
-       var index = layer.open({
+      layer.open({
             type: 2,
             area: ['450px', '400px'],
             fixed: true, maxmin: false,
-            content: '/User/Option',
+            content: ['/User/Option','no'],
             title: "用户接口",
             end: function () {
                 $("#UserQuery").click();
             }
         });
-        layer.full(index);
     });
 </script>

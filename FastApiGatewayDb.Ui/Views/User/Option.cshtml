@@ -1,4 +1,4 @@
-@using FastApiGatewayDb.DataModel;
+﻿@using FastApiGatewayDb.DataModel;
 @model FastApiGatewayDb.Ui.Models.UserModel
 @{
     Layout = null;
@@ -7,9 +7,9 @@
 }
 <html>
 <head>
-    @Html.Partial("Meta")
-    @Html.Partial("link")
-    @Html.Partial("script")
+    @await Html.PartialAsync("Meta")
+    @await Html.PartialAsync("link")
+    @await Html.PartialAsync("script")
 </head>
 <body class="form-body">
     <form id="SubmitForm">
@@ -58,7 +58,6 @@
 
         $("#saveBtn").click(function () {
             parent.layer.load(2);
-            debugger;
             $.ajax({
                 type: "POST",
                 url: "/User/UserOption",

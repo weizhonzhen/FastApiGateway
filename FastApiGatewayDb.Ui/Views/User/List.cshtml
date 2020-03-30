@@ -52,7 +52,7 @@
             }
         </tbody>
     </table>
-    @Html.Partial("page", page)
+    @await Html.PartialAsync("page", page)
 </div>
 <script>
     $('#UserTable tbody tr').click(function () {
@@ -61,17 +61,16 @@
         $('#UserTable tbody tr:even').not(this).css('background-color', '#f3f4f5');
     });
           
-    function FnEdit(name) {
-         var index = layer.open({
+    function FnEdit(key) {
+        layer.open({
             type: 2,
-            area: ['750px', '660px'],
+            area: ['350px', '300px'],
             fixed: true, maxmin: false,
-            content: '/User/Option?Key=' + $("#Key").val(),
-            title: name,
+            content: ['/User/Option?Key=' + key, 'no'],
+            title: "用户修改",
             end: function () {
                 $("#UserQuery").click();
             }
         });
-        layer.full(index);
     }
 </script>
