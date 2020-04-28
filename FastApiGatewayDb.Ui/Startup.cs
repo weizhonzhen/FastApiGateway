@@ -7,6 +7,7 @@ using FastApiGatewayDb.Ui.Filter;
 using Microsoft.AspNetCore.Diagnostics;
 using FastUntility.Core.Base;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace FastApiGatewayDb.Ui
 {
@@ -42,9 +43,12 @@ namespace FastApiGatewayDb.Ui
                     if (contextFeature != null)
                     {
                         BaseLog.SaveLog(contextFeature.Error.Message, "error");
-                        context.Response.ContentType = "application/json";
-                        context.Response.StatusCode = 404;
-                        await context.Response.WriteAsync(contextFeature.Error.Message);
+                        context.Response.ContentType = "application/json;charset=utf-8";
+                        context.Response.StatusCode = 200;
+                        var result = new Dictionary<string, object>();
+                        result.Add("success", false);
+                        result.Add("msg", contextFeature.Error.Message);
+                        await context.Response.WriteAsync(BaseJson.ModelToJson(result));
                     }
                 });
             });
