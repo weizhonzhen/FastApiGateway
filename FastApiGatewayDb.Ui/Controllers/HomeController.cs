@@ -1,19 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using FastData.Core;
 using FastData.Core.Context;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using FastUntility.Core.Page;
-using FastApiGatewayDb.Ui.Mvc.Models;
+using FastApiGatewayDb.Ui.Models;
 using FastApiGatewayDb.DataModel;
 using FastUntility.Core.Base;
 using FastUntility.Core.Cache;
 using Microsoft.AspNetCore.Authorization;
+using FastData.Core.Repository;
 
-namespace FastApiGatewayDb.Ui.Mvc.Controllers
+namespace FastApiGatewayDb.Ui.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IFastRepository IFast;
+        public HomeController(IFastRepository _IFast)
+        {
+            IFast = _IFast;
+        }
+
+
         #region 加载登陆
         /// <summary>
         /// 加载登陆
@@ -22,6 +30,9 @@ namespace FastApiGatewayDb.Ui.Mvc.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
+            var aaa = bb.AA();
+            Test a = new Test();
+           var bbb = a.AA();
             var model = new LoginModel();
             ViewData.Model = model;
             return View();
@@ -51,7 +62,7 @@ namespace FastApiGatewayDb.Ui.Mvc.Controllers
                 if (isSuccess)
                 {
                     BaseCache.Set<Dictionary<string,object>>(App.Cache.UserInfo, info);
-                    return Json(new { success = isSuccess, url = "/home/index" });
+                    return Json(new { success = isSuccess, url = "home/index" });
                 }
                 else
                     return Json(new { success = isSuccess, msg = "密码不正确" });

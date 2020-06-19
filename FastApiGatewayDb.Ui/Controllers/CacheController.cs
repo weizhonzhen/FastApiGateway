@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FastApiGatewayDb.Ui.Models;
-using FastData.Core;
 using FastData.Core.Context;
-using FastUntility.Core.Base;
+using FastData.Core.Repository;
 using FastUntility.Core.Page;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
@@ -14,6 +10,12 @@ namespace FastApiGatewayDb.Ui.Controllers
 {
     public class CacheController : Controller
     {
+        private readonly IFastRepository IFast;
+        public CacheController(IFastRepository _IFast)
+        {
+            IFast = _IFast;
+        }
+
         #region 加载缓存
         /// <summary>
         /// 加载缓存
@@ -43,7 +45,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
                 var param = new List<OracleParameter>();
                 param.Add(new OracleParameter { ParameterName = "Key", Value = item.Key });
-                var info = FastMap.QueryPage(page, "Api.Cache", param.ToArray(), db);
+                var info = IFast.QueryPage(page, "Api.Cache", param.ToArray(), db);
 
                 return PartialView("List", info);
             }

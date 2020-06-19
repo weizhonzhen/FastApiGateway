@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FastApiGatewayDb.DataModel;
 using FastApiGatewayDb.Ui.Models;
 using FastData.Core;
@@ -8,12 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using FastData.Core.Repository;
 
 namespace FastApiGatewayDb.Ui.Controllers
 {
     public class UserController : Controller
     {
+        private readonly IFastRepository IFast;
+        public UserController(IFastRepository _IFast)
+        {
+            IFast = _IFast;
+        }
+
         #region 加载用户
         /// <summary>
         /// 加载用户
@@ -43,7 +49,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
                 var param = new List<OracleParameter>();
                 param.Add(new OracleParameter { ParameterName = "Key", Value = item.Key });
-                var info = FastMap.QueryPage(page, "Api.User", param.ToArray(),db);
+                var info = IFast.QueryPage(page, "Api.User", param.ToArray(),db);
 
                 return PartialView("List", info);
             }
@@ -63,11 +69,11 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             using (var db = new DataContext(App.DbKey.Api))
             {
-                list = FastRead.Query<ApiGatewayUrl>(a => a.Key != "", a => new { a.Key, a.Name }).ToList<ApiGatewayUrl>(db);
+                list = IFast.Query<ApiGatewayUrl>(a => a.Key != "", a => new { a.Key, a.Name }).ToList<ApiGatewayUrl>(db);
 
                 if (!string.IsNullOrEmpty(key))
                 {
-                    var info = FastRead.Query<ApiGatewayUser>(a => a.AppKey.ToLower() == key.ToLower()).ToItem<ApiGatewayUser>();
+                    var info = IFast.Query<ApiGatewayUser>(a => a.AppKey.ToLower() == key.ToLower()).ToItem<ApiGatewayUser>();
                     model.Ip = info.Ip;
                     model.Power = info.Power;
                     if (!string.IsNullOrEmpty(model.Power))
@@ -103,7 +109,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             using (var db = new DataContext(App.DbKey.Api))
             {
-                if (FastRead.Query<ApiGatewayUser>(a => a.AppKey == model.AppKey).ToCount(db) > 0)
+                if (IFast.Query<ApiGatewayUser>(a => a.AppKey == model.AppKey).ToCount(db) > 0)
                     isSuccess = db.Update<ApiGatewayUser>(model, a => a.AppKey.ToLower() == model.AppKey.ToLower(), a => new { a.AppKey, a.Ip, a.Power }).writeReturn.IsSuccess;
                 else
                     isSuccess = db.Add(model).writeReturn.IsSuccess;

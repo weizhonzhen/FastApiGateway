@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FastApiGatewayDb.Ui.Models;
-using FastData.Core;
 using FastData.Core.Context;
 using FastUntility.Core.Page;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 using FastUntility.Core.Base;
+using FastData.Core.Repository;
 
 namespace FastApiGatewayDb.Ui.Controllers
 {
     public class LogController : Controller
     {
+        private readonly IFastRepository IFast;
+        public LogController(IFastRepository _IFast)
+        {
+            IFast = _IFast;
+        }
+
         #region 加载日志
         /// <summary>
         /// 加载日志
@@ -50,7 +54,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 param.Add(new OracleParameter { ParameterName = "Day", Value = item.Day.ToDate("yyyy-MM-dd").ToDate() });
                 param.Add(new OracleParameter { ParameterName = "Success", Value = item.Success });
 
-                var info = FastMap.QueryPage(page, "Api.Log", param.ToArray(), db);
+                var info = IFast.QueryPage(page, "Api.Log", param.ToArray(), db);
 
                 return PartialView("List", info);
             }
