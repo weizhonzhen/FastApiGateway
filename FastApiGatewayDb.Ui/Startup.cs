@@ -1,4 +1,4 @@
-using FastData.Core;
+﻿using FastData.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Diagnostics;
 using FastUntility.Core.Base;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using FastData.Core.Repository;
 
 namespace FastApiGatewayDb.Ui
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
-        {
+        { 
             Configuration = configuration;
             FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
-            FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
+            //FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
             FastMap.InstanceMap();
         }
 
@@ -25,10 +26,9 @@ namespace FastApiGatewayDb.Ui
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IFastRepository, FastRepository>();
             services.AddMvc(options =>
             {
-                //全局过滤器
-                options.Filters.Add(new ErrorAttribute());
                 options.Filters.Add(new PowerAttribute());
             });
         }
