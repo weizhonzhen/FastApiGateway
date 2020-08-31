@@ -1,3 +1,4 @@
+using FastData.Core.Repository;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,9 +9,9 @@ namespace FastApiGatewayDb
     {
         public FastApiGatewayDbHandler(RequestDelegate request) { }
 
-        public async Task Invoke(HttpContext context, IFastApiGatewayDb response, IHttpClientFactory client)
+        public async Task Invoke(HttpContext context, IFastApiGatewayDb response, IHttpClientFactory client, IFastRepository IFast)
         {
-            await response.ContentAsync(context, client).ConfigureAwait(false);
+            await response.ContentAsync(context, client,IFast).ConfigureAwait(false);
         }
     }
 }
