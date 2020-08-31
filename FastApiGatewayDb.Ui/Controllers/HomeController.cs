@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FastData.Core;
 using FastData.Core.Context;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
@@ -30,9 +29,7 @@ namespace FastApiGatewayDb.Ui.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            var aaa = bb.AA();
-            Test a = new Test();
-           var bbb = a.AA();
+           
             var model = new LoginModel();
             ViewData.Model = model;
             return View();
@@ -53,7 +50,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             using (var db = new DataContext(App.DbKey.Api))
             {
-                var info = FastRead.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToDic(db);
+                var info = IFast.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToDic(db);
 
                 isSuccess = BaseSymmetric.Generate(item.Pwd).ToLower() == info.GetValue("UserPwd").ToStr().ToLower();
 
@@ -102,7 +99,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 {
                     var param = new List<OracleParameter>();
                     param.Add(new OracleParameter { ParameterName = "Key", Value = item.Key.ToUpper() });
-                    info = FastMap.QueryPage(page, "Api.DownUrl", param.ToArray(),db);
+                    info = IFast.QueryPage(page, "Api.DownUrl", param.ToArray(),db);
                 }
                 else
                     info.list = new List<Dictionary<string, object>>();
@@ -135,7 +132,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
                 var param = new List<OracleParameter>();
                 param.Add(new OracleParameter { ParameterName = "Key", Value = item.Key });
-                var info = FastMap.QueryPage(page, "Api.Url", param.ToArray(),db);
+                var info = IFast.QueryPage(page, "Api.Url", param.ToArray(),db);
 
                 return PartialView("UrlList", info);
             }
@@ -153,7 +150,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             if(!string.IsNullOrEmpty(key))
             {
-                var item = FastRead.Query<ApiGatewayUrl>(a => a.Key.ToLower() == key.ToLower(), null, App.DbKey.Api).ToItem<ApiGatewayUrl>();
+                var item = IFast.Query<ApiGatewayUrl>(a => a.Key.ToLower() == key.ToLower(), null, App.DbKey.Api).ToItem<ApiGatewayUrl>();
                 model.IsAnonymous = item.IsAnonymous;
                 model.CacheTimeOut = item.CacheTimeOut;
                 model.IsCache = item.IsCache;
@@ -183,7 +180,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             if (!string.IsNullOrEmpty(key))
             {
-                var item = FastRead.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == key.ToLower()&&a.OrderBy==orderBy.ToInt(1), null, App.DbKey.Api).ToItem<ApiGatewayDownParam>();
+                var item = IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == key.ToLower()&&a.OrderBy==orderBy.ToInt(1), null, App.DbKey.Api).ToItem<ApiGatewayDownParam>();
              
                 model.Name = item.Name;
                 model.IsBody = item.IsBody;
@@ -238,7 +235,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Url = item.Url;
                 model.WaitHour = item.WaitHour;
 
-                if (FastRead.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).ToCount(db) > 0)
+                if (IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).ToCount(db) > 0)
                     success = db.Update<ApiGatewayDownParam>(model, a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
                 else
                     success = db.Add(model).writeReturn.IsSuccess;
@@ -275,7 +272,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Name = item.Name;
                 model.Schema = item.Schema;
                 
-                if (FastRead.Query<ApiGatewayUrl>(a => a.Key.ToLower() == item.Key.ToLower()).ToCount(db) > 0)
+                if (IFast.Query<ApiGatewayUrl>(a => a.Key.ToLower() == item.Key.ToLower()).ToCount(db) > 0)
                     success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == item.Key.ToLower()).writeReturn.IsSuccess;
                 else
                     success = db.Add(model).writeReturn.IsSuccess;

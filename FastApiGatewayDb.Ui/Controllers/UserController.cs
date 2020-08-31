@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using FastApiGatewayDb.DataModel;
 using FastApiGatewayDb.Ui.Models;
-using FastData.Core;
 using FastData.Core.Context;
 using FastUntility.Core.Page;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 using System;
-using System.Linq;
 using FastData.Core.Repository;
 
 namespace FastApiGatewayDb.Ui.Controllers
