@@ -1,7 +1,8 @@
 ﻿using FastUntility.Core.Base;
 using FastApiGatewayDb.DataModel;
 using System.ComponentModel.DataAnnotations;
-using FastData.Core;
+using Microsoft.Extensions.DependencyInjection;
+using FastData.Core.Repository;
 
 namespace FastApiGatewayDb.Ui.Validation
 {
@@ -9,7 +10,8 @@ namespace FastApiGatewayDb.Ui.Validation
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var count = FastRead.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == value.ToStr().ToLower(), null, App.DbKey.Api).ToCount();
+            var IFast = validationContext.GetService<IFastRepository>();
+            var count = IFast.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == value.ToStr().ToLower(), null, App.DbKey.Api).ToCount();
 
             if (count > 0)
                 return ValidationResult.Success;
