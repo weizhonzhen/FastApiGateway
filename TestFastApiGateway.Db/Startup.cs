@@ -1,9 +1,8 @@
-using FastApiGatewayDb;
 using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core;
 using FastData.Core.Context;
+using FastData.Core.Repository;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
@@ -43,7 +42,8 @@ namespace TestFastApiGateway.Db
             services.AddResponseCompression();
 
             //注入
-            services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
+            services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();            
+            services.AddTransient<IFastRepository, FastRepository>();
 
             //跨域
             services.AddCors(options =>
