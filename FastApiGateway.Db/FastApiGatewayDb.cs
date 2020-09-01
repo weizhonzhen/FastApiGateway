@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using FastUntility.Core.Base;
-using FastData.Core;
 using FastData.Core.Context;
 using FastApiGatewayDb.Model;
 using System.Web;
@@ -442,16 +441,18 @@ namespace FastApiGatewayDb
         /// <returns></returns>
         private static string GetUrlParam(HttpContext context)
         {
-            var content = new StreamReader(context.Request.Body).ReadToEnd();
-            var param = context.Request.QueryString.Value;
+            using (var content = new StreamReader(context.Request.Body))
+            {
+                var param = context.Request.QueryString.Value;
 
-            if (string.IsNullOrEmpty(param))
-                param = content;
+                if (string.IsNullOrEmpty(param))
+                    param = content.ReadToEnd();
 
-            if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
-                param = param.Substring(1, param.Length - 1);
+                if (!string.IsNullOrEmpty(param) && param.Substring(0, 1) == "?")
+                    param = param.Substring(1, param.Length - 1);
 
-            return param;
+                return param;
+            }
         }
         #endregion
 
