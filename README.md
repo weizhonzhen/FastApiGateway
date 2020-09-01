@@ -8,6 +8,7 @@ services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
 
 //注入
 services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
+services.AddTransient<IFastRepository, FastRepository>();
 
 //跨域
 services.AddCors(options =>
