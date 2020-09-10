@@ -8,6 +8,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using FastUntility.Core;
 
 namespace TestFastApiGateway.Db
 {
@@ -44,6 +45,7 @@ namespace TestFastApiGateway.Db
             //注入
             services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();            
             services.AddTransient<IFastRepository, FastRepository>();
+            ServiceContext.Init(new ServiceEngine(services.BuildServiceProvider()));
 
             //跨域
             services.AddCors(options =>
