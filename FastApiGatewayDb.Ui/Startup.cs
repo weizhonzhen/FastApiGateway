@@ -9,6 +9,7 @@ using FastUntility.Core.Base;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using FastData.Core.Repository;
+using FastUntility.Core;
 
 namespace FastApiGatewayDb.Ui
 {
@@ -17,9 +18,6 @@ namespace FastApiGatewayDb.Ui
         public Startup(IConfiguration configuration)
         { 
             Configuration = configuration;
-            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
-            //FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
-            FastMap.InstanceMap();
         }
 
         public IConfiguration Configuration { get; }
@@ -27,10 +25,14 @@ namespace FastApiGatewayDb.Ui
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IFastRepository, FastRepository>();
+            ServiceContext.Init(new ServiceEngine(services.BuildServiceProvider()));
             services.AddMvc(options =>
             {
                 options.Filters.Add(new PowerAttribute());
             });
+            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
+            //FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
+            FastMap.InstanceMap();
         }
 
         public void Configure(IApplicationBuilder app)
