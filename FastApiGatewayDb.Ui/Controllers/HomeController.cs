@@ -180,21 +180,7 @@ namespace FastApiGatewayDb.Ui.Controllers
 
             if (!string.IsNullOrEmpty(key))
             {
-                var item = IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == key.ToLower()&&a.OrderBy==orderBy.ToInt(1), null, App.DbKey.Api).ToItem<ApiGatewayDownParam>();
-             
-                model.Name = item.Name;
-                model.IsBody = item.IsBody;
-                model.IsDecode = item.IsDecode;
-                model.IsResult = item.IsResult;
-                model.Key = item.Key;
-                model.Method = item.Method;
-                model.Name = item.Name;
-                model.Protocol = item.Protocol;
-                model.SoapMethod = item.SoapMethod;
-                model.SoapParamName = item.SoapParamName;
-                model.SourceParam = item.SourceParam;
-                model.Url = item.Url;
-                model.WaitHour = item.WaitHour;
+                model = IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == key.ToLower()&&a.OrderBy==orderBy.ToInt(1), null, App.DbKey.Api).ToItem<DownUrlModel>();
 
                 if(model.Key==null)
                 {
@@ -234,6 +220,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.SourceParam = item.SourceParam;
                 model.Url = item.Url;
                 model.WaitHour = item.WaitHour;
+                model.SoapNamespace = item.SoapNamespace;
 
                 if (IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).ToCount(db) > 0)
                     success = db.Update<ApiGatewayDownParam>(model, a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
