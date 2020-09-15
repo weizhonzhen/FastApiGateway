@@ -20,8 +20,8 @@ namespace FastApiGatewayDb
     public class FastApiGatewayDb : IFastApiGatewayDb
     {
         //接口数据库
-        public static string ParamKey = "param";
-        public static string DbApi = "ApiGateway";
+        public static readonly string ParamKey = "param";
+        public static readonly string DbApi = "ApiGateway";
         public Task ContentAsync(HttpContext context, IHttpClientFactory client, IFastRepository IFast)
         {
             var urlParam = GetUrlParam(context);
@@ -96,7 +96,7 @@ namespace FastApiGatewayDb
         /// <param name="param">请求参数</param>
         /// <param name="content">请求参数body</param>
         /// <returns></returns>
-        private static ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog, int isDbLog, DataContext db, IFastRepository IFast, HttpContext context, string ActionId, int OrderBy, IHttpClientFactory client)
+        private ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog, int isDbLog, DataContext db, IFastRepository IFast, HttpContext context, string ActionId, int OrderBy, IHttpClientFactory client)
         {
             var info = IFast.Query<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()).ToItem<ApiGatewayWait>(db) ?? new ApiGatewayWait();
             if (info.Key.ToStr().ToLower() == key.ToLower() && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
@@ -131,6 +131,9 @@ namespace FastApiGatewayDb
                 //else if (downparam.Protocol.ToLower() == "mq")
                 //    //mq
                 //    result = BaseUrl.RabbitUrl(downparam.QueueName, param);
+                //else if (downparam.Protocol.ToLower() == "rpc")
+                //    //mq
+                //    result = BaseUrl.RpcUrl(downparam.QueueName, param);
                 else
                     result.status = 408;
 
@@ -181,7 +184,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static bool CheckToken(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, string urlParam)
+        private bool CheckToken(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, string urlParam)
         {
             var dic = new Dictionary<string, object>();
             var token = GetUrlParamKey(urlParam, "token");
@@ -245,7 +248,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 普通请求
         /// </summary>
-        private static Task Normal(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
+        private Task Normal(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var actionId = Guid.NewGuid().ToStr();
             var downparam = list.FirstOrDefault() ?? new ApiGatewayDownParam();
@@ -265,7 +268,7 @@ namespace FastApiGatewayDb
         /// <summary>
         /// 轮循请求
         /// </summary>
-        private static Task Polling(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
+        private Task Polling(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var orderBy = 1;
             var actionId = Guid.NewGuid().ToStr();
@@ -309,7 +312,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static Task Composite(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
+        private Task Composite(ApiGatewayUrl item, HttpContext context, DataContext db, IFastRepository IFast, List<ApiGatewayDownParam> list, string urlParamDecode, string urlParam, IHttpClientFactory client)
         {
             var actionId = Guid.NewGuid().ToStr();
             var orderBy = 1;
@@ -356,7 +359,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="item"></param>
         /// <param name="context"></param>
-        private static Task Token(HttpContext context, DataContext db,IFastRepository IFast, string urlParam)
+        private Task Token(HttpContext context, DataContext db,IFastRepository IFast, string urlParam)
         {
             var dic = new Dictionary<string, object>();
             var AppKey = GetUrlParamKey(urlParam, "AppKey");
@@ -397,7 +400,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static string GetClientIp(HttpContext context)
+        public string GetClientIp(HttpContext context)
         {
             var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
             if (string.IsNullOrEmpty(ip))
@@ -414,7 +417,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="info"></param>
         /// <param name="item"></param>
-        private static void CacheResult(ApiGatewayUrl item, DataContext db,IFastRepository IFast, ReturnModel info = null, Dictionary<string, object> dic = null)
+        private void CacheResult(ApiGatewayUrl item, DataContext db,IFastRepository IFast, ReturnModel info = null, Dictionary<string, object> dic = null)
         {
             var model = new ApiGatewayCache();
             model.Key = item.Key.ToLower();
@@ -439,7 +442,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private static string GetUrlParam(HttpContext context)
+        private string GetUrlParam(HttpContext context)
         {
             using (var content = new StreamReader(context.Request.Body))
             {
@@ -462,7 +465,7 @@ namespace FastApiGatewayDb
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private static string GetUrlParamKey(string param, string key)
+        private string GetUrlParamKey(string param, string key)
         {
             var dic = new Dictionary<string, object>();
             if (param.IndexOf('&') > 0)
