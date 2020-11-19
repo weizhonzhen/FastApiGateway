@@ -24,8 +24,7 @@ namespace FastApiGatewayDb.Ui
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IFastRepository, FastRepository>();
-            ServiceContext.Init(new ServiceEngine(services.BuildServiceProvider()));
+            services.AddFastData();
             services.AddMvc(options =>
             {
                 options.Filters.Add(new PowerAttribute());
