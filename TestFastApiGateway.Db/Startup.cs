@@ -43,9 +43,8 @@ namespace TestFastApiGateway.Db
             services.AddResponseCompression();
 
             //注入
-            services.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();            
-            services.AddTransient<IFastRepository, FastRepository>();
-            ServiceContext.Init(new ServiceEngine(services.BuildServiceProvider()));
+            services.AddFastData();
+            services.AddFastApiGatewayDb();
 
             //跨域
             services.AddCors(options =>
