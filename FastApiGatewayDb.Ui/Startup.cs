@@ -1,6 +1,4 @@
-﻿using FastData.Core;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FastApiGatewayDb.Ui.Filter;
@@ -8,8 +6,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using FastUntility.Core.Base;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using FastData.Core.Repository;
-using FastUntility.Core;
 
 namespace FastApiGatewayDb.Ui
 {
@@ -24,14 +20,21 @@ namespace FastApiGatewayDb.Ui
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFastData();
+            services.AddFastData(new ConfigData
+            {
+                dbKey = "ApiGateway",
+                dbFile = "db.json",
+                mapFile = "map.json",
+                IsResource = false,
+                IsCodeFirst = true,
+                NamespaceCodeFirst = "FastApiGatewayDb.DataModel",
+                NamespaceProperties = "FastApiGatewayDb.DataModel"
+            });
+
             services.AddMvc(options =>
             {
                 options.Filters.Add(new PowerAttribute());
             });
-            FastMap.InstanceProperties("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
-            //FastMap.InstanceTable("FastApiGatewayDb.DataModel", "FastApiGatewayDb.Ui.dll");
-            FastMap.InstanceMap();
         }
 
         public void Configure(IApplicationBuilder app)
