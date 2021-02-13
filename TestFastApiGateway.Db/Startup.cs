@@ -33,7 +33,7 @@ namespace FastApiGatewayDb.Web
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseFastApiGatewayMiddleware();
+            app.UseFastApiGatewayMiddleware(a => a.dbKey = "ApiGateway");
         }
     }
 }
