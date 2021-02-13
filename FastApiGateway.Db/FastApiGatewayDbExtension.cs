@@ -42,9 +42,16 @@ namespace Microsoft.Extensions.DependencyInjection
             return serviceCollection;
         }
 
-        public static IApplicationBuilder UseFastApiGatewayMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseFastApiGatewayMiddleware(this IApplicationBuilder app, Action<ConfigOption> optionsAction)
         {
-            return app.UseMiddleware<FastApiGatewayDbHandler>();
+            var options = new ConfigOption();
+            optionsAction(options);
+            return app.UseMiddleware<FastApiGatewayDbHandler>(options);
         }
+    }
+
+    public class ConfigOption
+    {
+        public string dbKey { get; set; }
     }
 }

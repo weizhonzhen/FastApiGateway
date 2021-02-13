@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastApiGatewayDb
 {
@@ -21,9 +22,10 @@ namespace FastApiGatewayDb
     {
         //接口数据库
         public static readonly string ParamKey = "param";
-        public static readonly string DbApi = "ApiGateway";
-        public Task ContentAsync(HttpContext context, IHttpClientFactory client, IFastRepository IFast)
+        public static string DbApi = "";
+        public Task ContentAsync(HttpContext context, IHttpClientFactory client, IFastRepository IFast, ConfigOption option)
         {
+            DbApi = option.dbKey;
             var urlParam = GetUrlParam(context);
             var urlParamDecode = HttpUtility.UrlDecode(urlParam);
 
