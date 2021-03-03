@@ -12,8 +12,11 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FastApiGatewayDbExtension
     {
-        public static IServiceCollection AddFastApiGatewayDb(this IServiceCollection serviceCollection, ConfigData config)
+        public static IServiceCollection AddFastApiGatewayDb(this IServiceCollection serviceCollection, Action<ConfigData> Action)
         {
+            var config = new ConfigData();
+            Action(config);
+
             if (string.IsNullOrEmpty(config.dbKey))
                 throw new Exception("ConfigData dbKey is not null");
 
