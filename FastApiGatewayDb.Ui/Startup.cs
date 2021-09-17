@@ -20,15 +20,15 @@ namespace FastApiGatewayDb.Ui
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFastData(new ConfigData
+            services.AddFastData(a =>
             {
-                dbKey = "ApiGateway",
-                dbFile = "db.json",
-                mapFile = "map.json",
-                IsResource = false,
-                IsCodeFirst = true,
-                NamespaceCodeFirst = "FastApiGatewayDb.DataModel",
-                NamespaceProperties = "FastApiGatewayDb.DataModel"
+                a.dbKey = "ApiGateway";
+                a.dbFile = "db.json";
+                a.mapFile = "map.json";
+                a.IsResource = false;
+                a.IsCodeFirst = false;
+                a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel";
+                a.NamespaceProperties = "FastApiGatewayDb.DataModel";
             });
 
             services.AddMvc(options =>
