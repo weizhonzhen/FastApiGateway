@@ -9,6 +9,7 @@ using FastUntility.Core.Base;
 using FastUntility.Core.Cache;
 using Microsoft.AspNetCore.Authorization;
 using FastData.Core.Repository;
+using System;
 
 namespace FastApiGatewayDb.Ui.Controllers
 {
@@ -160,6 +161,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Key = item.Key;
                 model.Schema = item.Schema;
                 model.Name = item.Name;
+                model.Id = key;
             }
 
             ViewData.Model = model;
@@ -246,6 +248,8 @@ namespace FastApiGatewayDb.Ui.Controllers
         {
             using (var db = new DataContext(App.DbKey.Api))
             {
+                db.BeginTrans();
+
                 var success = true;
                 var model = new ApiGatewayUrl();
 
@@ -258,16 +262,36 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Key = item.Key;
                 model.Name = item.Name;
                 model.Schema = item.Schema;
-                
-                if (IFast.Query<ApiGatewayUrl>(a => a.Key.ToLower() == item.Key.ToLower()).ToCount(db) > 0)
-                    success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == item.Key.ToLower()).writeReturn.IsSuccess;
-                else
+
+                if (!string.IsNullOrEmpty(item.Id))
+                {
+                    if (IFast.Query<ApiGatewayUrl>(a => a.Key.ToLower() == item.Key.ToLower()).ToCount(db) > 0)
+                        success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == item.Key.ToLower()).writeReturn.IsSuccess;
+                    else
+                    {
+                        success = db.Update<ApiGatewayUrl>(model, a => a.Key.ToLower() == item.Id.ToLower()).writeReturn.IsSuccess;
+                        if (success)
+                        {
+                            var downModel = new ApiGatewayDownParam();
+                            downModel.Key = item.Key;
+                            success = db.Update<ApiGatewayDownParam>(downModel, a => a.Key.ToLower() == item.Id.ToLower(), a => new { a.Key }).writeReturn.IsSuccess;
+                        }
+                    }
+                }
+
+                if(string.IsNullOrEmpty(item.Id))
                     success = db.Add(model).writeReturn.IsSuccess;
 
                 if (success)
+                {
+                    db.SubmitTrans();
                     return Json(new { success = true, msg = "操作成功" });
+                }
                 else
+                {
+                    db.RollbackTrans();
                     return Json(new { success = false, msg = "操作失败" });
+                }
             }
         }
 
