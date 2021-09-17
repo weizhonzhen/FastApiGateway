@@ -15,14 +15,14 @@ using System.Net.Http;
 using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using FastApiGatewayDb.Aop;
 
 namespace FastApiGatewayDb
 {
     public class FastApiGatewayDb : IFastApiGatewayDb
     {
-        //接口数据库
-        public static readonly string ParamKey = "param";
         public static string DbApi = "";
+
         public Task ContentAsync(HttpContext context, IHttpClientFactory client, IFastRepository IFast, ConfigOption option)
         {
             DbApi = option.dbKey;
@@ -115,20 +115,22 @@ namespace FastApiGatewayDb
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
+                BaseAop.Before(downparam.Url,key, ref param, downparam.Protocol);
+
                 if (downparam.Protocol.ToLower() == "soap")
-                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param,client,key,downparam.SoapNamespace);
+                    result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param, client, key, downparam.SoapNamespace);
                 else if (downparam.Protocol.ToLower() == "http")
                 {
                     //http
                     if (downparam.Method.ToStr().ToLower() == "post")
                     {
                         if (downparam.IsBody == 1)
-                            result = BaseUrl.PostContent(downparam.Url, param, key,client);
+                            result = BaseUrl.PostContent(downparam.Url, param, key, client);
                         else
-                            result = BaseUrl.PostUrl(downparam.Url, param, key,client);
+                            result = BaseUrl.PostUrl(downparam.Url, param, key, client);
                     }
                     else if (downparam.Method.ToStr().ToLower() == "get")
-                        result = BaseUrl.GetUrl(downparam.Url, param, key,client);
+                        result = BaseUrl.GetUrl(downparam.Url, param, key, client);
                 }
                 //else if (downparam.Protocol.ToLower() == "mq")
                 //    //mq
@@ -138,6 +140,8 @@ namespace FastApiGatewayDb
                 //    result = BaseUrl.RpcUrl(downparam.QueueName, param);
                 else
                     result.status = 408;
+
+                BaseAop.After(downparam.Url,key, ref param, downparam.Protocol, result);
 
                 if (result.status == 408)
                 {
