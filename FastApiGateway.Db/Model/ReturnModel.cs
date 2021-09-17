@@ -1,6 +1,6 @@
 ﻿namespace FastApiGatewayDb.Model
 {
-    internal class ReturnModel
+    public class ReturnModel
     {
         public int status { get; set; }
 
