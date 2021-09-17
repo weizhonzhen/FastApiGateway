@@ -1,6 +1,5 @@
 ﻿@model FastApiGatewayDb.Ui.Models.DownUrlModel
 @{
-    Model.WaitHour = "1";
     Layout = null;
     var selectList = new List<SelectListItem>();
     selectList.Add(new SelectListItem { Value = "1", Text = "是" });
@@ -28,7 +27,7 @@
 <body class="form-body">
     <form id="SubmitLeafForm">
         <H4 style="text-align:center;margin-bottom:20px;"><b>下游接口参数</b></H4>
-        @Html.HiddenFor(a=>a.Key)
+        @Html.HiddenFor(a => a.Key)
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>请求排序</label></div>
             @Html.TextBoxFor(a => a.OrderBy, new { @class = "form-control shorLength" })
@@ -67,6 +66,10 @@
             <div class="input-group-addon input-group-none"><label>soap参数</label></div>
             @Html.TextBoxFor(a => a.SoapParamName, new { @class = "form-control shorLength" })
         </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>命名空间</label></div>
+            @Html.TextBoxFor(a => a.SoapNamespace, new { @class = "form-control textLength1", @autocomplete = "off" })
+        </div>
         <div class="center" style="margin-top:20px;margin-bottom:20px;">
             <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
             <button type="button" class="btn btn-primary center" id="delBtn">删除</button>
@@ -82,6 +85,7 @@
             $("#SubmitLeafForm #WaitHour").val("");
             $("#SubmitLeafForm #SoapMethod").val("");
             $("#SubmitLeafForm #SoapParamName").val("");
+            $("#SubmitLeafForm #SoapNamespace").val("");
         });
 
         $("#CancelBtn").click(function () {
