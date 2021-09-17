@@ -38,4 +38,18 @@ services.AddCors(options =>
 //Configure方法里 使用api网关 
 app.UseFastApiGatewayMiddleware();
 
+
+//aop
+ public class FastAop : IFastApiAop
+    {
+	public void After(AfterContext context)
+        {
+                
+        }
+
+        public void Before(BeforeContext context)
+        {
+            context.param = null;
+        }
+    }
 ```
