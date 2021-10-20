@@ -61,4 +61,27 @@ app.UseFastApiGatewayMiddleware();
             context.param = null;
         }
     }
+    
+     public class FastRabbitAop : IFastRabbitAop
+        {
+            public void Delete(DeleteContext context)
+            {
+                //throw new System.NotImplementedException();
+            }
+
+            public void Exception(ExceptionContext context)
+            {
+                //throw new System.NotImplementedException();
+            }
+
+            public void Receive(ReceiveContext context)
+            {
+                //throw new System.NotImplementedException();
+            }
+
+            public void Send(SendContext context)
+            {
+                //throw new System.NotImplementedException();
+            }
+        }
 ```
