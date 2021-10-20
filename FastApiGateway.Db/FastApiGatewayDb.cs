@@ -14,8 +14,9 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core.Repository;
-using Microsoft.Extensions.DependencyInjection;
 using FastApiGatewayDb.Aop;
+using FastRabbitMQ.Core;
+using FastRabbitMQ.Core.Model;
 
 namespace FastApiGatewayDb
 {
@@ -132,11 +133,16 @@ namespace FastApiGatewayDb
                     else if (downparam.Method.ToStr().ToLower() == "get")
                         result = BaseUrl.GetUrl(downparam.Url, param, key, client);
                 }
-                //else if (downparam.Protocol.ToLower() == "mq")
-                //    //mq
-                //    result = BaseUrl.RabbitUrl(downparam.QueueName, param);
+                else if (downparam.Protocol.ToLower() == "rabbitmq")
+                {
+                    result.status = 200;
+                    result.msg = "成功";
+
+                    var mqConfig = new ConfigModel();
+                    mqConfig.QueueName = downparam.QueueName;
+                    FastRabbit.Send(mqConfig, GetUrlParam(param));
+                }
                 //else if (downparam.Protocol.ToLower() == "rpc")
-                //    //mq
                 //    result = BaseUrl.RpcUrl(downparam.QueueName, param);
                 else
                     result.status = 408;
@@ -489,6 +495,33 @@ namespace FastApiGatewayDb
             }
 
             return dic.GetValue(key).ToStr();
+        }
+        #endregion
+
+        #region 解析参数
+        /// <summary>
+        /// 解析参数
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        private Dictionary<string, object> GetUrlParam(string param)
+        {
+            var dic = new Dictionary<string, object>();
+            if (param.IndexOf('&') > 0)
+            {
+                foreach (var temp in param.Split('&'))
+                {
+                    if (temp.IndexOf('=') > 0)
+                        dic.Add(temp.Split('=')[0], temp.Split('=')[1]);
+                }
+            }
+            else
+            {
+                if (param.IndexOf('=') > 0)
+                    dic.Add(param.Split('=')[0], param.Split('=')[1]);
+            }
+
+            return dic;
         }
         #endregion
     }

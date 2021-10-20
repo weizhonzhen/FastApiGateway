@@ -7,13 +7,15 @@
     <PackageId>Fast.ApiGateway</PackageId>
     <Authors>Fast.ApiGateway</Authors>
     <Product>Fast.ApiGateway</Product>
-    <Version>1.7.0</Version>
+    <Version>1.7.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIconUrl>https://en.gravatar.com/userimage/151376774/1cba1ca23219db268cc5ed8abde11775.png</PackageIconUrl>
+    <PackageReleaseNotes>add RabbitMQ</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fast.Data.Core" Version="2.5.7.2" />
+    <PackageReference Include="Fast.Data.Core" Version="2.6.7" />
+    <PackageReference Include="Fast.RabbitMQ.Core" Version="1.0.4" />
   </ItemGroup>
 
 </Project>

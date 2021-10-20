@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class FastApiGatewayDbExtension
     {
-        public static IServiceCollection AddFastApiGatewayDb(this IServiceCollection serviceCollection, Action<ConfigData> Action, IFastApiAop aop = null)
+        public static IServiceCollection AddFastApiGatewayDb(this IServiceCollection serviceCollection, Action<ConfigData> Action, Action<FastRabbitMQ.Core.ConfigData> MqAction=null, IFastApiAop aop = null)
         {
             var config = new ConfigData();
             Action(config);
@@ -30,6 +30,21 @@ namespace Microsoft.Extensions.DependencyInjection
                 a.NamespaceCodeFirst = config.NamespaceCodeFirst;
                 a.NamespaceProperties = config.NamespaceProperties;           
             });
+
+            if (MqAction != null)
+            {
+                var mqConfig = new FastRabbitMQ.Core.ConfigData();
+                MqAction(mqConfig);
+                serviceCollection.AddFastRabbitMQ(a =>
+                {
+                    a.Host = mqConfig.Host;
+                    a.PassWord = mqConfig.PassWord;
+                    a.UserName = mqConfig.UserName;
+                    a.Port = mqConfig.Port;
+                    a.VirtualHost = mqConfig.VirtualHost;
+                    a.aop = mqConfig.aop;
+                });
+            }
 
             serviceCollection.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
 
