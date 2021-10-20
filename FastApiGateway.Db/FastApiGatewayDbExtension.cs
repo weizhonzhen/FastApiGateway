@@ -65,9 +65,4 @@ namespace Microsoft.Extensions.DependencyInjection
             return app.UseMiddleware<FastApiGatewayDbHandler>(options);
         }
     }
-
-    public class ConfigOption
-    {
-        public string dbKey { get; set; }
-    }
 }
