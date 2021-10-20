@@ -92,5 +92,11 @@ namespace FastApiGatewayDb.DataModel.Oracle
         /// </summary>
         [Column(Comments = "soap Namespace", DataType = "varchar2", Length = 128, IsNull = true)]
         public string SoapNamespace { get; set; }
+
+        /// <summary>
+        /// Queue Name
+        /// </summary>
+        [Column(Comments = "Queue Name", DataType = "varchar2", Length = 128, IsNull = true)]
+        public string QueueName { get; set; }
     }
 }
