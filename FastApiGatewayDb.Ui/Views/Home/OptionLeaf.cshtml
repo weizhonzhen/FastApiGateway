@@ -8,6 +8,7 @@
     var typeList = new List<SelectListItem>();
     typeList.Add(new SelectListItem { Value = "Http", Text = "Http" });
     typeList.Add(new SelectListItem { Value = "Soap", Text = "Soap" });
+    typeList.Add(new SelectListItem { Value = "RabbitMq", Text = "RabbitMq" });
 
     var methodList = new List<SelectListItem>();
     methodList.Add(new SelectListItem { Value = "Post", Text = "Post" });
@@ -69,6 +70,11 @@
         <div class="input-group">
             <div class="input-group-addon input-group-none"><label>命名空间</label></div>
             @Html.TextBoxFor(a => a.SoapNamespace, new { @class = "form-control textLength1", @autocomplete = "off" })
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon input-group-none"><label>队列名称</label></div>
+            @Html.TextBoxFor(a => a.QueueName, new { @class = "form-control shorLength" })
+            <div class="input-group-addon input-group-none"></div>
         </div>
         <div class="center" style="margin-top:20px;margin-bottom:20px;">
             <button type="button" class="btn btn-primary center" id="saveBtn">保存</button>
