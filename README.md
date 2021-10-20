@@ -16,17 +16,26 @@
         NamespaceProperties = "FastApiGatewayDb.DataModel.Oracle"
    });
    	or
-   services.AddFastApiGatewayDb(a=>
-   {
-        a.dbFile = "db.json";
-        a.dbKey = "ApiGateway";
-        a.IsResource = false;
-        a.IsCodeFirst = true;
-        a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.Oracle";
-        //a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.MySql";
-        //a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.SqlServer";
-        a.NamespaceProperties = "FastApiGatewayDb.DataModel.Oracle";
-   });
+  services.AddFastApiGatewayDb(a =>
+  {
+    a.dbFile = "db.json";
+    a.dbKey = "ApiGateway";
+    a.IsResource = false;
+    a.IsCodeFirst = false;
+    a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.Oracle";
+    //a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.MySql";
+    //a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.SqlServer";
+    a.NamespaceProperties = "FastApiGatewayDb.DataModel.Oracle";
+  },
+ a =>
+ {
+   a.Host = "127.0.0.1";
+   a.PassWord = "guest";
+   a.UserName = "guest";
+   a.Port = 5672;
+   a.VirtualHost = "/";
+   a.aop = new FastRabbitAop();
+}, new FastAop());
 
 //跨域
 services.AddCors(options =>
