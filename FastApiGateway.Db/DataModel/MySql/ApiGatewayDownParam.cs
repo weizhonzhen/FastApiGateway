@@ -92,5 +92,11 @@ namespace FastApiGatewayDb.DataModel.MySql
         /// </summary>
         [Column(Comments = "soap Namespace", DataType = "Char", Length = 128, IsNull = true)]
         public string SoapNamespace { get; set; }
+
+        /// <summary>
+        /// Queue Name
+        /// </summary>
+        [Column(Comments = "Queue Name", DataType = "Char", Length = 128, IsNull = true)]
+        public string QueueName { get; set; }
     }
 }
