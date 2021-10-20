@@ -12,8 +12,10 @@ namespace FastApiGatewayDb.Ui.Validation
                 return ValidationResult.Success;
             else if (value.ToStr().ToLower() == "soap")
                 return ValidationResult.Success;
+            else if (value.ToStr().ToLower() == "rabbitmq")
+                return ValidationResult.Success;
             else
-                return new ValidationResult(ErrorMessage = "{0}不正确");
+                return new ValidationResult(ErrorMessage = string.Format("{0}不正确",validationContext.DisplayName));
         }
     }
 }
