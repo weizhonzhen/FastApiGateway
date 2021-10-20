@@ -27,7 +27,7 @@
     //a.NamespaceCodeFirst = "FastApiGatewayDb.DataModel.SqlServer";
     a.NamespaceProperties = "FastApiGatewayDb.DataModel.Oracle";
   },
- a =>
+ a => //RabbitMq
  {
    a.Host = "127.0.0.1";
    a.PassWord = "guest";
