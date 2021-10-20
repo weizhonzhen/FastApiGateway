@@ -223,6 +223,7 @@ namespace FastApiGatewayDb.Ui.Controllers
                 model.Url = item.Url;
                 model.WaitHour = item.WaitHour;
                 model.SoapNamespace = item.SoapNamespace;
+                model.QueueName = item.QueueName;
 
                 if (IFast.Query<ApiGatewayDownParam>(a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).ToCount(db) > 0)
                     success = db.Update<ApiGatewayDownParam>(model, a => a.Key.ToLower() == item.Key.ToLower() && a.OrderBy == item.OrderBy).writeReturn.IsSuccess;
