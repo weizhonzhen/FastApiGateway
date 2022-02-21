@@ -12,9 +12,9 @@ namespace FastApiGatewayDb.Ui.Validation
             if (IsNull && string.IsNullOrEmpty(value.ToStr()))
                 return ValidationResult.Success;
 
-            if (value.ToStr().ToLower() == "composite")
+            if (string.Compare( value.ToStr(),"composite",false)==0)
                 return ValidationResult.Success;
-            else if (value.ToStr().ToLower() == "polling")
+            else if (string.Compare( value.ToStr(), "polling",false)==0)
                 return ValidationResult.Success;
             else
                 return new ValidationResult(ErrorMessage = "{0}不正确");

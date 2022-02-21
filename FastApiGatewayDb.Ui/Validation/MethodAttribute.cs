@@ -1,9 +1,5 @@
 ﻿using FastUntility.Core.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FastApiGatewayDb.Ui.Validation
 {
@@ -11,9 +7,9 @@ namespace FastApiGatewayDb.Ui.Validation
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value.ToStr().ToLower() == "get")
+            if (string.Compare( value.ToStr(),"get",false)==0)
                 return ValidationResult.Success;
-            else if (value.ToStr().ToLower() == "post")
+            else if (string.Compare( value.ToStr(), "post",false)==0)
                 return ValidationResult.Success;
             else
                 return new ValidationResult(ErrorMessage = "{0}不正确");

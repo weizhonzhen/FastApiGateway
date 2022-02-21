@@ -8,11 +8,11 @@ namespace FastApiGatewayDb.Ui.Validation
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value.ToStr().ToLower() == "http")
+            if (string.Compare( value.ToStr(), "http",false)==0)
                 return ValidationResult.Success;
-            else if (value.ToStr().ToLower() == "soap")
+            else if (string.Compare( value.ToStr(), "soap",false)==0)
                 return ValidationResult.Success;
-            else if (value.ToStr().ToLower() == "rabbitmq")
+            else if (string.Compare( value.ToStr(),"rabbitmq",false)==0)
                 return ValidationResult.Success;
             else
                 return new ValidationResult(ErrorMessage = string.Format("{0}不正确",validationContext.DisplayName));
