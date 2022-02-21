@@ -34,9 +34,9 @@
                     foreach (var item in Model.list)
                     {
                         var label = "";
-                        if(item.GetValue("SCHEMA").ToStr().ToLower()=="composite")
+                        if(string.Compare( item.GetValue("SCHEMA").ToStr(),"composite",false)==0)
                         { label = "合并"; }
-                        if(item.GetValue("SCHEMA").ToStr().ToLower()=="polling")
+                        if(string.Compare( item.GetValue("SCHEMA").ToStr(),"polling",false)==0)
                         { label = "轮循"; }
                         <tr data-value="@item.GetValue("key")">
                             <td style="padding-left:20px;" align="left">@item.GetValue("key")<font color="red">&nbsp;@label</font></td>
