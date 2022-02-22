@@ -7,9 +7,9 @@ namespace FastApiGatewayDb.Ui.Validation
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (string.Compare( value.ToStr(),"get",false)==0)
+            if (string.Compare( value.ToStr(),"get", true) ==0)
                 return ValidationResult.Success;
-            else if (string.Compare( value.ToStr(), "post",false)==0)
+            else if (string.Compare( value.ToStr(), "post", true) ==0)
                 return ValidationResult.Success;
             else
                 return new ValidationResult(ErrorMessage = "{0}不正确");
