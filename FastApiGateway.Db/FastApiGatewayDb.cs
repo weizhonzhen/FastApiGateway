@@ -69,9 +69,9 @@ namespace FastApiGatewayDb
                             }
                             else
                             {
-                                if (string.Compare( item.Schema.ToStr(),"polling",false)==0) //polling 轮循请求
+                                if (string.Compare( item.Schema.ToStr(),"polling",true)==0) //polling 轮循请求
                                     return Polling(item, context, db,IFast,downParam, urlParamDecode, urlParam,client);
-                                else if (string.Compare( item.Schema.ToStr(), "composite",false)==0) //composite 合并请求
+                                else if (string.Compare( item.Schema.ToStr(), "composite", true) ==0) //composite 合并请求
                                     return Composite(item, context, db,IFast, downParam, urlParamDecode, urlParam,client);
                                 else
                                     return Normal(item, context, db,IFast, downParam, urlParamDecode, urlParam,client);
@@ -79,9 +79,9 @@ namespace FastApiGatewayDb
                         }
                         else
                         {
-                            if (string.Compare( item.Schema.ToStr(),"polling",false)==0) //polling 轮循请求
+                            if (string.Compare( item.Schema.ToStr(),"polling", true) ==0) //polling 轮循请求
                                 return Polling(item, context, db,IFast, downParam, urlParamDecode, urlParam,client);
-                            else if (string.Compare( item.Schema.ToStr(), "composite",false)==0) //composite 合并请求
+                            else if (string.Compare( item.Schema.ToStr(), "composite", true) ==0) //composite 合并请求
                                 return Composite(item, context, db,IFast, downParam, urlParamDecode, urlParam,client);
                             else
                                 return Normal(item, context, db,IFast, downParam, urlParamDecode, urlParam,client);
@@ -102,7 +102,7 @@ namespace FastApiGatewayDb
         private ReturnModel GetReuslt(ApiGatewayDownParam downparam, string param, string key, int isTextLog, int isDbLog, DataContext db, IFastRepository IFast, HttpContext context, string ActionId, int OrderBy, IHttpClientFactory client)
         {
             var info = IFast.Query<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower() && a.Url.ToLower() == downparam.Url.ToLower()).ToItem<ApiGatewayWait>(db) ?? new ApiGatewayWait();
-            if (string.Compare( info.Key.ToStr(), key,false)==0 && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
+            if (string.Compare( info.Key.ToStr(), key, true) ==0 && DateTime.Compare(info.NextAction, DateTime.Now) > 0)
             {
                 //return time out
                 var dic = new Dictionary<string, object>();
@@ -118,22 +118,22 @@ namespace FastApiGatewayDb
 
                 BaseAop.Before(downparam.Url,key, ref param, downparam.Protocol);
 
-                if (string.Compare( downparam.Protocol, "soap",false)==0)
+                if (string.Compare( downparam.Protocol, "soap", true) ==0)
                     result = BaseUrl.SoapUrl(downparam.Url, downparam.SoapParamName, downparam.SoapMethod, param, client, key, downparam.SoapNamespace);
-                else if (string.Compare( downparam.Protocol,"http",false)==0)
+                else if (string.Compare( downparam.Protocol,"http", true) ==0)
                 {
                     //http
-                    if (string.Compare( downparam.Method.ToStr(),"post",false)==0)
+                    if (string.Compare( downparam.Method.ToStr(),"post", true) ==0)
                     {
                         if (downparam.IsBody == 1)
                             result = BaseUrl.PostContent(downparam.Url, param, key, client);
                         else
                             result = BaseUrl.PostUrl(downparam.Url, param, key, client);
                     }
-                    else if (string.Compare( downparam.Method.ToStr(), "get",false)==0)
+                    else if (string.Compare( downparam.Method.ToStr(), "get", true) ==0)
                         result = BaseUrl.GetUrl(downparam.Url, param, key, client);
                 }
-                else if (string.Compare( downparam.Protocol, "rabbitmq",false)==0)
+                else if (string.Compare( downparam.Protocol, "rabbitmq", true) ==0)
                 {
                     result.status = 200;
                     result.msg = "成功";
@@ -142,7 +142,7 @@ namespace FastApiGatewayDb
                     mqConfig.QueueName = downparam.QueueName;
                     FastRabbit.Send(mqConfig, GetUrlParam(param));
                 }
-                //else if (string.Compare( downparam.Protocol, "rpc",false)==0)
+                //else if (string.Compare( downparam.Protocol, "rpc",true)==0)
                 //    result = BaseUrl.RpcUrl(downparam.QueueName, param);
                 else
                     result.status = 408;
@@ -161,7 +161,7 @@ namespace FastApiGatewayDb
 
                     IFast.Add(wait, db);
                 }
-                else if (string.Compare( info.Key.ToStr(),key,false)==0)
+                else if (string.Compare( info.Key.ToStr(),key, true) ==0)
                     IFast.Delete<ApiGatewayWait>(a => a.Key.ToLower() == key.ToLower(), db);
 
                 stopwatch.Stop();
@@ -234,7 +234,7 @@ namespace FastApiGatewayDb
                 {
                     foreach (var temp in tokenInfo.Power.Split(','))
                     {
-                        if (string.Compare( temp, item.Key,false)==0)
+                        if (string.Compare( temp, item.Key, true) ==0)
                             return true;
                     }
 
