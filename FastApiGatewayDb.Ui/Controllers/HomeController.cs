@@ -53,7 +53,7 @@ namespace FastApiGatewayDb.Ui.Controllers
             {
                 var info = IFast.Query<ApiGatewayLogin>(a => a.UserName.ToLower() == item.Code.ToLower()).ToDic(db);
 
-                isSuccess = string.Compare( BaseSymmetric.Generate(item.Pwd), info.GetValue("UserPwd").ToStr(),false)==0;
+                isSuccess = string.Compare( BaseSymmetric.Generate(item.Pwd), info.GetValue("UserPwd").ToStr(), true) ==0;
 
                 info.Add("ip", App.Ip.Get(HttpContext));
 
