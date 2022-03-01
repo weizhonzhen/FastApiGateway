@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 });
             }
 
-            serviceCollection.AddTransient<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
+            serviceCollection.AddSingleton<IFastApiGatewayDb, FastApiGatewayDb.FastApiGatewayDb>();
 
             if (aop != null)
                 serviceCollection.AddSingleton<IFastApiAop>(aop);
