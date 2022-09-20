@@ -3,6 +3,7 @@ using FastApiGatewayDb.Aop;
 using FastApiGatewayDb.DataModel.Oracle;
 using FastData.Core;
 using FastData.Core.Context;
+using FastData.Core.Model;
 using FastUntility.Core;
 using Microsoft.AspNetCore.Builder;
 using System;
@@ -18,15 +19,15 @@ namespace Microsoft.Extensions.DependencyInjection
             var config = new ConfigData();
             Action(config);
 
-            if (string.IsNullOrEmpty(config.dbKey))
+            if (string.IsNullOrEmpty(config.DbKey))
                 throw new Exception("ConfigData dbKey is not null");
 
             serviceCollection.AddFastData(a=> {
-                a.dbFile = config.dbFile;
-                a.dbKey = config.dbKey;
+                a.DbFile = config.DbFile;
+                a.DbKey = config.DbKey;
                 a.IsCodeFirst = config.IsCodeFirst;
                 a.IsResource = config.IsResource;
-                a.mapFile = config.mapFile;
+                a.MapFile = config.MapFile;
                 a.NamespaceCodeFirst = config.NamespaceCodeFirst;
                 a.NamespaceProperties = config.NamespaceProperties;           
             });
@@ -53,7 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             ServiceContext.Init(new ServiceEngine(serviceCollection.BuildServiceProvider()));
 
-            using (var db = new DataContext(config.dbKey))
+            using (var db = new DataContext(config.DbKey))
             {
                 var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol != "", a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
                 foreach (var item in list)
