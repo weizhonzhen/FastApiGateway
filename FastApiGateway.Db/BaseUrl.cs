@@ -2,7 +2,6 @@ using FastApiGatewayDb.Model;
 using FastUntility.Core.Base;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 
@@ -19,18 +18,8 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel GetUrl(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
-            var http = client.CreateClient(key);
-            if (http.BaseAddress == null)
-            {
-                var hand = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    AllowAutoRedirect = false,
-                    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-                };
-                http = new HttpClient(hand, true);
-                http.BaseAddress = new Uri(url);
-            }
+            var http = client.CreateClient(key); 
+            http.BaseAddress = new Uri(url);            
             var model = new ReturnModel();
             try
             {
@@ -64,18 +53,8 @@ namespace FastApiGatewayDb
         /// </summary>
         public static ReturnModel PostUrl(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
-            var http = client.CreateClient(key);            
-            if (http.BaseAddress == null)
-            {
-                var hand = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    AllowAutoRedirect = false,
-                    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-                };
-                http = new HttpClient(hand, true);
-                http.BaseAddress = new Uri(url);
-            }
+            var http = client.CreateClient(key);
+            http.BaseAddress = new Uri(url);
             var model = new ReturnModel();
             try
             {
@@ -109,17 +88,7 @@ namespace FastApiGatewayDb
         public static ReturnModel PostContent(string url,string param,string key, IHttpClientFactory client, int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
-            if (http.BaseAddress == null)
-            {
-                var hand = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    AllowAutoRedirect = false,
-                    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-                };
-                http = new HttpClient(hand, true);
-                http.BaseAddress = new Uri(url);
-            }
+            http.BaseAddress = new Uri(url);
             var model = new ReturnModel();
             try
             {
@@ -151,17 +120,7 @@ namespace FastApiGatewayDb
         private static string PostSoap(string url, string method, Dictionary<string, object> param, IHttpClientFactory client, string key, string Namespace = "http://tempuri.org/", int marjor = 1, int minor = 1)
         {
             var http = client.CreateClient(key);
-            if (http.BaseAddress == null)
-            {
-                var hand = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    AllowAutoRedirect = false,
-                    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-                };
-                http = new HttpClient(hand, true);
-                http.BaseAddress = new Uri(url);
-            }
+            http.BaseAddress = new Uri(url);
             var xml = new StringBuilder();
             xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xml.Append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">");

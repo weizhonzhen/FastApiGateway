@@ -59,10 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 var list = FastRead.Query<ApiGatewayDownParam>(a => a.Protocol != "", a => new { a.Key, a.Url }).ToList<ApiGatewayDownParam>(db);
                 foreach (var item in list)
                 {
-                    serviceCollection.AddHttpClient(item.Key, client =>
-                    {
-                        client.BaseAddress = new Uri(item.Url);
-                    }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                    serviceCollection.AddHttpClient(item.Key).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                     {
                         ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
                         AllowAutoRedirect = false,
