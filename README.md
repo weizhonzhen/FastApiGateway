@@ -85,3 +85,13 @@ app.UseFastApiGatewayMiddleware();
             }
         }
 ```
+
+	//all service add into GatewayDb
+ 	services.AddFastApiGatewayDbClient(a => {
+                a.DbKey = "ApiGateway";
+                a.LogType = FastApiGatewayDbClient.Core.LogType.TxtLog;
+                a.TemplateType = FastApiGatewayDbClient.Core.TemplateType.ControllerActionPort;
+                a.TemplateName = "test";
+                a.Host= "127.0.0.1";
+                a.Port = 1024;
+            });
