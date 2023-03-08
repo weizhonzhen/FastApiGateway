@@ -56,6 +56,9 @@ namespace Microsoft.Extensions.DependencyInjection
                                 t.GetMethods().ToList().ForEach(m => {
                                     if (m.GetCustomAttributes().ToList().Exists(r => r.GetType().BaseType == typeof(HttpMethodAttribute)))
                                     {
+                                        if (m.GetCustomAttribute<ExcludeAttribute>() != null)
+                                            return;
+
                                         var attribute = m.GetCustomAttributes().ToList().Find(r => r.GetType().BaseType == typeof(HttpMethodAttribute)) as HttpMethodAttribute;
 
                                         if (!string.IsNullOrEmpty(attribute.Template))

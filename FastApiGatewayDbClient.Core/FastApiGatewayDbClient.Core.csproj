@@ -1,10 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-	<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Description>https://github.com/weizhonzhen/FastApiGateway</Description>
+		<PackageProjectUrl>https://github.com/weizhonzhen/FastApiGateway</PackageProjectUrl>
+		<PackageId>Fast.ApiGatewayDbClient.Core</PackageId>
+		<Authors>Fast.ApiGatewayDbClient.Core</Authors>
+		<Product>Fast.ApiGatewayDbClient.Core</Product>
+		<Version>1</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIconUrl>https://en.gravatar.com/userimage/151376774/1cba1ca23219db268cc5ed8abde11775.png</PackageIconUrl>
+		<PackageReleaseNotes></PackageReleaseNotes>
+	</PropertyGroup>
+	
   <ItemGroup>
     <PackageReference Include="Fast.Data.Core" Version="3.5.9" />
   </ItemGroup>
