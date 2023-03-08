@@ -1,4 +1,4 @@
-namespace FastApiGatewayDbClient.DataModel
+﻿namespace FastApiGatewayDbClient.DataModel
 {
     /// <summary>
     /// 接口
