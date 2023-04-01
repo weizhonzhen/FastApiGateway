@@ -111,8 +111,8 @@ namespace Microsoft.Extensions.DependencyInjection
                                         }
                                         else
                                         {
-                                            db.Update(model, d => d.Key == model.Key, d => new { d.IsDbLog, d.IsTxtLog, d.Name });
-                                            db.Update(downParam, d => d.Key == downParam.Key, d => new { d.Name, d.Url, d.Method, d.IsBody });
+                                            db.Update(model, d => d.Key == model.Key);
+                                            db.Update(downParam, d => d.Key == downParam.Key);
                                         }
                                         db.SubmitTrans();
                                     }
