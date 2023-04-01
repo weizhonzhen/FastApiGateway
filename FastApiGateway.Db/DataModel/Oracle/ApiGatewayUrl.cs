@@ -11,7 +11,7 @@ namespace FastApiGatewayDb.DataModel.Oracle
         /// <summary>
         /// key
         /// </summary>
-        [Column(Comments = "接口key", DataType = "varchar2", Length = 16, IsNull = false)]
+        [Column(Comments = "接口key", DataType = "varchar2", Length = 32, IsNull = false)]
         public string Key { get; set; }
 
         /// <summary>
