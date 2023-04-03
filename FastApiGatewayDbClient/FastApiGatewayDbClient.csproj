@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fast.Data">
-      <Version>3.0.3</Version>
+      <Version>3.0.6</Version>
     </PackageReference>
     <PackageReference Include="Fast.Redis">
       <Version>1.1.9</Version>
@@ -59,7 +59,7 @@
       <Version>1.2.67</Version>
     </PackageReference>
     <PackageReference Include="FastAop">
-      <Version>2.3.6</Version>
+      <Version>2.3.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.9</Version>

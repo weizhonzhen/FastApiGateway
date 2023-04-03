@@ -41,6 +41,8 @@ namespace FastApiGatewayDbClient
                                     else
                                         url.Append($"http://{config.Host}:{config.Port}/");
 
+                                    //var apiController = (t.BaseType as ApiController);
+
                                     var reg = new Regex("controller", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                                     var route = t.GetCustomAttribute<RoutePrefixAttribute>() ?? new RoutePrefixAttribute("");
 
@@ -50,10 +52,12 @@ namespace FastApiGatewayDbClient
                                     controller = reg.Replace(t.Name, "");
 
                                     if (string.IsNullOrEmpty(route.Prefix))
-                                        url.Append(reg.Replace(t.Name, ""));
+                                        url.AppendFormat("{0}/",reg.Replace(t.Name, ""));
 
                                     t.GetMethods(BindingFlags.Instance | BindingFlags.Public).ToList().ForEach(m =>
                                     {
+                                        var tempUrl = new StringBuilder();
+                                        tempUrl.Append(url.ToString());
                                         if (m.GetCustomAttribute<ExcludeAttribute>() != null)
                                             return;
 
@@ -64,9 +68,9 @@ namespace FastApiGatewayDbClient
                                             var attribute = m.GetCustomAttributes().ToList().Find(r => r.GetType().BaseType == typeof(RouteAttribute)) as RouteAttribute ?? new RouteAttribute();
 
                                             if (!string.IsNullOrEmpty(attribute.Template))
-                                                url.Append(attribute.Template);
+                                                tempUrl.Append(attribute.Template);
                                             else
-                                                url.Append(m.Name);
+                                                tempUrl.Append(m.Name);
 
                                             var method = attribute.Name ?? "get";
                                             var action = m.Name;
@@ -86,26 +90,24 @@ namespace FastApiGatewayDbClient
 
                                             downParam.Key = model.Key;
                                             downParam.Name = model.Name;
-                                            downParam.Url = url.ToString();
+                                            downParam.Url = tempUrl.ToString();
                                             downParam.Method = method;
 
                                             if (m.GetParameters().ToList().Exists(p => p.GetCustomAttribute<FromBodyAttribute>() != null))
                                                 downParam.IsBody = 1;
 
+                                            db.BeginTrans();
                                             if (FastRead.Query<ApiGatewayUrl>(q => q.Key.ToLower() == model.Key.ToLower()).ToCount(db) == 0)
                                             {
-                                                db.BeginTrans();
-                                                var result = db.Add(model).writeReturn;
-                                                if (result.IsSuccess)
-                                                    result = db.Add(downParam).writeReturn;
-
-                                                if (result.IsSuccess)
-                                                    db.SubmitTrans();
-                                                else
-                                                    db.RollbackTrans();
+                                                db.Add(model);
+                                                db.Add(downParam);
                                             }
                                             else
-                                                BaseLog.SaveLog($"{model.Key} is exists", "AddFastApiGatewayDbClient");
+                                            {
+                                                db.Update(model, d => d.Key == model.Key);
+                                                db.Update(downParam, d => d.Key == downParam.Key);
+                                            }
+                                            db.SubmitTrans();
                                         }
                                     });
                                 }
